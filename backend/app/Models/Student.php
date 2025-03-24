@@ -15,10 +15,9 @@ class Student extends Model
     // Specify the fields that can be mass-assigned
     protected $fillable = [
         'student_number', 
-        'name', 
+        'student_name', 
         'enrolled', 
-        'id_validated', 
-        'face_encoding_id'
+        'id_validated'
     ];
 
     // Optionally, if you want to define relationships (e.g., with face_encodings table)

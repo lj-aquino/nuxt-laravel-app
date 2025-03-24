@@ -2,46 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;  // Add the Log facade
+use App\Models\Student;
+use App\Models\Log;
 
 class StudentController extends Controller
 {
-    public function checkStudentNumber($student_number)
+    // Check if student exists
+    public function checkStudent($studentNumber)
     {
-        Log::info("Checking if student exists: $student_number");
+        try {
+            $student = Student::where('student_number', $studentNumber)->first();
 
-        $student = Student::where('student_number', $student_number)->first();
-
-        if ($student) {
-            Log::info("Student found: $student_number");
-        } else {
-            Log::info("Student not found: $student_number");
+            if ($student) {
+                // Determine enrolled status
+                $remarks = $student->enrolled ? 'Enrolled' : 'Not enrolled';
+                return response()->json(['exists' => true, 'remarks' => $remarks]);
+            } else {
+                // If student doesn't exist, return false
+                return response()->json(['exists' => false]);
+            }
+        } catch (\Exception $e) {
+            // Return error message in case of failure
+            return response()->json(['error' => 'An error occurred while checking the student. Please try again.'], 500);
         }
-
-        return response()->json([
-            'exists' => $student ? true : false,
-        ]);
     }
 
-    public function registerNewStudent(Request $request)
+    // Register the student if not already registered
+    public function registerStudent(Request $request)
     {
-        // Log the incoming request data
-        Log::info('Registering new student', ['student_number' => $request->student_number]);
+        $studentNumber = $request->input('student_number');
+        $student = Student::where('student_number', $studentNumber)->first();
 
-        $validated = $request->validate([
-            'student_number' => 'required|string|unique:students,student_number',
-        ]);
+        if (!$student) {
+            // Register new student
+            $student = new Student();
+            $student->student_number = $studentNumber;
+            $student->enrolled = false; // Default value
+            $student->save();
 
-        // Assigning a fake name for now
-        $student = new Student();
-        $student->student_number = $validated['student_number'];
-        $student->name = "Student " . $validated['student_number'];  // Fake name generation
-        $student->save();
+            // Log the new user
+            Log::create([
+                'student_number' => $studentNumber,
+                'has_id' => false,  // Change this based on validation
+                'entry_time' => now(),
+                'remarks' => 'New user',
+            ]);
 
-        Log::info("New student registered: " . $student->student_number);
-
-        return response()->json(['message' => 'Student registered successfully.']);
+            return response()->json(['exists' => true, 'remarks' => 'New user']);
+        } else {
+            // If student already exists, return remarks (Enrolled or Not enrolled)
+            $remarks = $student->enrolled ? 'Enrolled' : 'Not enrolled';
+            return response()->json(['exists' => true, 'remarks' => $remarks]);
+        }
     }
 }
