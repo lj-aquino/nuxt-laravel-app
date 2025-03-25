@@ -4,7 +4,7 @@
       <h2 class="text-2xl font-semibold text-center mb-4">Enter Student ID</h2>
 
       <!-- Initial selection for student having ID or not -->
-      <div v-if="!hasStudentId" class="mb-4">
+      <div v-if="hasStudentId === null" class="mb-4">
         <button @click="setHasStudentId(true)" class="bg-blue-500 text-white px-4 py-2 rounded w-full mb-2">Student has ID</button>
         <button @click="setHasStudentId(false)" class="bg-red-500 text-white px-4 py-2 rounded w-full">Student has no ID</button>
       </div>
@@ -19,6 +19,40 @@
           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           placeholder="Enter Student Number"
         />
+      </div>
+
+      <!-- Ask if the student can show a valid ID only if the student number is not found in the database -->
+      <div v-if="!studentFound && !identityVerified" class="mb-4">
+        <label for="canPresentId" class="block text-sm font-medium text-gray-700">Can you present a valid ID?</label>
+        <input
+          type="checkbox"
+          v-model="canPresentValidId"
+          id="canPresentId"
+          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <!-- Dropdown for selecting a valid ID (hidden until checkbox is checked) -->
+      <div v-if="canPresentValidId" class="mb-4">
+        <label for="validId" class="block text-sm font-medium text-gray-700">Select Valid ID</label>
+        <select v-model="validId" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <option disabled value="">Please select a valid ID</option>
+          <option value="Philippine Passport">Philippine Passport</option>
+          <option value="Philippine National ID">Philippine National ID</option>
+          <option value="Driver's License">Driver’s License</option>
+          <option value="UMID">UMID</option>
+          <option value="SSS ID">SSS ID</option>
+          <option value="PRC ID">PRC ID</option>
+          <option value="Voter's ID">Voter’s ID</option>
+          <option value="Postal ID">Postal ID</option>
+          <option value="Senior Citizen ID">Senior Citizen ID</option>
+          <option value="PWD ID">PWD ID</option>
+          <option value="PhilHealth ID">PhilHealth ID</option>
+          <option value="Pag-IBIG Loyalty Card Plus">Pag-IBIG Loyalty Card Plus</option>
+          <option value="Barangay ID">Barangay ID</option>
+          <option value="NBI Clearance">NBI Clearance</option>
+          <option value="Police Clearance">Police Clearance</option>
+        </select>
       </div>
 
       <!-- Buttons for submitting or proceeding -->
@@ -52,6 +86,10 @@ const hasStudentId = ref(null); // null means the student has not made a choice 
 const loading = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
+const identityVerified = ref(false); // If the student has a valid ID
+const validId = ref(''); // The ID presented by the student
+const canPresentValidId = ref(false); // Checkbox for presenting valid ID
+const studentFound = ref(true); // To check if student number exists
 
 // Set if the student has an ID or not
 const setHasStudentId = (hasId) => {
@@ -79,16 +117,14 @@ const checkStudentNumber = async () => {
   successMessage.value = '';
 
   try {
-    // Use $fetch to make the GET request
     const data = await $fetch(`${apiUrl}/check-student/${studentNumber.value}`);
     console.log('API Response:', data);
 
     if (data.exists) {
-      // If the student exists, proceed to the face-scanning page
+      studentFound.value = true;
       router.push({ path: '/face-scanning' });
     } else {
-      // If the student doesn't exist in the system, register them
-      await registerStudent();
+      studentFound.value = false;  // Student not found, show checkbox for valid ID
     }
   } catch (error) {
     errorMessage.value = 'An error occurred. Please try again.';
@@ -98,16 +134,14 @@ const checkStudentNumber = async () => {
   }
 };
 
+// Register the student with only the student number
 const registerStudent = async () => {
-  // Make a POST request to register the student using the updated apiUrl
   const { data, error } = await $fetch(`${apiUrl}/register-student`, {
-    method: 'POST',  // POST request
+    method: 'POST',
     body: {
-      student_number: studentNumber.value,  // Send student number to register
+      student_number: studentNumber.value, // Only student number is posted in students table
     },
   });
-
-  successMessage.value = 'You are added as a new user!';
 
   if (error) {
     errorMessage.value = 'An error occurred during registration. Please try again.';
@@ -115,7 +149,7 @@ const registerStudent = async () => {
     return;
   }
 
-  // After successful registration, redirect to the face-scanning page
+  successMessage.value = 'You are added as a new user!';
   router.push({ path: '/face-scanning' });
 };
 </script>
