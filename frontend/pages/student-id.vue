@@ -104,7 +104,7 @@ const simulateBarcodeScan = () => {
   studentNumber.value = '2021-12345'; // Replace with a sample student number
   hasStudentId.value = false;
 };
-
+  
 // Check if the student number exists in the database
 const checkStudentNumber = async () => {
   if (!studentNumber.value) {
@@ -125,6 +125,10 @@ const checkStudentNumber = async () => {
       router.push({ path: '/face-scanning' });
     } else {
       studentFound.value = false;  // Student not found, show checkbox for valid ID
+      if (canPresentValidId.value && validId.value) {
+        // Redirect to the face scanning page after selecting a valid ID
+        router.push({ path: '/face-scanning' });
+      }
     }
   } catch (error) {
     errorMessage.value = 'An error occurred. Please try again.';
