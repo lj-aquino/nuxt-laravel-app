@@ -1,95 +1,61 @@
 <template>
-    <div>
-      <h1>Face Scanning</h1>
-      <div v-if="isConnected">
-        <p>Connection to DroidCam is successful!</p>
-        <video ref="video" id="video" width="640" height="480" autoplay></video>
-        <button @click="captureFaceEncoding">Capture Face Encoding</button>
-      </div>
-      <div v-else>
-        <p>Connecting to DroidCam...</p>
+    <div class="viewport">
+      <div class="device-sim">
+        <div class="rotated-wrapper">
+          <iframe
+            :src="droidCamUrl"
+            class="stream"
+            frameborder="0"
+            allowfullscreen
+          ></iframe>
+        </div>
       </div>
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        isConnected: false,
-        faceEncoding: [],
-      };
-    },
-    mounted() {
-      this.connectToDroidCam();
-    },
-    methods: {
-      connectToDroidCam() {
-        const videoElement = this.$refs.video;
-        const constraints = {
-          video: {
-            deviceId: {
-              exact: "http://192.168.1.113:4747/video" // DroidCam IP URL
-            }
-          }
-        };
-  
-        navigator.mediaDevices.getUserMedia(constraints)
-          .then((stream) => {
-            videoElement.srcObject = stream;
-            this.isConnected = true;
-          })
-          .catch((error) => {
-            console.error("Error connecting to DroidCam:", error);
-            this.isConnected = false;
-          });
-      },
-  
-      captureFaceEncoding() {
-        // Call your method to capture the face encoding
-        this.processFaceEncoding();
-      },
-  
-      processFaceEncoding() {
-        const videoElement = this.$refs.video;
-        // Simulating face encoding extraction from the video frame
-        // In practice, you will use a method that extracts actual face encodings from the video feed
-  
-        // Here is a sample face encoding array (similar to your provided example):
-        const sampleFaceEncoding = [
-          -0.12127532809972763, 0.06478552520275116, 0.07996156811714172, // and so on
-          0.027136305347085
-        ];
-  
-        this.faceEncoding = sampleFaceEncoding; // Store it in data for now
-        console.log('Face Encoding:', this.faceEncoding);
-  
-        // You would typically call an API here to save the encoding
-        //this.saveFaceEncodingToDB();
-      },
-  
-    //   async saveFaceEncodingToDB() {
-    //     // Assuming you have Supabase set up and want to save the face encoding
-    //     const { data, error } = await this.$supabase
-    //       .from('face_encodings')
-    //       .insert([
-    //         {
-    //           student_number: '2021-07092',  // Use actual student number here
-    //           encoding: this.faceEncoding,   // This is the face encoding captured
-    //         }
-    //       ]);
-        
-    //     if (error) {
-    //       console.error('Error saving face encoding:', error);
-    //     } else {
-    //       console.log('Face encoding saved:', data);
-    //     }
-    //   }
-    }
-  };
+  <script setup>
+  const droidCamUrl = 'http://192.168.1.113:4747/video';
   </script>
   
   <style scoped>
-  /* Add any specific styling here */
+  .viewport {
+    height: 100vh;
+    width: 100vw;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .device-sim {
+    width: 100%;
+    max-width: 360px;  /* Max width to ensure it doesn't get too big */
+    height: 80%;  /* Make the height responsive */
+    border: 4px solid #22c55e;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden; /* Prevent scrolling */
+  }
+  
+  .rotated-wrapper {
+    width: 100%;
+    height: 100%;
+    transform: rotate(90deg);
+    transform-origin: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .stream {
+    width: 100%;   /* Take up full width of the container */
+    height: 100%;  /* Take up full height of the container */
+    border: none;
+  }
   </style>
   
