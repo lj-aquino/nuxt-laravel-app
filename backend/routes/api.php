@@ -8,3 +8,5 @@ Route::get('/check-student/{studentNumber}', [StudentController::class, 'checkSt
 
 // Register student
 Route::post('/register-student', [StudentController::class, 'registerStudent']);
+
+Route::post('/encode', [FaceController::class, 'encode']);
