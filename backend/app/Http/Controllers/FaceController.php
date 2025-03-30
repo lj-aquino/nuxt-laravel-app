@@ -42,7 +42,7 @@ class FaceController extends Controller
         }
 
         // Prepare the command to run the Python script (face recognition)
-        $process = new Process(['python3', storage_path('app/python-scripts/face_encoding.py'), $imagePath]);
+        $process = new Process(['python', storage_path('app/python-scripts/face_encoding.py'), $imagePath]);
         Log::debug("Running Python script...");
 
         // Run the process and capture output
