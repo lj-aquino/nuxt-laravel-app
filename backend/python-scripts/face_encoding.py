@@ -1,15 +1,24 @@
 import dlib
 import cv2
 import numpy as np
+import sys
+import os  # For checking if the image file exists
 
 def get_face_encoding(image_path):
     print(f"Debug: Starting face encoding for image: {image_path}")
+
+    # Convert backslashes to forward slashes (if needed)
+    image_path = image_path.replace("\\", "/")
+
+    # Check if the image exists
+    if not os.path.exists(image_path):
+        print(f"Debug: Image file does not exist at {image_path}")
+        sys.exit(1)  # Exit if the image doesn't exist
 
     # Initialize the face detector and models
     detector = dlib.get_frontal_face_detector()
     print("Debug: Face detector initialized.")
     
-    # Update the file paths to the models in the new location
     sp = dlib.shape_predictor(r"C:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\backend\app\Models\dlib_models\shape_predictor_68_face_landmarks.dat")
     print("Debug: Shape predictor initialized.")
     
@@ -17,9 +26,10 @@ def get_face_encoding(image_path):
     print("Debug: Face recognition model initialized.")
 
     # Load the image
+    print(f"Debug: Loading image from path: {image_path}")
     image = cv2.imread(image_path)
     if image is None:
-        print("Debug: Failed to load the image.")
+        print(f"Debug: Failed to load the image from {image_path}.")
         return None
     print(f"Debug: Image loaded with shape: {image.shape}")
 
@@ -47,7 +57,15 @@ def get_face_encoding(image_path):
 
 # Test the function (for testing purpose)
 if __name__ == "__main__":
-    encoding = get_face_encoding("path_to_image.jpg")
+    # Ensure that the script receives the image path as a command-line argument
+    if len(sys.argv) < 2:
+        print("Debug: No image path provided.")
+        sys.exit(1)
+
+    # Get the image path from the command-line argument
+    image_path = sys.argv[1]
+
+    encoding = get_face_encoding(image_path)
     if encoding is not None:
         print(f"Debug: Face encoding: {encoding}")
     else:

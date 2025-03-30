@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Illuminate\Support\Facades\Log; // Import Laravel's Log facade
+use Illuminate\Support\Facades\Log;
 
 class FaceController extends Controller
 {
@@ -25,7 +25,7 @@ class FaceController extends Controller
 
         // Remove the data URL prefix (if exists)
         if (strpos($imageData, 'data:image/jpeg;base64,') === 0) {
-            $imageData = substr($imageData, strlen('data:image/jpeg;base64,'));
+            $imageData = substr($imageData, strlen('data:image/jpeg;base64,'));  // Remove prefix
             Log::debug("Removed base64 prefix.");
         }
 
@@ -34,15 +34,35 @@ class FaceController extends Controller
         Log::debug("Base64 image decoded.");
 
         // Save the image temporarily
-        $imagePath = storage_path('app/temp_image.jpg');
+        // Using DIRECTORY_SEPARATOR for compatibility
+        $imagePath = storage_path('app' . DIRECTORY_SEPARATOR . 'temp_image.jpg');
+        Log::debug("Image path: {$imagePath}");
+
+        // Ensure the file is saved
         if (file_put_contents($imagePath, $image)) {
             Log::debug("Image saved to {$imagePath}");
         } else {
             Log::error("Failed to save the image to {$imagePath}");
         }
 
+        // Check if the image exists before running the Python script
+        if (file_exists($imagePath)) {
+            Log::debug("Image exists at {$imagePath}");
+        } else {
+            Log::error("Image not found at {$imagePath}");
+            return response()->json(['error' => 'Image not found'], 500);
+        }
+
         // Prepare the command to run the Python script (face recognition)
-        $process = new Process(['python', storage_path('app/python-scripts/face_encoding.py'), $imagePath]);
+        $pythonScriptPath = 'C:\\Users\\LJ\\Desktop\\Academics\\2nd Sem 2024-2025\\nuxt-laravel-app\\backend\\python-scripts\\face_encoding.py';
+
+        // Using the full path for the image and python script
+        $process = new Process([
+            'C:\\Python312\\python.exe',
+            $pythonScriptPath, 
+            $imagePath
+        ]);
+
         Log::debug("Running Python script...");
 
         // Run the process and capture output
