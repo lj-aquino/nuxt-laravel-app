@@ -26,7 +26,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const droidCamUrl = 'http://192.168.68.232:4747/video'; // Your DroidCam stream URL
+const droidCamUrl = 'http://192.168.11.120:4747/video'; // Your DroidCam stream URL
 const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 let isCapturing = false; // Track if capturing is ongoing

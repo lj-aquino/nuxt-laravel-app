@@ -2,7 +2,7 @@ import dlib
 import cv2
 import numpy as np
 import sys
-import os  # For checking if the image file exists
+import os
 
 def get_face_encoding(image_path):
     print(f"Debug: Starting face encoding for image: {image_path}")
@@ -19,10 +19,20 @@ def get_face_encoding(image_path):
     detector = dlib.get_frontal_face_detector()
     print("Debug: Face detector initialized.")
     
-    sp = dlib.shape_predictor(r"C:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\backend\app\Models\dlib_models\shape_predictor_68_face_landmarks.dat")
+    # Ensure the shape predictor file exists
+    shape_predictor_path = r"C:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\backend\app\Models\dlib_models\shape_predictor_68_face_landmarks.dat"
+    if not os.path.exists(shape_predictor_path):
+        print(f"Debug: Shape predictor model not found at {shape_predictor_path}")
+        sys.exit(1)  # Exit if the shape predictor model is missing
+    sp = dlib.shape_predictor(shape_predictor_path)
     print("Debug: Shape predictor initialized.")
     
-    facerec = dlib.face_recognition_model_v1(r"C:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\backend\app\Models\dlib_models\dlib_face_recognition_resnet_model_v1.dat")
+    # Ensure the face recognition model file exists
+    face_recognition_model_path = r"C:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\backend\app\Models\dlib_models\dlib_face_recognition_resnet_model_v1.dat"
+    if not os.path.exists(face_recognition_model_path):
+        print(f"Debug: Face recognition model not found at {face_recognition_model_path}")
+        sys.exit(1)  # Exit if the face recognition model is missing
+    facerec = dlib.face_recognition_model_v1(face_recognition_model_path)
     print("Debug: Face recognition model initialized.")
 
     # Load the image
