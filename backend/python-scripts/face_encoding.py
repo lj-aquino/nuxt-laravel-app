@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import sys
 import os
+import json
 
 def get_face_encoding(image_path):
     print(f"Debug: Starting face encoding for image: {image_path}")
@@ -60,7 +61,10 @@ def get_face_encoding(image_path):
         face_descriptor = facerec.compute_face_descriptor(image, shape)
         print("Debug: Face descriptor computed.")
 
-        return np.array(face_descriptor)
+        # Convert the encoding to JSON format
+        encoding_json = json.dumps(list(face_descriptor))
+        print("Debug: Face encoding converted to JSON.")
+        return encoding_json
     else:
         print("Debug: No faces detected.")
         return None
