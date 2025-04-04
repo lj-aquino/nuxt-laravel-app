@@ -6,9 +6,7 @@
           ref="videoElement"
           autoplay
           playsinline
-          loop
           muted
-          :src="droidCamUrl"
           class="stream"
           @canplaythrough="onVideoCanPlayThrough"
           @play="onVideoPlay"
@@ -26,7 +24,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const droidCamUrl = 'http://192.168.11.120:4747/video'; // Your DroidCam stream URL
 const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 let isCapturing = false; // Track if capturing is ongoing
@@ -55,12 +52,6 @@ const captureAndSend = async () => {
     return;
   }
 
-  // Check if video dimensions are available
-  // if (!video.videoWidth || !video.videoHeight) {
-  //   console.error("Error: Video dimensions are unavailable.");
-  //   return;
-  // }
-
   if (isCapturing) return; // Prevent capturing if it's already ongoing
   isCapturing = true;
 
@@ -81,7 +72,7 @@ const captureAndSend = async () => {
 
   try {
     const formData = new FormData();
-    formData.append('image', imageData);  // Send the base64 image
+    formData.append('image', imageData); // Send the base64 image
 
     const response = await fetch('http://localhost:8000/api/encode', {
       method: 'POST',
@@ -110,7 +101,21 @@ const startCapturingFrames = () => {
   requestAnimationFrame(captureLoop);
 };
 
+// Initialize the webcam feed
+const initializeWebcam = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const video = videoElement.value;
+    if (video) {
+      video.srcObject = stream; // Set the webcam stream as the video source
+    }
+  } catch (error) {
+    console.error("Error accessing webcam:", error);
+  }
+};
+
 onMounted(() => {
+  initializeWebcam(); // Start the webcam feed
   startCapturingFrames(); // Start capturing frames using requestAnimationFrame
 });
 </script>
@@ -128,8 +133,8 @@ onMounted(() => {
 
 .device-sim {
   width: 100%;
-  max-width: 360px;  /* Max width to ensure it doesn't get too big */
-  height: 80%;  /* Make the height responsive */
+  max-width: 360px; /* Max width to ensure it doesn't get too big */
+  height: 80%; /* Make the height responsive */
   border: 4px solid #22c55e;
   border-radius: 1rem;
   box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
@@ -143,16 +148,16 @@ onMounted(() => {
 .rotated-wrapper {
   width: 100%;
   height: 100%;
-  transform: rotate(90deg);
-  transform-origin: center;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .stream {
-  width: 100%;   /* Take up full width of the container */
-  height: 100%;  /* Take up full height of the container */
+  width: 100%; /* Take up full width of the container */
+  height: 100%; /* Take up full height of the container */
   border: none;
+  transform: rotate(0deg); /* Rotate the video feed by 180 degrees */
+  transform-origin: center;
 }
 </style>
