@@ -1,5 +1,8 @@
 <template>
   <div class="viewport">
+    <!-- Add the TopBar component -->
+    <TopBar />
+
     <div class="device-sim">
       <div class="rotated-wrapper">
         <video
@@ -18,29 +21,31 @@
       <h3>Face Encoding</h3>
       <pre>{{ encoding }}</pre>
     </div>
+
+    <!-- Add the Sidebar component -->
+    <Sidebar />
+
+    <!-- Backend Debug Messages Section -->
+    <div class="debug-messages">
+      <h4>Backend Debug Messages</h4>
+      <ul>
+        <li v-for="(message, index) in backendDebugMessages" :key="index">{{ message }}</li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 
+// Import the Sidebar and TopBar components
+import Sidebar from '~/components/Sidebar.vue';
+import TopBar from '~/components/TopBar.vue';
+
 const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
+const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
-
-// Method to handle when the video is ready to play through
-const onVideoCanPlayThrough = () => {
-  console.log("Video is ready to play through.");
-  const video = videoElement.value;
-  if (video) {
-    console.log("Video dimensions:", video.videoWidth, video.videoHeight);
-  }
-};
-
-// Method to handle when the video starts playing
-const onVideoPlay = () => {
-  console.log("Video started playing.");
-};
 
 // Function to capture a frame from the video and send to the backend
 const captureAndSend = async () => {
@@ -48,14 +53,12 @@ const captureAndSend = async () => {
 
   // Ensure the video element exists and has video dimensions
   if (!video) {
-    console.error("Error: Video element not found.");
+    backendDebugMessages.value.push("Error: Video element not found.");
     return;
   }
 
   if (isCapturing) return; // Prevent capturing if it's already ongoing
   isCapturing = true;
-
-  console.log("Capturing video frame...");
 
   // Create a canvas element to draw the current video frame
   const canvas = document.createElement('canvas');
@@ -64,11 +67,9 @@ const captureAndSend = async () => {
 
   // Draw the current video frame onto the canvas
   canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-  console.log("Frame drawn on canvas.");
 
   // Convert the canvas image to a base64-encoded JPEG image
   const imageData = canvas.toDataURL('image/jpeg');
-  console.log("Canvas converted to base64 image.");
 
   try {
     const formData = new FormData();
@@ -79,21 +80,38 @@ const captureAndSend = async () => {
       body: formData,
     });
 
-    console.log("Received response from backend.");
-
     const data = await response.json();
-    encoding.value = data.encoding; // Display the face encoding
-    console.log("Face encoding received and set.");
+
+    if (data.success) {
+      encoding.value = data.encoding; // Display the face encoding
+    }
+
+    // Update backend debug messages
+    backendDebugMessages.value = data.debug_logs || [];
   } catch (error) {
-    console.error("Error sending the image:", error);
+    backendDebugMessages.value.push(`Error sending the image: ${error}`);
   } finally {
     isCapturing = false; // Reset the capturing flag
   }
 };
 
+// Method to handle when the video is ready to play through
+const onVideoCanPlayThrough = () => {
+  backendDebugMessages.value.push("Video is ready to play through.");
+  const video = videoElement.value;
+  if (video) {
+    backendDebugMessages.value.push(`Video dimensions: ${video.videoWidth}x${video.videoHeight}`);
+  }
+};
+
+// Method to handle when the video starts playing
+const onVideoPlay = () => {
+  backendDebugMessages.value.push("Video started playing.");
+};
+
 // Start capturing frames using requestAnimationFrame
 const startCapturingFrames = () => {
-  console.log("Starting to capture frames using requestAnimationFrame.");
+  backendDebugMessages.value.push("Starting to capture frames using requestAnimationFrame.");
   const captureLoop = () => {
     captureAndSend();
     requestAnimationFrame(captureLoop);
@@ -110,7 +128,7 @@ const initializeWebcam = async () => {
       video.srcObject = stream; // Set the webcam stream as the video source
     }
   } catch (error) {
-    console.error("Error accessing webcam:", error);
+    backendDebugMessages.value.push(`Error accessing webcam: ${error}`);
   }
 };
 
@@ -159,5 +177,19 @@ onMounted(() => {
   border: none;
   transform: rotate(0deg); /* Rotate the video feed by 180 degrees */
   transform-origin: center;
+}
+
+.debug-messages {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 300px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
 }
 </style>
