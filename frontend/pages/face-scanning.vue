@@ -3,7 +3,8 @@
     <!-- Add the TopBar component -->
     <TopBar />
 
-    <div class="device-sim">
+    <!-- First Square -->
+    <div class="square first-square">
       <div class="rotated-wrapper">
         <video
           ref="videoElement"
@@ -17,13 +18,16 @@
       </div>
     </div>
 
-    <div v-if="encoding">
-      <h3>Face Encoding</h3>
-      <pre>{{ encoding }}</pre>
+    <!-- Second Square -->
+    <div class="square second-square">
+      <div v-if="encoding">
+        <h3>Face Encoding</h3>
+        <pre>{{ encoding }}</pre>
+      </div>
     </div>
 
     <!-- Add the Sidebar component -->
-    <Sidebar />
+    <Sidebar activeMenu="Dashboard" />
 
     <!-- Backend Debug Messages Section -->
     <div class="debug-messages">
@@ -140,43 +144,41 @@ onMounted(() => {
 
 <style scoped>
 .viewport {
-  height: 100vh;
-  width: 100vw;
-  background-color: #1a1a1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  height: 90vh;
+  width: 90vw;
+  background-color: white;
+  left: 350px;
+  top: 200.2px;
 }
 
-.device-sim {
-  width: 100%;
-  max-width: 360px; /* Max width to ensure it doesn't get too big */
-  height: 80%; /* Make the height responsive */
-  border: 4px solid #22c55e;
-  border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden; /* Prevent scrolling */
+.square {
+  border: 1px solid #e8e8e8;
+  border-radius: 22px;
+  position: absolute;
 }
 
-.rotated-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.first-square {
+  width: 400.1px;
+  height: 582.8px;
+  left: 350px;
+  top: 200.2px;
+}
+
+.second-square {
+  width: 700.5px;
+  height: 581.2px;
+  left: 780.5px;
+  top: 200.2px;
 }
 
 .stream {
-  width: 100%; /* Take up full width of the container */
-  height: 100%; /* Take up full height of the container */
-  border: none;
-  transform: rotate(0deg); /* Rotate the video feed by 180 degrees */
-  transform-origin: center;
+  border-radius: 22px;
+  background-color: #9f9f9f; /* Default color when video is not streaming */
+  width: 355.7px;
+  height: 210px;
+  position: absolute;
+  left: 20px;
+  top: 100.2px;
 }
 
 .debug-messages {
@@ -191,5 +193,13 @@ onMounted(() => {
   padding: 10px;
   border-radius: 8px;
   font-size: 12px;
+}
+
+/* Global styles to remove scrollbars */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrollbars on the entire page */
 }
 </style>

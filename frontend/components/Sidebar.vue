@@ -1,8 +1,7 @@
-<!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\Sidebar.vue -->
 <template>
   <div
     class="sidebar"
-    style="background-color: #252525; width: 245.5px; height: 800px; position: absolute; left: 0px; top: 0px;"
+    style="background-color: #252525; width: 280px; height: 100vh; position: absolute; left: 0px; top: 0px; overflow: hidden;"
   >
     <!-- UPLB Logo -->
     <div style="position: absolute; left: 25.4px; top: 43.8px;">
@@ -36,6 +35,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Dashboard' }"
           >
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
@@ -45,15 +45,17 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Logs Summary' }"
           >
             <i class="fas fa-file-alt"></i>
-            Detailed Logs
+            Logs Summary
           </a>
         </li>
         <li>
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Register Student' }"
           >
             <i class="fas fa-user-plus"></i>
             Register Student
@@ -63,30 +65,26 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Update Info' }"
           >
             <i class="fas fa-edit"></i>
             Update Info
           </a>
         </li>
-        <li>
-          <a
-            href="#"
-            class="menu-item"
-          >
-            <i class="fas fa-bell"></i>
-            Notifications
-          </a>
-        </li>
       </ul>
     </div>
 
+    <!-- Horizontal Line -->
+    <hr style="border: 1px solid #444; margin: 16px 0; width: 90%; margin-left: auto; margin-right: auto;" />
+
     <!-- Account Section -->
-    <div class="menu" style="margin-top: 20px; padding: 0;">
+    <div class="menu" style="margin-top: 0; padding: 0;">
       <ul>
         <li>
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Account' }"
           >
             <i class="fas fa-user"></i>
             Account
@@ -96,6 +94,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Saved Logs' }"
           >
             <i class="fas fa-save"></i>
             Saved Logs
@@ -105,6 +104,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Settings' }"
           >
             <i class="fas fa-cog"></i>
             Settings
@@ -113,6 +113,9 @@
       </ul>
     </div>
 
+    <!-- Horizontal Line -->
+    <hr style="border: 1px solid #444; margin: 16px 0; width: 90%; margin-left: auto; margin-right: auto;" />
+
     <!-- Footer Section -->
     <div class="menu" style="position: absolute; bottom: 16px; width: 100%; padding: 0;">
       <ul>
@@ -120,6 +123,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Admin' }"
           >
             <i class="fas fa-user-shield"></i>
             Admin
@@ -129,6 +133,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Help' }"
           >
             <i class="fas fa-question-circle"></i>
             Help
@@ -138,6 +143,7 @@
           <a
             href="#"
             class="menu-item"
+            :class="{ active: activeMenu === 'Log Out' }"
           >
             <i class="fas fa-sign-out-alt"></i>
             Log Out
@@ -151,6 +157,12 @@
 <script>
 export default {
   name: 'Sidebar',
+  props: {
+    activeMenu: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>
 
@@ -161,6 +173,7 @@ export default {
 /* Sidebar styles */
 .sidebar {
   font-family: 'Bricolage Grotesque', sans-serif;
+  overflow: hidden; /* Prevent scrollbars */
 }
 
 /* Remove bullet points and underlining */
@@ -178,8 +191,9 @@ export default {
   padding: 8px 16px;
   border-radius: 4px;
   height: 45.5px;
-  width: 245.5px;
+  width: 280px;
   transition: background-color 0.3s ease;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 /* Add spacing for icons */
@@ -194,5 +208,8 @@ export default {
   font-weight: bold;
   color: white;
   background-color: #eead2b;
+  height: 45.5px; /* Explicitly set height */
+  width: 280px; /* Explicitly set width */
+  box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
 }
 </style>
