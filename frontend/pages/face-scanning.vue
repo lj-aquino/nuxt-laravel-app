@@ -37,6 +37,23 @@
     <!-- Student Info Square -->
     <div class="square student-info"></div>
 
+    <!-- Buttons -->
+    <button
+      class="enter-id-button animated-button"
+      style="position: absolute; left: 370.4px; top: 690.7px;"
+    >
+      <i class="fas fa-id-card" style="font-size: 16px;"></i>
+      Enter ID
+    </button>
+    
+    <button
+      class="scan-id-button animated-button"
+      style="position: absolute; left: 555.4px; top: 690.7px;"
+    >
+      <i class="fas fa-qrcode" style="font-size: 16px;"></i>
+      Scan ID
+    </button>
+
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
@@ -222,4 +239,26 @@ body {
   padding: 0;
   overflow: hidden; /* Prevent scrollbars on the entire page */
 }
+
+.animated-button {
+  background-color: #71231c;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  width: 170.7px;
+  height: 57.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.animated-button:hover {
+  transform: scale(1.1); /* Slightly enlarge the button */
+  background-color: #9a2d24; /* Change background color on hover */
+}
+
 </style>
