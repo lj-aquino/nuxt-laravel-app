@@ -3,6 +3,14 @@
     <!-- Add the TopBar component -->
     <TopBar />
 
+    <!-- Face Scanning Text -->
+    <div
+      class="face-scanning-text"
+      style="position: absolute; left: 370.4px; top: 195px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 25px; color: black; font-weight: bold;"
+    >
+      Face Scanning
+    </div>
+
     <!-- First Square -->
     <div class="square first-square">
       <div class="rotated-wrapper">
@@ -161,14 +169,14 @@ onMounted(() => {
   width: 400.1px;
   height: 582.8px;
   left: 350px;
-  top: 200.2px;
+  top: 180.2px;
 }
 
 .second-square {
   width: 700.5px;
   height: 581.2px;
   left: 780.5px;
-  top: 200.2px;
+  top: 180.2px;
 }
 
 .stream {
@@ -177,8 +185,8 @@ onMounted(() => {
   width: 355.7px;
   height: 210px;
   position: absolute;
-  left: 20px;
-  top: 100.2px;
+  left: 22px;
+  top: 55.2px;
 }
 
 .debug-messages {
