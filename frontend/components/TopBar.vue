@@ -17,7 +17,7 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="flex items-center" style="position: absolute; right: 380px; top: 50px; gap: 8px;">
+    <div class="flex items-center" style="position: absolute; right: 420px; top: 65px; gap: 8px;">
       <input
         type="text"
         placeholder="Search here"
@@ -31,7 +31,7 @@
         <i class="fas fa-search" style="color: white; font-size: 16px;"></i>
       </div>
     </div>
-    
+
     <!-- Profile Section -->
     <div
       class="profile-text"
