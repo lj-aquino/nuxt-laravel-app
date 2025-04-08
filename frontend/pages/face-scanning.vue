@@ -34,6 +34,9 @@
       </div>
     </div>
 
+    <!-- Student Info Square -->
+    <div class="square student-info"></div>
+
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
@@ -177,6 +180,15 @@ onMounted(() => {
   height: 581.2px;
   left: 780.5px;
   top: 180.2px;
+}
+
+.student-info {
+  width: 355.7px;
+  height: 210px;
+  left: 370.4px;
+  top: 465px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
 }
 
 .stream {

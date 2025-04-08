@@ -17,16 +17,16 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="flex items-center" style="position: absolute; right: 420px; top: 65px; gap: 8px;">
+    <div style="position: relative;">
       <input
         type="text"
         placeholder="Search here"
         class="search-bar"
-        style="background-color: white; color: black; border-radius: 100px; padding: 8px 16px; width: 256px; flex-shrink: 0;"
+        style="position: absolute; right: 420px; top: 65px; background-color: white; color: black; border-radius: 100px; padding: 8px 16px; width: 256px; flex-shrink: 0;"
       />
       <div
         class="search-icon"
-        style="background-color: #eead2b; border: 1px solid white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;"
+        style="position: absolute; right: 370px; top: 62px; background-color: #eead2b; border: 1px solid white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;"
       >
         <i class="fas fa-search" style="color: white; font-size: 16px;"></i>
       </div>
