@@ -20,7 +20,7 @@
           playsinline
           muted
           class="stream"
-          @canplaythrough="onVideoCanPlayThrough"
+          @canplay="onVideoCanPlay"
           @play="onVideoPlay"
         ></video>
       </div>
@@ -79,6 +79,14 @@ const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
 
+const onVideoCanPlay = () => {
+  backendDebugMessages.value.push("Video is ready to play.");
+};
+
+const onVideoPlay = () => {
+  backendDebugMessages.value.push("Video started playing.");
+};
+
 // Function to capture a frame from the video and send to the backend
 const captureAndSend = async () => {
   const video = videoElement.value;
@@ -136,11 +144,6 @@ const onVideoCanPlayThrough = () => {
   }
 };
 
-// Method to handle when the video starts playing
-const onVideoPlay = () => {
-  backendDebugMessages.value.push("Video started playing.");
-};
-
 // Start capturing frames using requestAnimationFrame
 const startCapturingFrames = () => {
   backendDebugMessages.value.push("Starting to capture frames using requestAnimationFrame.");
@@ -158,9 +161,11 @@ const initializeWebcam = async () => {
     const video = videoElement.value;
     if (video) {
       video.srcObject = stream; // Set the webcam stream as the video source
+      video.play(); // Ensure the video starts playing
     }
   } catch (error) {
-    backendDebugMessages.value.push(`Error accessing webcam: ${error}`);
+    console.error("Error accessing webcam:", error); // Log the error
+    backendDebugMessages.value.push(`Error accessing webcam: ${error.message}`);
   }
 };
 
@@ -216,6 +221,7 @@ onMounted(() => {
   position: absolute;
   left: 22px;
   top: 55.2px;
+  z-index: 10; /* Ensure it is above other elements */
 }
 
 .debug-messages {
