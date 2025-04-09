@@ -64,13 +64,15 @@ export default {
 }
 
 .welcome-message {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: bold;
+  margin-left: 300px;
 }
 
 .detailed-logs-message {
-  font-size: 14px;
+  font-size: 20px;
   margin-top: 4px;
+  margin-left: 300px;
 }
 
 /* Search Section */
@@ -163,6 +165,16 @@ export default {
 
   .profile-text {
     text-align: left;
+  }
+
+  .welcome-message {
+    margin-left: 40px; /* Remove left margin for mobile screens */
+    font-size: 20px; /* Adjust font size for mobile screens */
+  }
+
+  .detailed-logs-message {
+    margin-left: 0;
+    font-size: 16px; /* Adjust font size for mobile screens */
   }
 }
 </style>
