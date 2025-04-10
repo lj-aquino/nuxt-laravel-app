@@ -35,7 +35,41 @@
     </div>
 
     <!-- Student Info Square -->
-    <div class="square student-info"></div>
+    <div class="square student-info">
+      <!-- Student Info Text -->
+      <div class="student-info-text">Student Info</div>
+    
+      <!-- Verified Rectangle -->
+      <div class="verified-box">
+        <div class="verified-circle">
+          <i class="fas fa-check"></i>
+        </div>
+        <span>Verified</span>
+      </div>
+
+      <!-- Student Name -->
+      <div class="student-name">
+        Ly*a Jo**e A.
+      </div>
+
+      <!-- Student ID -->
+      <div class="student-id">
+        2023-12345
+      </div>
+
+      <div class="enrolled">
+        Enrolled
+      </div>
+
+      <div class="remarks">
+        Remarks
+      </div>
+
+      <div class="remarks-note">
+        Has ID
+      </div>
+
+    </div>
 
     <!-- Buttons -->
     <button
@@ -176,6 +210,100 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+.remarks-note {
+  position: absolute;
+  right: 15px;
+  bottom: 15px; /* Adjusted to fit within the student info box */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+}
+
+.remarks {
+  position: absolute;
+  right: 15px;
+  bottom: 35px; /* Adjusted to fit within the student info box */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  font-weight: bold; /* Make the text bold */ 
+}
+
+.enrolled {
+  position: absolute;
+  left: 15px;
+  bottom: 15px; /* Adjusted to fit within the student info box */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  color: #3871c1; /* Color for the enrolled text */
+  font-weight: bold; /* Make the text bold */
+}
+
+.student-id {
+  position: absolute;
+  left: 15px;
+  top: 80px; /* Adjusted to fit within the student info box */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+}
+
+.student-name {
+  position: absolute;
+  left: 15px;
+  top: 50px; /* Adjusted to fit within the student info box */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 25px;
+  font-weight: bold;
+  color: #3871c1
+}
+
+.student-info {
+  width: 355.7px;
+  height: 210px;
+  left: 370.4px;
+  top: 465px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
+  position: relative;
+}
+
+.student-info-text {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.verified-box {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background-color: #71231c;
+  color: white;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 14px;
+  width: 148.2px;
+  height: 32.8px;
+}
+
+.verified-circle {
+  margin-left: 15px;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 7px;
+}
+
 .viewport {
   height: 90vh;
   width: 90vw;
