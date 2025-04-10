@@ -267,4 +267,52 @@ body {
   background-color: #9a2d24; /* Change background color on hover */
 }
 
+/* Media Queries for Responsiveness */
+
+/* For small screens (mobile) */
+@media (max-width: 768px) {
+  .viewport {
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+  }
+
+  .first-square,
+  .second-square {
+    width: 90%;
+    height: auto;
+    left: 5%;
+    top: 5%;
+  }
+
+  .student-info {
+    width: 90%;
+    left: 5%;
+    top: auto;
+    bottom: 5%;
+  }
+
+  .animated-button {
+    width: 80%;
+    height: auto;
+    font-size: 16px;
+  }
+}
+
+/* For tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .first-square,
+  .second-square {
+    width: 45%;
+    height: auto;
+    left: 5%;
+    top: 10%;
+  }
+
+  .student-info {
+    width: 40%;
+    left: 5%;
+    top: 60%;
+  }
+}
 </style>
