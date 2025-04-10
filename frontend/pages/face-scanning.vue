@@ -181,7 +181,7 @@ onMounted(() => {
   width: 90vw;
   background-color: white;
   left: 350px;
-  top: 200.2px;
+  top: 0; /* Fix: Remove white space by setting top to 0 */
 }
 
 .square {

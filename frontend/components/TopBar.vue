@@ -44,6 +44,13 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css'); /* Import Font Awesome for icons */
 
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Top Bar Container */
 .topbar {
   display: flex;
@@ -53,7 +60,7 @@ export default {
   color: white;
   padding: 16px 24px;
   width: 110%;
-  height: 20%;
+  height: 22%;
   box-sizing: border-box;
   font-family: 'Bricolage Grotesque', sans-serif;
 }
@@ -79,7 +86,8 @@ export default {
 .search-section {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
+  margin-right: 80px;
 }
 
 .search-bar {
@@ -95,8 +103,8 @@ export default {
   background-color: #eead2b;
   border: 1px solid white;
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
+  width: 29px;
+  height: 29px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,6 +120,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-right: 50px;
 }
 
 .profile-text {
@@ -142,6 +151,7 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     padding: 16px;
+    height: auto;
   }
 
   .welcome-section {
@@ -155,7 +165,7 @@ export default {
   }
 
   .search-bar {
-    width: 100%;
+    width: 80%;
   }
 
   .profile-section {
@@ -175,6 +185,41 @@ export default {
   .detailed-logs-message {
     margin-left: 0;
     font-size: 16px; /* Adjust font size for mobile screens */
+  }
+}
+
+/* iPad Air Styles (820px x 1180px) */
+@media (min-width: 820px) and (max-width: 1180px) {
+  .topbar {
+    align-items: center;
+    padding: 20px;
+    height: auto;
+    display: block;
+  }
+
+  .welcome-section {
+    margin-left: 260px;
+  }
+
+  .search-section {
+    margin-top: 20px;
+    margin-left: 260px;
+  }
+
+  .search-bar {
+    width: 250px; /* Slightly larger search bar for iPad Air */
+  }
+
+  .profile-section {
+    margin-right: 30px;
+  }
+
+  .welcome-message {
+    font-size: 28px; /* Larger font size for iPad Air */
+  }
+
+  .detailed-logs-message {
+    font-size: 18px; /* Larger font size for iPad Air */
   }
 }
 </style>
