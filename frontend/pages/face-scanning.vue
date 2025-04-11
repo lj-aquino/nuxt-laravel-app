@@ -49,7 +49,7 @@
       </select>
       
       <!-- Table -->
-      <table class="status-table">
+      <table class="logs-table">
         <thead>
           <tr>
             <th>Student No.</th>
@@ -59,6 +59,20 @@
           </tr>
         </thead>
       </table>
+
+      <!-- Table -->
+      <div class="table-container-wrapper">
+        <table class="info-table">
+          <tbody>
+            <tr v-for="log in logs" :key="log.id">
+              <td style="color: black;">{{ log.student_number }}</td>
+              <td style="color: black;">{{ log.entry_time }}</td>
+              <td style="color: #3871c1;">{{ log.status }}</td>
+              <td style="color: black;">{{ log.has_id ? 'Has ID' : 'No ID' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       
       <button class="print-button">
         <i class="fas fa-print"></i>
@@ -145,6 +159,28 @@ const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
+
+const logs = ref([]); // Store logs fetched from the backend
+
+// Fetch logs from the backend
+const fetchLogs = async () => {
+  try {
+    const result = await $fetch('https://sp-j16t.onrender.com/api/logs/recent', {
+      method: 'GET',
+      headers: {
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+    });
+
+    if (result.success) {
+      logs.value = result.data; // Populate the logs array with the fetched data
+    } else {
+      console.error('Failed to fetch logs:', result);
+    }
+  } catch (error) {
+    console.error('Error fetching logs:', error);
+  }
+};
 
 const onVideoCanPlay = () => {
   backendDebugMessages.value.push("Video is ready to play.");
@@ -239,5 +275,6 @@ const initializeWebcam = async () => {
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
   startCapturingFrames(); // Start capturing frames using requestAnimationFrame
+  fetchLogs(); // Fetch logs when the component is mounted
 });
 </script>
