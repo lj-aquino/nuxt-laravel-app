@@ -66,9 +66,12 @@
           <tbody>
             <tr v-for="log in logs" :key="log.id">
               <td style="color: black;">{{ log.student_number }}</td>
-              <td style="color: black;">{{ log.entry_time }}</td>
+              <td>
+                <div class="time">{{ log.time }}</div>
+                <div class="date">{{ log.date }}</div>
+              </td>
               <td style="color: #3871c1;">{{ log.status }}</td>
-              <td style="color: black;">{{ log.has_id ? 'Has ID' : 'No ID' }}</td>
+              <td style="color: black;">{{ log.has_id ? 'Presented ID' : 'No ID Presented' }}</td>
             </tr>
           </tbody>
         </table>
@@ -173,7 +176,13 @@ const fetchLogs = async () => {
     });
 
     if (result.success) {
-      logs.value = result.data; // Populate the logs array with the fetched data
+      logs.value = result.data
+        .map(log => {
+          const [date, time] = log.entry_time.split(' ');
+          const formattedTime = time.slice(0, 5); // Remove seconds
+          return { ...log, date, time: formattedTime };
+        })
+        .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time)); // Sort by latest time
     } else {
       console.error('Failed to fetch logs:', result);
     }
