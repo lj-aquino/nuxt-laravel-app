@@ -1,0 +1,228 @@
+.remarks-note {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+}
+
+.remarks {
+  position: absolute;
+  right: 5%;
+  bottom: 15%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.logs-summary {
+  position: absolute; 
+  left: 2%;
+  top: 2%;
+  font-family: 'Bricolage Grotesque', sans-serif; 
+  font-size: 25px; 
+  color: black; 
+  font-weight: bold;
+}
+
+.enrolled {
+  position: absolute;
+  left: 5%;
+  bottom: 5%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  color: #3871c1;
+  font-weight: bold;
+}
+
+.student-id {
+  position: absolute;
+  left: 5%;
+  top: 40%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+}
+
+.student-name {
+  position: absolute;
+  left: 5%;
+  top: 25%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 25px;
+  font-weight: bold;
+  color: #3871c1;
+}
+
+.student-info {
+  width: 355.7px;
+  height: 210px;
+  left: 370.4px;
+  top: 465px;
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
+  position: relative;
+}
+
+.student-info-text {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.verified-box {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  background-color: #71231c;
+  color: white;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 14px;
+  width: 148.2px;
+  height: 32.8px;
+}
+
+.verified-circle {
+  margin-left: 15px;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 7px;
+}
+
+.viewport {
+  height: 90vh;
+  width: 90vw;
+  background-color: white;
+  left: 350px;
+  top: 0;
+}
+
+.square {
+  border: 1px solid #e8e8e8;
+  border-radius: 22px;
+  position: absolute;
+}
+
+.first-square {
+  width: 400.1px;
+  height: 582.8px;
+  left: 350px;
+  top: 180.2px;
+}
+
+.second-square {
+  width: 700.5px;
+  height: 581.2px;
+  left: 780.5px;
+  top: 180.2px;
+}
+
+.stream {
+  border-radius: 22px;
+  background-color: #9f9f9f;
+  width: 355.7px;
+  height: 210px;
+  position: absolute;
+  left: 22px;
+  top: 55.2px;
+  z-index: 10;
+}
+
+.debug-messages {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 300px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.animated-button {
+  background-color: #71231c;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  width: 170.7px;
+  height: 57.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.animated-button:hover {
+  transform: scale(1.1);
+  background-color: #9a2d24;
+}
+
+@media (max-width: 768px) {
+  .viewport {
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+  }
+
+  .first-square,
+  .second-square {
+    width: 90%;
+    height: auto;
+    left: 5%;
+    top: 5%;
+  }
+
+  .student-info {
+    width: 90%;
+    left: 5%;
+    top: auto;
+    bottom: 5%;
+  }
+
+  .animated-button {
+    width: 80%;
+    height: auto;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .first-square,
+  .second-square {
+    width: 45%;
+    height: auto;
+    left: 5%;
+    top: 10%;
+  }
+
+  .student-info {
+    width: 40%;
+    left: 5%;
+    top: 60%;
+  }
+}
