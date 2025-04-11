@@ -17,12 +17,79 @@
 
 .logs-summary {
   position: absolute; 
-  left: 2%;
+  left: 5%;
   top: 2%;
   font-family: 'Bricolage Grotesque', sans-serif; 
   font-size: 25px; 
   color: black; 
   font-weight: bold;
+}
+
+.status-filter {
+    position: absolute;
+    left: 5%;
+    top: 8%;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 100%;
+    color: black;
+}
+
+.status-dropdown {
+    position: absolute;
+    left: 15%;
+    top: 7%;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 100%;
+    color: #3871c1;
+    background-color: white;
+    border: none; /* Remove the square borders */
+    border-radius: 8px; /* Add rounded corners */
+    padding: 5px;
+    width: 20%; /* Adjust width as needed */
+    outline: none; /* Remove the focus outline */
+  }
+
+.print-button {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+  background-color: #71231c;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 120%;
+  width: 20%;
+  height: 7%;
+}
+
+.status-table {
+  position: absolute;
+  left: 5%;
+  top: 15%;
+  width: 90%;
+  border-collapse: collapse; /* Remove gaps between table cells */
+  background-color: #71231c;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
+}
+
+.status-table th,
+.status-table td {
+  padding: 10px;
+}
+
+.status-table th {
+  font-weight: bold;
+}
+
+.status-table td {
+  font-size: 90%; /* Slightly smaller font for table data */
 }
 
 .enrolled {
@@ -74,8 +141,8 @@
 
 .verified-box {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 5%;
+  top: 10%;
   background-color: #71231c;
   color: white;
   border-radius: 32px;
@@ -84,14 +151,14 @@
   gap: 10px;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 14px;
-  width: 148.2px;
-  height: 32.8px;
+  width: 40%;
+  height: 15%;
 }
 
 .verified-circle {
-  margin-left: 15px;
-  width: 10px;
-  height: 10px;
+  margin-left: 15%;
+  width: 8%;
+  height: 40%;
   background-color: blue;
   border-radius: 50%;
   display: flex;

@@ -36,6 +36,34 @@
       <div class = "logs-summary">
         Logs Summary
       </div>  
+
+      <div class = "status-filter">
+        Status: 
+      </div>  
+
+      <!-- Dropdown for Verified/Unverified -->
+      <select class="status-dropdown">
+        <option value="verified">Verified</option>
+        <option value="unverified">Unverified</option>
+        <option value="all">All</option>
+      </select>
+      
+      <!-- Table -->
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Student No.</th>
+            <th>Entry Time</th>
+            <th>Status</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+      </table>
+      
+      <button class="print-button">
+        <i class="fas fa-print"></i>
+        Print
+      </button>
     </div>
 
     <!-- Student Info Square -->
