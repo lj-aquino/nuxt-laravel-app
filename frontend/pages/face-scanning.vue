@@ -66,8 +66,8 @@
           <tbody>
             <tr v-for="log in logs" :key="log.id">
               <td>
-                <div class="student-name" style="color: #8a8a8a;">{{ formatStudentName(log.student_name) }}</div>
-                <div class="student-number" style="color: black;">{{ log.student_number }}</div>
+                <div class="student-number">{{ log.student_number }}</div>
+                <div class="student-name-logs">{{ formatStudentName(log.student_name) }}</div>
               </td>
               <td>
                 <div class="time">{{ log.time }}</div>

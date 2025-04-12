@@ -75,15 +75,18 @@
     width: 90%;
     height: 70%;
     font-family: 'Bricolage Grotesque', sans-serif;
+    overflow: visible; /* Allow overflow to be visible */
 }
 
-.student-name {
+.student-name-logs {
+  display: block;
   font-size: 14px; /* Smaller font for the name */
   color: #8a8a8a; /* Gray color for the name */
   font-weight: bold;
 }
 
 .student-number {
+  display: block;
   font-size: 16px; /* Slightly larger font for the student number */
   color: black; /* Black color for the student number */
 }
@@ -97,6 +100,7 @@
 .info-table {
   border-collapse: separate; /* Allow spacing between rows */
   border-spacing: 0 10px; /* Add vertical spacing between rows */
+  width: 100%; /* Make the table take full width */
 }
 
 .info-table td {
