@@ -77,6 +77,17 @@
     font-family: 'Bricolage Grotesque', sans-serif;
 }
 
+.student-name {
+  font-size: 14px; /* Smaller font for the name */
+  color: #8a8a8a; /* Gray color for the name */
+  font-weight: bold;
+}
+
+.student-number {
+  font-size: 16px; /* Slightly larger font for the student number */
+  color: black; /* Black color for the student number */
+}
+
 .info-table {
   width: 100%; /* Make the table take full width */
   border-collapse: separate; /* Allow spacing between rows */

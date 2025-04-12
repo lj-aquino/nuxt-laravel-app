@@ -65,12 +65,15 @@
         <table class="info-table">
           <tbody>
             <tr v-for="log in logs" :key="log.id">
-              <td style="color: black;">{{ log.student_number }}</td>
+              <td>
+                <div class="student-name" style="color: #8a8a8a;">{{ formatStudentName(log.student_name) }}</div>
+                <div class="student-number" style="color: black;">{{ log.student_number }}</div>
+              </td>
               <td>
                 <div class="time">{{ log.time }}</div>
                 <div class="date">{{ log.date }}</div>
               </td>
-              <td style="color: #3871c1;">{{ log.status }}</td>
+              <td style="color: #3871c1;">{{ log.status.charAt(0).toUpperCase() + log.status.slice(1) }}</td>
               <td style="color: black;">{{ log.has_id ? 'Presented ID' : 'No ID Presented' }}</td>
             </tr>
           </tbody>
@@ -164,6 +167,20 @@ const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
 
 const logs = ref([]); // Store logs fetched from the backend
+
+const formatStudentName = (name) => {
+  const parts = name.split(' ');
+  const formattedParts = parts.map((part, index) => {
+    if (index === parts.length - 1) {
+      // Last name: Show only the first letter
+      return part.charAt(0) + '.';
+    } else {
+      // First and middle names: Show first and last letters with asterisks in between
+      return part.charAt(0) + '*'.repeat(part.length - 2) + part.charAt(part.length - 1);
+    }
+  });
+  return formattedParts.join(' ');
+};
 
 // Fetch logs from the backend
 const fetchLogs = async () => {
