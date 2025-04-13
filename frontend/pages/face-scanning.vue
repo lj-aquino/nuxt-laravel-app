@@ -192,6 +192,8 @@ const fetchLogs = async () => {
       },
     });
 
+    console.log('API Response:', result); // Log the full API response
+
     if (result.success) {
       logs.value = result.data
         .map(log => {
@@ -200,6 +202,8 @@ const fetchLogs = async () => {
           return { ...log, date, time: formattedTime };
         })
         .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time)); // Sort by latest time
+
+      console.log('Processed Logs:', logs.value); // Log the processed logs
     } else {
       console.error('Failed to fetch logs:', result);
     }
