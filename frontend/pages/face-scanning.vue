@@ -60,20 +60,20 @@
         </thead>
       </table>
 
-      <!-- Table -->
       <div class="table-container-wrapper">
         <table class="info-table">
           <tbody>
-            <tr v-for="log in logs" :key="log.id">
+            <!-- Use slice to limit logs to the 5 most recent rows -->
+            <tr v-for="log in logs.slice(0, 5)" :key="log.id" style="border-bottom: 1px solid #e8e8e8;">
               <td>
                 <div class="student-number">{{ log.student_number }}</div>
                 <div class="student-name-logs">{{ formatStudentName(log.student_name) }}</div>
               </td>
-              <td>
+              <td style="justify-content: center; align-items: center; text-align: center;">
                 <div class="time">{{ log.time }}</div>
                 <div class="date">{{ log.date }}</div>
               </td>
-              <td>
+              <td style="justify-content: center; align-items: center; text-align: center;">
                 <!-- Verified or Unverified Status -->
                 <div v-if="log.status === 'verified'" style="color: #3871c1; display: flex; align-items: center; gap: 8px;">
                   <div class="verified-circle">
@@ -85,14 +85,22 @@
                   <span>Unverified</span>
                 </div>
               </td>
-              <td>
+              <td style="justify-content: center; align-items: center; text-align: center;">
                 <!-- Enrollment Status -->
-                <div style="color: black;">
+                <div style="color: black; font-weight: bold;">
                   {{ log.enrolled ? 'Enrolled' : 'Not Enrolled' }}
                 </div>
                 <!-- ID Status -->
                 <div style="color: #8a8a8a;">
                   {{ log.has_id ? 'Presented ID' : 'No ID Presented' }}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 10px;">
+                <div class="show-all" @click="navigateToLogsSummary" style="cursor: pointer; display: inline-block; text-align: center;">
+                  <span>Show All Logs</span>
+                  <div style="font-size: 20px; color: #3871c1;">&#x25BC;</div> <!-- Arrowhead pointing down -->
                 </div>
               </td>
             </tr>
@@ -176,6 +184,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
+import { useRouter } from 'vue-router'; // Import the router for navigation
 
 // Import the Sidebar and TopBar components
 import Sidebar from '~/components/Sidebar.vue';
@@ -185,6 +194,11 @@ const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
+const router = useRouter(); // Use the router for navigation
+
+const navigateToLogsSummary = () => {
+  router.push('/logs-summary'); // Navigate to the logs summary page
+};
 
 const logs = ref([]); // Store logs fetched from the backend
 

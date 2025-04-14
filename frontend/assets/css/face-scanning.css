@@ -73,9 +73,20 @@
     left: 5%;
     top: 23%;
     width: 90%;
-    height: 70%;
+    height: 73%;
     font-family: 'Bricolage Grotesque', sans-serif;
     overflow: visible; /* Allow overflow to be visible */
+    display: flex;
+}
+
+.show-all {
+  bottom: 10%;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px;
+  color: #3871c1;
+  font-weight: bold;
 }
 
 .student-name-logs {
@@ -110,6 +121,10 @@
 
 .info-table td:not(:last-child) {
   padding-right: 20px; /* Add spacing between columns */
+}
+
+.info-table tr {
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .time {
