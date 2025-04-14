@@ -73,8 +73,28 @@
                 <div class="time">{{ log.time }}</div>
                 <div class="date">{{ log.date }}</div>
               </td>
-              <td style="color: #3871c1;">{{ log.status.charAt(0).toUpperCase() + log.status.slice(1) }}</td>
-              <td style="color: black;">{{ log.has_id ? 'Presented ID' : 'No ID Presented' }}</td>
+              <td>
+                <!-- Verified or Unverified Status -->
+                <div v-if="log.status === 'verified'" style="color: #3871c1; display: flex; align-items: center; gap: 8px;">
+                  <div class="verified-circle">
+                    <i class="fas fa-check"></i>
+                  </div>
+                  <span>Verified</span>
+                </div>
+                <div v-else style="color: #3871c1;">
+                  <span>Unverified</span>
+                </div>
+              </td>
+              <td>
+                <!-- Enrollment Status -->
+                <div style="color: black;">
+                  {{ log.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+                </div>
+                <!-- ID Status -->
+                <div style="color: #8a8a8a;">
+                  {{ log.has_id ? 'Presented ID' : 'No ID Presented' }}
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
