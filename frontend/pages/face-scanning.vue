@@ -57,7 +57,7 @@
 
       <!-- Student ID -->
       <div class="student-id">
-        2023-12345
+        2019-09924
       </div>
 
       <div class="enrolled">
@@ -94,13 +94,6 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
-    <!-- Backend Debug Messages Section -->
-    <div class="debug-messages">
-      <h4>Backend Debug Messages</h4>
-      <ul>
-        <li v-for="(message, index) in backendDebugMessages" :key="index">{{ message }}</li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -113,6 +106,8 @@ import { useRouter } from 'vue-router'; // Import the router for navigation
 // Import the Sidebar and TopBar components
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
+
+const logs = ref([]); // Store logs
 
 const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element

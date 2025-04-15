@@ -80,6 +80,7 @@
 </template>
 
 <script>
+// filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue
 import '~/assets/css/logs-summary.css';
 
 export default {
@@ -102,11 +103,14 @@ export default {
         });
 
         if (result.success) {
-          this.logs = result.data.map((log) => {
-            const [date, time] = log.entry_time.split(" ");
-            const formattedTime = time.slice(0, 5); // Remove seconds
-            return { ...log, date, time: formattedTime };
-          });
+          this.logs = result.data
+            .map((log) => {
+              const [date, time] = log.entry_time.split(" ");
+              const formattedTime = time.slice(0, 5); // Remove seconds
+              return { ...log, date, time: formattedTime };
+            })
+            .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time)); // Sort by entry_time (descending)
+
           this.filteredLogs = this.logs; // Initialize filtered logs
         } else {
           console.error("Failed to fetch logs:", result);
