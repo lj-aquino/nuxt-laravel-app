@@ -24,6 +24,27 @@
           @play="onVideoPlay"
         ></video>
       </div>
+
+      <div class="square student-info">
+        <!-- Student Info Text -->
+        <div class="student-name-text">Student Name:</div>
+        
+        <!-- Text Field -->
+        <input
+          type="text"
+          class="student-name-input"
+          placeholder="Enter student name"
+        />
+
+        <div class="student-number-text">Student Number:</div>
+        
+        <!-- Text Field -->
+        <input
+          type="text"
+          class="student-number-input"
+          placeholder="Enter student number"
+        />
+      </div>
     </div>
 
     <!-- Second Square -->
@@ -41,18 +62,6 @@
     :activeMenu="activeMenu"
     @update:activeMenu="activeMenu = $event"
     />
-
-    <div class="square student-info">
-      <!-- Student Info Text -->
-      <div class="student-info-text">Student Name:</div>
-      
-      <!-- Text Field -->
-      <input
-        type="text"
-        class="student-name-input"
-        placeholder="Enter student name"
-      />
-    </div>
 
   </div>
 </template>
@@ -103,15 +112,42 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.student-name-input {
+.student-name-input,
+.student-number-input {
   background-color: #fcfcfd; /* Background color */
-  border: 1px solid #71231c; /* Border color and weight */
+  border: 1px solid #776f6e; /* Border color and weight */
   border-radius: 20px; /* Corner rounding */
   padding: 8px 12px; /* Padding for better spacing */
   font-size: 16px; /* Font size */
   width: 80%; /* Full width of the container */
-  margin-top: 10%; /* Space between label and input */
-  box-sizing: border-box; /* Include padding and border in width/height */
-  justify-content: center;
+}
+
+.student-name-input {
+  margin-top: 18%;
+  margin-left: 5%;
+}
+
+.student-number-input {
+  margin-top: 23%;
+  margin-left: 6%;
+}
+
+.student-name-text,
+.student-number-text {
+  position: absolute;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.student-name-text{
+  margin-top: 15%;
+  margin-left: 5%;
+}
+
+.student-number-text{
+  margin-top:15%;
+  margin-left: 5%;
+
 }
 </style>

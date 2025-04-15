@@ -24,6 +24,43 @@
           @play="onVideoPlay"
         ></video>
       </div>
+
+            <!-- Student Info Square -->
+      <div class="square student-info">
+        <!-- Student Info Text -->
+        <div class="student-info-text">Student Info</div>
+      
+        <!-- Verified Rectangle -->
+        <div class="verified-box">
+          <div class="verified-circle">
+            <i class="fas fa-check"></i>
+          </div>
+          <span>Verified</span>
+        </div>
+
+        <!-- Student Name -->
+        <div class="student-name">
+          Ly*a Jo**e A.
+        </div>
+
+        <!-- Student ID -->
+        <div class="student-id">
+          2019-09924
+        </div>
+
+        <div class="enrolled">
+          Enrolled
+        </div>
+
+        <div class="remarks">
+          Remarks
+        </div>
+
+        <div class="remarks-note">
+          Has ID
+        </div>
+
+      </div>
     </div>
 
     <!-- Second Square -->
@@ -35,43 +72,6 @@
 
       <!-- LogsSummary Component -->
       <LogsSummary :logs="logs" />
-    </div>
-
-    <!-- Student Info Square -->
-    <div class="square student-info">
-      <!-- Student Info Text -->
-      <div class="student-info-text">Student Info</div>
-    
-      <!-- Verified Rectangle -->
-      <div class="verified-box">
-        <div class="verified-circle">
-          <i class="fas fa-check"></i>
-        </div>
-        <span>Verified</span>
-      </div>
-
-      <!-- Student Name -->
-      <div class="student-name">
-        Ly*a Jo**e A.
-      </div>
-
-      <!-- Student ID -->
-      <div class="student-id">
-        2019-09924
-      </div>
-
-      <div class="enrolled">
-        Enrolled
-      </div>
-
-      <div class="remarks">
-        Remarks
-      </div>
-
-      <div class="remarks-note">
-        Has ID
-      </div>
-
     </div>
 
     <!-- Buttons -->
