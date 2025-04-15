@@ -38,6 +38,7 @@
               href="#"
               class="menu-item"
               :class="{ active: activeMenu === 'Dashboard' }"
+              @click.prevent="$router.push('/face-scanning')"
             >
               <i class="fas fa-tachometer-alt"></i>
               Dashboard
@@ -58,6 +59,7 @@
               href="#"
               class="menu-item"
               :class="{ active: activeMenu === 'Register Student' }"
+              @click.prevent="$router.push('/register-student')"
             >
               <i class="fas fa-user-plus"></i>
               Register Student
