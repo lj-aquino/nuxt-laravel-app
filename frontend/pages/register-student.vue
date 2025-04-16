@@ -159,21 +159,31 @@ const handleRegister = async () => {
         method: 'POST',
         body: formData,
       });
-
-      const data = await response.json();
-      console.log('Backend Response:', data); // Existing log
-      if (!data.success) {
-        console.error('Error details:', data);
-      }
-
-      if (data.success === true || data.success === 'true') {
-        encoding.value = data.encoding;
-        logs.value.push(`Encoding: ${data.encoding}`);
+      
+      const rawData = await response.json();
+      console.log('Backend Response:', rawData); // Log the raw response
+      
+      // Extract the encoding string and remove the debug prefix
+      const encodingString = rawData.encoding.replace("Debug: Face encoding: ", "");
+      
+      // Convert Python-style JSON to JavaScript-compatible JSON
+      const jsonCompatible = encodingString
+        .replace(/'/g, '"')
+        .replace(/True/g, 'true')
+        .replace(/False/g, 'false');
+      
+      // Parse the inner JSON
+      const faceData = JSON.parse(jsonCompatible);
+      
+      // Access the success value
+      if (faceData.success) {
+        encoding.value = faceData.encoding;
+        logs.value.push(`Encoding: ${faceData.encoding}`);
         logs.value.push(`Student Number: ${studentNumber.value}`);
         success = true;
       } else {
         attempts++;
-        logs.value.push(`Attempt ${attempts}: Backend returned success = ${data.success}`);
+        logs.value.push(`Attempt ${attempts}: Backend returned success = ${faceData.success}`);
         if (attempts < maxAttempts) {
           await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
         }
