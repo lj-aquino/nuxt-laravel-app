@@ -46,7 +46,13 @@
           v-model="studentNumber"
         />
       </div>
-      <button class="register-button" @click="handleRegister">Register</button>
+      <button 
+        class="register-button" 
+        @click="handleRegister" 
+        :disabled="loading"
+      >
+        {{ loading ? 'Registering...' : 'Register' }}
+      </button>
 
       <div v-if="encoding" class="encoding-display">
         <h3>Face Encoding</h3>
@@ -90,7 +96,6 @@ const studentNumber = ref(''); // Ref for the student number input
 const encoding = ref(null); // Ref to store the face encoding
 const logs = ref([]); // Logs for debugging
 const router = useRouter(); // Use the router for navigation
-
 const loading = ref(false); // Track if the register button is clicked
 
 // Define activeMenu and set the default value to 'Register Student'
@@ -125,44 +130,67 @@ const handleRegister = async () => {
     return;
   }
 
+  loading.value = true;
+
   const video = videoElement.value;
   if (!video) {
     alert('Video element not found.');
+    loading.value = false;
     return;
   }
 
-  // Capture the current video frame
   const canvas = document.createElement('canvas');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
 
-  // Convert the canvas image to a base64-encoded JPEG
   const imageData = canvas.toDataURL('image/jpeg');
 
   try {
     const formData = new FormData();
     formData.append('image', imageData);
 
-    const response = await fetch('http://localhost:8000/api/encode', {
-      method: 'POST',
-      body: formData,
-    });
+    let attempts = 0;
+    const maxAttempts = 3; // Retry up to 3 times
+    let success = false;
 
-    const data = await response.json();
+    while (attempts < maxAttempts && !success) {
+      const response = await fetch('http://localhost:8000/api/encode', {
+        method: 'POST',
+        body: formData,
+      });
 
-    if (data.success) {
-      encoding.value = data.encoding; // Store the face encoding
-      logs.value.push(`Encoding: ${data.encoding}`);
-      logs.value.push(`Student Number: ${studentNumber.value}`);
-    } else {
-      alert('Failed to get face encoding.');
+      const data = await response.json();
+      console.log('Backend Response:', data); // Existing log
+      if (!data.success) {
+        console.error('Error details:', data);
+      }
+
+      if (data.success === true || data.success === 'true') {
+        encoding.value = data.encoding;
+        logs.value.push(`Encoding: ${data.encoding}`);
+        logs.value.push(`Student Number: ${studentNumber.value}`);
+        success = true;
+      } else {
+        attempts++;
+        logs.value.push(`Attempt ${attempts}: Backend returned success = ${data.success}`);
+        if (attempts < maxAttempts) {
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+        }
+      }
+    }
+
+    if (!success) {
+      alert('Failed to get face encoding after multiple attempts.');
     }
   } catch (error) {
     console.error('Error capturing face encoding:', error);
     logs.value.push(`Error: ${error.message}`);
+  } finally {
+    loading.value = false;
   }
 };
+
 
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
