@@ -1,3 +1,44 @@
+.enter-id-button {
+  position: absolute;
+  left: 5%;
+  bottom: 4%;
+  height: 9%;
+  width: 42%;
+}
+
+.scan-id-button {
+  position: absolute;
+  right: 6%;
+  bottom: 4%;
+  height: 9%;
+  width: 42%;
+}
+
+.enter-id-button i,
+.scan-id-button i {
+  font-size: 16px;
+}
+
+.student-number-input-dashboard {
+  position: absolute;
+  left: 5%;
+  bottom: 4%;
+  height: 9%;
+  width: 55%;
+  border-radius: 12px;
+  border-color: #71231c;
+  font-family: 'bricolage Grotesque', sans-serif;
+  font-size: 16px;
+}
+
+.scan-face-button {
+  width: 30%;
+  height: 10%;
+  position: absolute;
+  right: 5%;
+  bottom: 4%;
+}
+
 .remarks-note {
   position: absolute;
   right: 5%;
@@ -169,8 +210,6 @@ body {
   color: white;
   border: none;
   border-radius: 12px;
-  width: 170.7px;
-  height: 57.2px;
   display: flex;
   align-items: center;
   justify-content: center;

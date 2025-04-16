@@ -25,11 +25,11 @@
         ></video>
       </div>
 
-            <!-- Student Info Square -->
+      <!-- Student Info Square -->
       <div class="square student-info">
         <!-- Student Info Text -->
         <div class="student-info-text">Student Info</div>
-      
+
         <!-- Verified Rectangle -->
         <div class="verified-box">
           <div class="verified-circle">
@@ -59,7 +59,39 @@
         <div class="remarks-note">
           Has ID
         </div>
+      </div>
 
+          <!-- Buttons -->
+      <div v-if="!enterIdMode">
+        <button
+          class="enter-id-button animated-button"
+          @click="onEnterIdClick"
+        >
+          <i class="fas fa-id-card"></i>
+          Enter ID
+        </button>
+        
+        <button
+          class="scan-id-button animated-button"
+        >
+          <i class="fas fa-qrcode"></i>
+          Scan ID
+        </button>
+      </div>
+
+      <div v-else>
+        <input
+          type="text"
+          v-model="studentNumber"
+          placeholder="Enter Student Number"
+          class="student-number-input-dashboard"
+        />
+        <button
+          class="scan-face-button animated-button"
+          @click="onScanFaceClick"
+        >
+          Scan Face
+        </button>
       </div>
     </div>
 
@@ -74,26 +106,8 @@
       <LogsSummary :logs="logs" />
     </div>
 
-    <!-- Buttons -->
-    <button
-      class="enter-id-button animated-button"
-      style="position: absolute; left: 370.4px; top: 690.7px;"
-    >
-      <i class="fas fa-id-card" style="font-size: 16px;"></i>
-      Enter ID
-    </button>
-    
-    <button
-      class="scan-id-button animated-button"
-      style="position: absolute; left: 555.4px; top: 690.7px;"
-    >
-      <i class="fas fa-qrcode" style="font-size: 16px;"></i>
-      Scan ID
-    </button>
-
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
-
   </div>
 </template>
 
@@ -108,12 +122,18 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 
 const logs = ref([]); // Store logs
-
 const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
 const router = useRouter(); // Use the router for navigation
+
+const enterIdMode = ref(false); // Track if "Enter ID" mode is active
+const studentNumber = ref(''); // Store the entered student number
+
+const onEnterIdClick = () => {
+  enterIdMode.value = true; // Enable "Enter ID" mode
+};
 
 const navigateToLogsSummary = () => {
   router.push('/logs-summary'); // Navigate to the logs summary page
@@ -141,7 +161,14 @@ const onVideoPlay = () => {
   backendDebugMessages.value.push("Video started playing.");
 };
 
-// Function to capture a frame from the video and send to the backend
+const onScanFaceClick = () => {
+  if (studentNumber.value.trim() === '') {
+    alert('Please enter a valid student number.');
+    return;
+  }
+  captureAndSend(); // Call the face encoding API
+};
+
 const captureAndSend = async () => {
   const video = videoElement.value;
 
@@ -198,16 +225,6 @@ const onVideoCanPlayThrough = () => {
   }
 };
 
-// Start capturing frames using requestAnimationFrame
-const startCapturingFrames = () => {
-  backendDebugMessages.value.push("Starting to capture frames using requestAnimationFrame.");
-  const captureLoop = () => {
-    captureAndSend();
-    requestAnimationFrame(captureLoop);
-  };
-  requestAnimationFrame(captureLoop);
-};
-
 // Initialize the webcam feed
 const initializeWebcam = async () => {
   try {
@@ -225,6 +242,5 @@ const initializeWebcam = async () => {
 
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
-  startCapturingFrames(); // Start capturing frames using requestAnimationFrame
 });
 </script>
