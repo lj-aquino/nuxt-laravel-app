@@ -18,17 +18,18 @@
 .scan-id-button i {
   font-size: 16px;
 }
-
 .student-number-input-dashboard {
   position: absolute;
   left: 5%;
   bottom: 4%;
   height: 9%;
-  width: 55%;
+  width: 50%;
   border-radius: 12px;
   border-color: #71231c;
   font-family: 'bricolage Grotesque', sans-serif;
-  font-size: 16px;
+  font-size: 22px;
+  text-align: right; /* Aligns text to the right */
+  padding-right: 5%;;
 }
 
 .scan-face-button {
