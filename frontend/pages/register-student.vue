@@ -54,21 +54,11 @@
         {{ loading ? 'Registering...' : 'Register' }}
       </button>
 
-      <div v-if="encoding" class="encoding-display">
-        <h3>Face Encoding</h3>
-        <pre>{{ encoding }}</pre>
-        <h3>Student Number</h3>
-        <p>{{ studentNumber }}</p>
-      </div>
+
     </div>
 
     <!-- Second Square -->
     <div class="square second-square">
-      <div v-if="encoding">
-        <h3>Face Encoding</h3>
-        <pre>{{ encoding }}</pre>
-      </div>
-
       <!-- LogsSummary Component -->
       <LogsSummary :logs="logs" />
     </div>
@@ -159,28 +149,50 @@ const handleRegister = async () => {
         method: 'POST',
         body: formData,
       });
-      
+
       const rawData = await response.json();
       console.log('Backend Response:', rawData); // Log the raw response
-      
+
       // Extract the encoding string and remove the debug prefix
       const encodingString = rawData.encoding.replace("Debug: Face encoding: ", "");
-      
+
       // Convert Python-style JSON to JavaScript-compatible JSON
       const jsonCompatible = encodingString
         .replace(/'/g, '"')
         .replace(/True/g, 'true')
         .replace(/False/g, 'false');
-      
+
       // Parse the inner JSON
       const faceData = JSON.parse(jsonCompatible);
-      
+
       // Access the success value
       if (faceData.success) {
         encoding.value = faceData.encoding;
         logs.value.push(`Encoding: ${faceData.encoding}`);
         logs.value.push(`Student Number: ${studentNumber.value}`);
         success = true;
+
+        // Send the face encoding and student number to the database
+        const dbResponse = await fetch('https://sp-j16t.onrender.com/api/face_encodings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q', // Add the API key here
+          },
+          body: JSON.stringify({
+            student_number: studentNumber.value,
+            encoding: faceData.encoding,
+          }),
+        });
+
+        const dbResult = await dbResponse.json();
+        if (dbResponse.ok) {
+          console.log('Database Response:', dbResult);
+          alert('Registration successful!'); // Visual remark for success
+        } else {
+          console.error('Database Error:', dbResult);
+          alert('Failed to save face encoding to the database.');
+        }
       } else {
         attempts++;
         logs.value.push(`Attempt ${attempts}: Backend returned success = ${faceData.success}`);
@@ -196,6 +208,7 @@ const handleRegister = async () => {
   } catch (error) {
     console.error('Error capturing face encoding:', error);
     logs.value.push(`Error: ${error.message}`);
+    alert('An error occurred during registration.');
   } finally {
     loading.value = false;
   }
@@ -267,14 +280,6 @@ onMounted(() => {
   color: white; /* Text color */ 
   font-weight: bold; /* Font weight */
   width: 90%;
-}
-
-.encoding-display {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
 }
 
 </style>
