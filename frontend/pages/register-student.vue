@@ -43,7 +43,16 @@
           type="text"
           class="student-number-input"
           placeholder="Enter student number"
+          v-model="studentNumber"
         />
+      </div>
+      <button class="register-button" @click="handleRegister">Register</button>
+
+      <div v-if="encoding" class="encoding-display">
+        <h3>Face Encoding</h3>
+        <pre>{{ encoding }}</pre>
+        <h3>Student Number</h3>
+        <p>{{ studentNumber }}</p>
       </div>
     </div>
 
@@ -77,8 +86,12 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 
 const videoElement = ref(null); // Ref for the video element
-const logs = ref([]); // Store logs
+const studentNumber = ref(''); // Ref for the student number input
+const encoding = ref(null); // Ref to store the face encoding
+const logs = ref([]); // Logs for debugging
 const router = useRouter(); // Use the router for navigation
+
+const loading = ref(false); // Track if the register button is clicked
 
 // Define activeMenu and set the default value to 'Register Student'
 const activeMenu = ref('Register Student');
@@ -106,9 +119,55 @@ const initializeWebcam = async () => {
   }
 };
 
+const handleRegister = async () => {
+  if (!studentNumber.value.trim()) {
+    alert('Student number cannot be empty.');
+    return;
+  }
+
+  const video = videoElement.value;
+  if (!video) {
+    alert('Video element not found.');
+    return;
+  }
+
+  // Capture the current video frame
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Convert the canvas image to a base64-encoded JPEG
+  const imageData = canvas.toDataURL('image/jpeg');
+
+  try {
+    const formData = new FormData();
+    formData.append('image', imageData);
+
+    const response = await fetch('http://localhost:8000/api/encode', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      encoding.value = data.encoding; // Store the face encoding
+      logs.value.push(`Encoding: ${data.encoding}`);
+      logs.value.push(`Student Number: ${studentNumber.value}`);
+    } else {
+      alert('Failed to get face encoding.');
+    }
+  } catch (error) {
+    console.error('Error capturing face encoding:', error);
+    logs.value.push(`Error: ${error.message}`);
+  }
+};
+
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
 });
+
 </script>
 
 <style scoped>
@@ -123,12 +182,12 @@ onMounted(() => {
 }
 
 .student-name-input {
-  margin-top: 18%;
+  margin-top: 22%;
   margin-left: 5%;
 }
 
 .student-number-input {
-  margin-top: 23%;
+  margin-top: 12%;
   margin-left: 6%;
 }
 
@@ -146,8 +205,38 @@ onMounted(() => {
 }
 
 .student-number-text{
-  margin-top:15%;
+  margin-top:5%;
   margin-left: 5%;
-
 }
+
+.student-name-input::placeholder,
+.student-number-input::placeholder {
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.register-button {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  transform: translate(-50%, -50%);
+  background-color: #71231c; /* Background color */
+  border: none; /* No border */
+  border-radius: 20px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for better spacing */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-family: 'Bricolage Grotesque', sans-serif; /* Font family */
+  color: white; /* Text color */ 
+  font-weight: bold; /* Font weight */
+  width: 90%;
+}
+
+.encoding-display {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
 </style>
