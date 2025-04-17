@@ -138,7 +138,7 @@ export default {
       }
     },
     navigateToLogsSummary() {
-      this.$router.push("/logs-summary");
+      this.$router.push("/logs-summary-page");
     },
     printLogs() {
       window.print();
