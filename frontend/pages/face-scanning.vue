@@ -288,9 +288,19 @@ const captureAndSend = async () => {
     // Extract the success value and encoding array from the response
     const match = data.encoding.match(/'success':\s*(true|false)/i);
     const success = match ? match[1].toLowerCase() === 'true' : false;
+    console.log("Success value:", success); // Log the success value
 
-    const encodingMatch = data.encoding.match(/\[.*\]/);
-    const encodingArray = encodingMatch ? JSON.parse(encodingMatch[0]) : null;
+    const encodingMatch = data.encoding.match(/\[([^\]]+)\]/); // Match the array inside square brackets
+    if (encodingMatch) {
+      try {
+        const encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
+        console.log("Encoding array:", encodingArray); // Log the encoding array
+      } catch (error) {
+        console.error("Failed to parse encoding array:", error);
+      }
+    } else {
+      console.error("No encoding array found in response:", data.encoding);
+    }
 
     if (success && encodingArray) {
       encoding.value = encodingArray; // Display the face encoding
