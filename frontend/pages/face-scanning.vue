@@ -97,20 +97,6 @@
 
     <!-- Second Square -->
     <div class="square second-square">
-      <div v-if="encoding">
-        <h3>Face Encoding</h3>
-        <pre>{{ encoding }}</pre>
-      </div>
-
-      <!-- Show stored encodings -->
-      <div v-if="Object.keys(studentEncodings).length > 0" class="stored-encodings">
-        <h3>Stored Encodings</h3>
-        <div v-for="(value, key) in studentEncodings" :key="key" class="encoding-entry">
-          <div class="student-number">{{ key }}</div>
-          <div class="encoding-status">Encoding stored</div>
-        </div>
-      </div>
-
       <!-- LogsSummary Component -->
       <LogsSummary :logs="logs" />
     </div>
@@ -131,7 +117,6 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 
 const logs = ref([]); // Store logs
-const encoding = ref(null); // Store face encoding
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
@@ -143,62 +128,101 @@ const studentNumber = ref(''); // Store the entered student number
 // Store student encodings with student numbers as keys
 const studentEncodings = reactive({});
 
+const compareFaceEncoding = async (studentNum, scannedEncoding) => {
+  if (!studentNum || !scannedEncoding || scannedEncoding.length === 0) {
+    console.error("Invalid student number or scanned encoding.");
+    logs.value.push("Error: Invalid student number or scanned encoding.");
+    return;
+  }
+
+  try {
+    // Prepare the payload for the API call
+    const payload = {
+      student_number: studentNum,
+      scanned_face: scannedEncoding,
+    };
+
+    // Make the API call
+    const response = await fetch('https://sp-j16t.onrender.com/api/face_encodings/recognize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    // Log the stored encoding and the encoding being compared
+    console.log("Stored Encoding:", studentEncodings[studentNum]);
+    console.log("Scanned Encoding:", scannedEncoding);
+
+    // Check if the comparison was successful
+    if (data && data.message === "Comparison done successfully") {
+      const isMatch = data.match;
+      console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
+      logs.value.push(`Comparison Result for ${studentNum}: ${isMatch ? "Match" : "No Match"}`);
+    } else {
+      console.error("Comparison failed or unexpected response:", data);
+      logs.value.push("Error: Comparison failed or unexpected response.");
+    }
+  } catch (error) {
+    console.error("Error during face encoding comparison:", error);
+    logs.value.push(`Error during face encoding comparison: ${error.message}`);
+  }
+};
+
 // Function to store encoding with student number
 const storeEncoding = (studentNum, encodingData) => {
-  console.log("storeEncoding called with student number:", studentNum);
-  console.log("encodingData type:", typeof encodingData);
-  console.log("encodingData value:", encodingData);
-  
   if (!studentNum || !encodingData) {
     console.log("Missing student number or encoding data");
+    logs.value.push(`Error: Missing student number or encoding data`);
     return false;
   }
-  
+
   try {
     // Parse the encoding from the response if it's a string
     let encodingArray;
     if (typeof encodingData === 'string') {
-      console.log("Processing encoding as string");
       // Extract the encoding array from the string response
       const match = encodingData.match(/\[.*\]/);
       if (match) {
-        console.log("Regex match found:", match[0].substring(0, 50) + "...");
         encodingArray = JSON.parse(match[0]);
-        console.log("Successfully parsed encoding array, length:", encodingArray.length);
       } else {
-        console.log("No regex match found for encoding array");
         throw new Error("Could not extract encoding array from response");
       }
     } else if (typeof encodingData === 'object' && encodingData.encoding) {
-      console.log("Processing encoding as object with encoding property");
       encodingArray = encodingData.encoding;
-      console.log("Extracted encoding array, length:", encodingArray.length);
     } else {
-      console.log("Processing encoding as direct array");
       // If it's already the array itself
       encodingArray = encodingData;
-      console.log("Using direct array, length:", encodingArray.length);
     }
-    
-    // Store the encoding with the student number as key
+
+    // Always create a new entry for the student number, even if it already exists
     studentEncodings[studentNum] = encodingArray;
-    console.log("Stored encoding for student:", studentNum);
-    console.log("Current student encodings count:", Object.keys(studentEncodings).length);
-    
-    // Display the full dictionary of student encodings
-    console.log("STUDENT ENCODINGS DICTIONARY:", JSON.stringify(studentEncodings, null, 2));
-    
-    // Add to logs
+
+    // Add to logs with more detailed information
     logs.value.push(`Encoding stored for student: ${studentNum}`);
-    
+    logs.value.push(`Student-Encoding Pair: "${studentNum}" - ${encodingArray.length} values [${encodingArray.slice(0, 3).map(v => v.toFixed(4))}...]`);
+
+    // Log to console for debugging
+    console.log(`Created Student-Encoding Pair:`, {
+      studentNumber: studentNum,
+      encodingLength: encodingArray.length,
+      encodingSample: encodingArray.slice(0, 5),
+    });
+
     // Save to localStorage for persistence (optional)
     try {
       localStorage.setItem('studentEncodings', JSON.stringify(studentEncodings));
-      console.log("Successfully saved to localStorage");
     } catch (e) {
       console.error("Error saving to localStorage:", e);
     }
-    
+
+    // Call compareFaceEncoding immediately after storing the encoding
+    compareFaceEncoding(studentNum, encodingArray);
+
     return true;
   } catch (error) {
     console.error("Error storing encoding:", error);
@@ -218,20 +242,6 @@ const onEnterIdClick = () => {
 
 const navigateToLogsSummary = () => {
   router.push('/logs-summary'); // Navigate to the logs summary page
-};
-
-const formatStudentName = (name) => {
-  const parts = name.split(' ');
-  const formattedParts = parts.map((part, index) => {
-    if (index === parts.length - 1) {
-      // Last name: Show only the first letter
-      return part.charAt(0) + '.';
-    } else {
-      // First and middle names: Show first and last letters with asterisks in between
-      return part.charAt(0) + '*'.repeat(part.length - 2) + part.charAt(part.length - 1);
-    }
-  });
-  return formattedParts.join(' ');
 };
 
 const onVideoCanPlay = () => {
@@ -262,20 +272,18 @@ const captureAndSend = async () => {
   if (isCapturing) return; // Prevent capturing if it's already ongoing
   isCapturing = true;
 
-  // Create a canvas element to draw the current video frame
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-
-  // Draw the current video frame onto the canvas
-  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Convert the canvas image to a base64-encoded JPEG image
-  const imageData = canvas.toDataURL('image/jpeg');
-
-  let encodingArray = null; // Declare encodingArray in the outer scope
-
   try {
+    // Create a canvas element to draw the current video frame
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame onto the canvas
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert the canvas image to a base64-encoded JPEG image
+    const imageData = canvas.toDataURL('image/jpeg');
+
     const formData = new FormData();
     formData.append('image', imageData); // Send the base64 image
 
@@ -285,70 +293,53 @@ const captureAndSend = async () => {
     });
 
     const data = await response.json();
-    console.log("Raw response data:", data.encoding); // Log the raw response for debugging
 
     // Extract the success value and encoding array from the response
     const match = data.encoding.match(/'success':\s*(true|false)/i);
     const success = match ? match[1].toLowerCase() === 'true' : false;
-    console.log("Success value and type:", success, typeof success);
 
     const encodingMatch = data.encoding.match(/\[([^\]]+)\]/); // Match the array inside square brackets
+    let encodingArray = null;
+    
     if (encodingMatch) {
       try {
         encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
-        console.log("Encoding array and type:", encodingArray, typeof encodingArray);
-        console.log("Is encodingArray truthy?", !!encodingArray);
       } catch (error) {
         console.error("Failed to parse encoding array:", error);
-        backendDebugMessages.value.push("Error parsing encoding array.");
+        logs.value.push("Error parsing encoding array.");
       }
     } else {
-      console.error("No encoding array found in response:", data.encoding);
-      backendDebugMessages.value.push("No encoding array found in response.");
+      console.error("No encoding array found in response");
+      logs.value.push("No encoding array found in response.");
     }
-
-    console.log("Student number and type:", studentNumber.value, typeof studentNumber.value);
 
     // Ensure student number is valid
     if (!studentNumber.value.trim()) {
-      console.error("Student number is empty or invalid.");
-      backendDebugMessages.value.push("Student number is empty or invalid.");
+      logs.value.push("Student number is empty or invalid.");
       return;
     }
 
     if (success && encodingArray && encodingArray.length > 0) {
-      encoding.value = encodingArray; // Display the face encoding
-      console.log("You've successfully scanned the face!");
-
       // Store the encoding with the student number
       const stored = storeEncoding(studentNumber.value, encodingArray);
 
       if (stored) {
         logs.value.push(`Successfully stored encoding for student: ${studentNumber.value}`);
       } else {
-        console.error("Failed to store encoding.");
-        backendDebugMessages.value.push("Failed to store encoding.");
+        logs.value.push("Failed to store encoding.");
       }
     } else {
-      backendDebugMessages.value.push("Failed to extract encoding or success value.");
+      logs.value.push("Failed to extract encoding or success value.");
     }
 
-    // Update backend debug messages
-    backendDebugMessages.value = data.debug_logs || [];
+    // Clear the student number input after successful scan
+    studentNumber.value = '';
+    
   } catch (error) {
     console.error("Error sending the image:", error);
-    backendDebugMessages.value.push(`Error sending the image: ${error.message}`);
+    logs.value.push(`Error sending the image: ${error.message}`);
   } finally {
     isCapturing = false; // Reset the capturing flag
-  }
-};
-
-// Method to handle when the video is ready to play through
-const onVideoCanPlayThrough = () => {
-  backendDebugMessages.value.push("Video is ready to play through.");
-  const video = videoElement.value;
-  if (video) {
-    backendDebugMessages.value.push(`Video dimensions: ${video.videoWidth}x${video.videoHeight}`);
   }
 };
 
@@ -363,7 +354,7 @@ const initializeWebcam = async () => {
     }
   } catch (error) {
     console.error("Error accessing webcam:", error); // Log the error
-    backendDebugMessages.value.push(`Error accessing webcam: ${error.message}`);
+    logs.value.push(`Error accessing webcam: ${error.message}`);
   }
 };
 
@@ -388,30 +379,9 @@ onMounted(() => {
 </script>
 
 <style>
-/* Additional styles for the encoding display */
-.stored-encodings {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.encoding-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  padding: 8px 0;
-}
-
-.student-number {
-  font-weight: bold;
-}
-
-.encoding-status {
-  color: #4CAF50;
-  font-size: 0.9em;
+/* Additional styles for the logs summary */
+.second-square {
+  padding: 20px;
+  box-sizing: border-box;
 }
 </style>
