@@ -61,7 +61,7 @@
         </div>
       </div>
 
-          <!-- Buttons -->
+      <!-- Buttons -->
       <div v-if="!enterIdMode">
         <button
           class="enter-id-button animated-button"
@@ -102,6 +102,15 @@
         <pre>{{ encoding }}</pre>
       </div>
 
+      <!-- Show stored encodings -->
+      <div v-if="Object.keys(studentEncodings).length > 0" class="stored-encodings">
+        <h3>Stored Encodings</h3>
+        <div v-for="(value, key) in studentEncodings" :key="key" class="encoding-entry">
+          <div class="student-number">{{ key }}</div>
+          <div class="encoding-status">Encoding stored</div>
+        </div>
+      </div>
+
       <!-- LogsSummary Component -->
       <LogsSummary :logs="logs" />
     </div>
@@ -113,7 +122,7 @@
 
 <script setup>
 import LogsSummary from '~/components/LogsSummary.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
 
@@ -130,6 +139,78 @@ const router = useRouter(); // Use the router for navigation
 
 const enterIdMode = ref(false); // Track if "Enter ID" mode is active
 const studentNumber = ref(''); // Store the entered student number
+
+// Store student encodings with student numbers as keys
+const studentEncodings = reactive({});
+
+// Function to store encoding with student number
+const storeEncoding = (studentNum, encodingData) => {
+  console.log("storeEncoding called with student number:", studentNum);
+  console.log("encodingData type:", typeof encodingData);
+  console.log("encodingData value:", encodingData);
+  
+  if (!studentNum || !encodingData) {
+    console.log("Missing student number or encoding data");
+    return false;
+  }
+  
+  try {
+    // Parse the encoding from the response if it's a string
+    let encodingArray;
+    if (typeof encodingData === 'string') {
+      console.log("Processing encoding as string");
+      // Extract the encoding array from the string response
+      const match = encodingData.match(/\[.*\]/);
+      if (match) {
+        console.log("Regex match found:", match[0].substring(0, 50) + "...");
+        encodingArray = JSON.parse(match[0]);
+        console.log("Successfully parsed encoding array, length:", encodingArray.length);
+      } else {
+        console.log("No regex match found for encoding array");
+        throw new Error("Could not extract encoding array from response");
+      }
+    } else if (typeof encodingData === 'object' && encodingData.encoding) {
+      console.log("Processing encoding as object with encoding property");
+      encodingArray = encodingData.encoding;
+      console.log("Extracted encoding array, length:", encodingArray.length);
+    } else {
+      console.log("Processing encoding as direct array");
+      // If it's already the array itself
+      encodingArray = encodingData;
+      console.log("Using direct array, length:", encodingArray.length);
+    }
+    
+    // Store the encoding with the student number as key
+    studentEncodings[studentNum] = encodingArray;
+    console.log("Stored encoding for student:", studentNum);
+    console.log("Current student encodings count:", Object.keys(studentEncodings).length);
+    
+    // Display the full dictionary of student encodings
+    console.log("STUDENT ENCODINGS DICTIONARY:", JSON.stringify(studentEncodings, null, 2));
+    
+    // Add to logs
+    logs.value.push(`Encoding stored for student: ${studentNum}`);
+    
+    // Save to localStorage for persistence (optional)
+    try {
+      localStorage.setItem('studentEncodings', JSON.stringify(studentEncodings));
+      console.log("Successfully saved to localStorage");
+    } catch (e) {
+      console.error("Error saving to localStorage:", e);
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error storing encoding:", error);
+    logs.value.push(`Error storing encoding: ${error.message}`);
+    return false;
+  }
+};
+
+// Function to retrieve encoding for a student number
+const getEncoding = (studentNum) => {
+  return studentEncodings[studentNum] || null;
+};
 
 const onEnterIdClick = () => {
   enterIdMode.value = true; // Enable "Enter ID" mode
@@ -202,9 +283,26 @@ const captureAndSend = async () => {
     });
 
     const data = await response.json();
+    console.log("Raw response data:", data.encoding); // Log the raw response for debugging
 
-    if (data.success) {
-      encoding.value = data.encoding; // Display the face encoding
+    // Extract the success value and encoding array from the response
+    const match = data.encoding.match(/'success':\s*(true|false)/i);
+    const success = match ? match[1].toLowerCase() === 'true' : false;
+
+    const encodingMatch = data.encoding.match(/\[.*\]/);
+    const encodingArray = encodingMatch ? JSON.parse(encodingMatch[0]) : null;
+
+    if (success && encodingArray) {
+      encoding.value = encodingArray; // Display the face encoding
+
+      // Store the encoding with the student number
+      const stored = storeEncoding(studentNumber.value, encodingArray);
+
+      if (stored) {
+        logs.value.push(`Successfully stored encoding for student: ${studentNumber.value}`);
+      }
+    } else {
+      backendDebugMessages.value.push("Failed to extract encoding or success value.");
     }
 
     // Update backend debug messages
@@ -240,7 +338,51 @@ const initializeWebcam = async () => {
   }
 };
 
+// Load saved encodings from localStorage if available
+const loadSavedEncodings = () => {
+  try {
+    const savedEncodings = localStorage.getItem('studentEncodings');
+    if (savedEncodings) {
+      const parsed = JSON.parse(savedEncodings);
+      Object.assign(studentEncodings, parsed);
+      logs.value.push(`Loaded ${Object.keys(parsed).length} saved encodings`);
+    }
+  } catch (error) {
+    console.error("Error loading saved encodings:", error);
+  }
+};
+
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
+  loadSavedEncodings(); // Load any previously saved encodings
 });
 </script>
+
+<style>
+/* Additional styles for the encoding display */
+.stored-encodings {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.encoding-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.student-number {
+  font-weight: bold;
+}
+
+.encoding-status {
+  color: #4CAF50;
+  font-size: 0.9em;
+}
+</style>
