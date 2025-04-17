@@ -28,36 +28,39 @@
       <!-- Student Info Square -->
       <div class="square student-info">
         <!-- Student Info Text -->
-        <div class="student-info-text">Student Info</div>
+        <div class="square student-info">
+          <!-- Student Info Text -->
+          <div class="student-info-text">Student Info</div>
 
-        <!-- Verified Rectangle -->
-        <div class="verified-box">
-          <div class="verified-circle">
-            <i class="fas fa-check"></i>
+          <!-- Verified Rectangle -->
+          <div class="verified-box">
+            <div class="verified-circle">
+              <i class="fas fa-check"></i>
+            </div>
+            <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
           </div>
-          <span>Verified</span>
-        </div>
 
-        <!-- Student Name -->
-        <div class="student-name">
-          Ly*a Jo**e A.
-        </div>
+          <!-- Student Name -->
+          <div class="student-name">
+            {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
+          </div>
 
-        <!-- Student ID -->
-        <div class="student-id">
-          2019-09924
-        </div>
+          <!-- Student ID -->
+          <div class="student-id">
+            {{ recentLog?.student_number || 'N/A' }}
+          </div>
 
-        <div class="enrolled">
-          Enrolled
-        </div>
+          <div class="enrolled">
+            {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+          </div>
 
-        <div class="remarks">
-          Remarks
-        </div>
+          <div class="remarks">
+            Remarks
+          </div>
 
-        <div class="remarks-note">
-          Has ID
+          <div class="remarks-note">
+            {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
+          </div>
         </div>
       </div>
 
@@ -117,6 +120,8 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 
 const logs = ref([]); // Store logs
+const recentLog = ref(null); // Store recent logs
+
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
@@ -127,6 +132,41 @@ const studentNumber = ref(''); // Store the entered student number
 
 // Store student encodings with student numbers as keys
 const studentEncodings = reactive({});
+
+const fetchRecentLog = async () => {
+  try {
+    const result = await $fetch('https://sp-j16t.onrender.com/api/logs/recent', {
+      method: 'GET',
+      headers: {
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+    });
+
+    if (result.success && result.data.length > 0) {
+      logs.value = result.data;
+      recentLog.value = logs.value[0]; // Get the most recent log
+    } else {
+      console.error("Failed to fetch logs:", result);
+    }
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+  }
+};
+
+// Function to format student names
+const formatStudentName = (name) => {
+  if (!name) return 'N/A';
+  const parts = name.split(" ");
+  const formattedParts = parts.map((part, index) => {
+    if (index === parts.length - 1) {
+      return part.charAt(0) + ".";
+    } else {
+      return part.charAt(0) + "*".repeat(part.length - 2) + part.charAt(part.length - 1);
+    }
+  });
+  return formattedParts.join(" ");
+};
+
 
 const compareFaceEncoding = async (studentNum, scannedEncoding) => {
   if (!studentNum || !scannedEncoding || scannedEncoding.length === 0) {
@@ -375,6 +415,7 @@ const loadSavedEncodings = () => {
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
   loadSavedEncodings(); // Load any previously saved encodings
+  fetchRecentLog(); // Fetch recent logs from the backend
 });
 </script>
 
