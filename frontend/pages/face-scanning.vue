@@ -166,6 +166,8 @@ const formatStudentName = (name) => {
 
 
 const compareFaceEncoding = async (studentNum, scannedEncoding) => {
+  console.log("compareFaceEncoding called with:", { studentNum, scannedEncoding });
+
   if (!studentNum || !scannedEncoding || scannedEncoding.length === 0) {
     console.error("Invalid student number or scanned encoding.");
     logs.value.push("Error: Invalid student number or scanned encoding.");
@@ -173,13 +175,14 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
   }
 
   try {
-    // Prepare the payload for the API call
+    console.log("Preparing payload...");
     const payload = {
       student_number: studentNum,
       scanned_face: scannedEncoding,
     };
+    console.log("Payload prepared:", payload);
 
-    // Make the API call
+    console.log("Making API call...");
     const response = await fetch('https://sp-j16t.onrender.com/api/face_encodings/recognize', {
       method: 'POST',
       headers: {
@@ -188,14 +191,14 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
       },
       body: JSON.stringify(payload),
     });
+    console.log("API call completed. Response received.");
 
     const data = await response.json();
+    console.log("Response JSON parsed:", data);
 
-    // Log the stored encoding and the encoding being compared
     console.log("Stored Encoding:", studentEncodings[studentNum]);
     console.log("Scanned Encoding:", scannedEncoding);
 
-    // Check if the comparison was successful
     if (data && data.message === "Comparison done successfully") {
       const isMatch = data.match;
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
