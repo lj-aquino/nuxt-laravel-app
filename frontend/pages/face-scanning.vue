@@ -51,7 +51,11 @@
         <div class="enrolled">
           {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
         </div>
-
+        
+        <div class="entry-time">
+          {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
+        </div>
+        
         <div class="remarks">
           Remarks
         </div>
@@ -141,7 +145,7 @@ const fetchRecentLog = async () => {
 
     if (result.success && result.data.length > 0) {
       logs.value = result.data;
-      recentLog.value = logs.value[0]; // Get the most recent log
+      recentLog.value = logs.value[logs.value.length - 1]; // Get the most recent log (last entry)
     } else {
       console.error("Failed to fetch logs:", result);
     }

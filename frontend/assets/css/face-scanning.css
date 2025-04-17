@@ -43,15 +43,24 @@
 .remarks-note {
   position: absolute;
   right: 5%;
+  bottom: 15%;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px;
+}
+
+.entry-time {
+  position: absolute;
+  right: 5%;
   bottom: 5%;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 15px;
 }
 
+
 .remarks {
   position: absolute;
   right: 5%;
-  bottom: 15%;
+  bottom: 25%;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 20px;
   font-weight: bold;
