@@ -288,13 +288,14 @@ const captureAndSend = async () => {
     // Extract the success value and encoding array from the response
     const match = data.encoding.match(/'success':\s*(true|false)/i);
     const success = match ? match[1].toLowerCase() === 'true' : false;
-    console.log("Success value:", success); // Log the success value
+    console.log("Success value and type:", success, typeof success);
 
     const encodingMatch = data.encoding.match(/\[([^\]]+)\]/); // Match the array inside square brackets
     if (encodingMatch) {
       try {
         const encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
-        console.log("Encoding array:", encodingArray); // Log the encoding array
+        console.log("Encoding array and type:", encodingArray, typeof encodingArray);
+        console.log("Is encodingArray truthy?", !!encodingArray);
       } catch (error) {
         console.error("Failed to parse encoding array:", error);
       }
@@ -302,8 +303,11 @@ const captureAndSend = async () => {
       console.error("No encoding array found in response:", data.encoding);
     }
 
+    console.log("Student number and type:", studentNumber.value, typeof studentNumber.value);
+
     if (success && encodingArray) {
       encoding.value = encodingArray; // Display the face encoding
+      console.log("you've successfully scanned the face!"); 
 
       // Store the encoding with the student number
       const stored = storeEncoding(studentNumber.value, encodingArray);
