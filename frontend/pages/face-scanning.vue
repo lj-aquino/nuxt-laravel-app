@@ -273,6 +273,8 @@ const captureAndSend = async () => {
   // Convert the canvas image to a base64-encoded JPEG image
   const imageData = canvas.toDataURL('image/jpeg');
 
+  let encodingArray = null; // Declare encodingArray in the outer scope
+
   try {
     const formData = new FormData();
     formData.append('image', imageData); // Send the base64 image
@@ -293,27 +295,39 @@ const captureAndSend = async () => {
     const encodingMatch = data.encoding.match(/\[([^\]]+)\]/); // Match the array inside square brackets
     if (encodingMatch) {
       try {
-        const encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
+        encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
         console.log("Encoding array and type:", encodingArray, typeof encodingArray);
         console.log("Is encodingArray truthy?", !!encodingArray);
       } catch (error) {
         console.error("Failed to parse encoding array:", error);
+        backendDebugMessages.value.push("Error parsing encoding array.");
       }
     } else {
       console.error("No encoding array found in response:", data.encoding);
+      backendDebugMessages.value.push("No encoding array found in response.");
     }
 
     console.log("Student number and type:", studentNumber.value, typeof studentNumber.value);
 
-    if (success && encodingArray) {
+    // Ensure student number is valid
+    if (!studentNumber.value.trim()) {
+      console.error("Student number is empty or invalid.");
+      backendDebugMessages.value.push("Student number is empty or invalid.");
+      return;
+    }
+
+    if (success && encodingArray && encodingArray.length > 0) {
       encoding.value = encodingArray; // Display the face encoding
-      console.log("you've successfully scanned the face!"); 
+      console.log("You've successfully scanned the face!");
 
       // Store the encoding with the student number
       const stored = storeEncoding(studentNumber.value, encodingArray);
 
       if (stored) {
         logs.value.push(`Successfully stored encoding for student: ${studentNumber.value}`);
+      } else {
+        console.error("Failed to store encoding.");
+        backendDebugMessages.value.push("Failed to store encoding.");
       }
     } else {
       backendDebugMessages.value.push("Failed to extract encoding or success value.");
@@ -322,7 +336,8 @@ const captureAndSend = async () => {
     // Update backend debug messages
     backendDebugMessages.value = data.debug_logs || [];
   } catch (error) {
-    backendDebugMessages.value.push(`Error sending the image: ${error}`);
+    console.error("Error sending the image:", error);
+    backendDebugMessages.value.push(`Error sending the image: ${error.message}`);
   } finally {
     isCapturing = false; // Reset the capturing flag
   }
