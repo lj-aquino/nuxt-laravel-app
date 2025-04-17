@@ -25,42 +25,39 @@
         ></video>
       </div>
 
-      <!-- Student Info Square -->
+      <!-- Student Info Text -->
       <div class="square student-info">
         <!-- Student Info Text -->
-        <div class="square student-info">
-          <!-- Student Info Text -->
-          <div class="student-info-text">Student Info</div>
+        <div class="student-info-text">Student Info</div>
 
-          <!-- Verified Rectangle -->
-          <div class="verified-box">
-            <div class="verified-circle">
-              <i class="fas fa-check"></i>
-            </div>
-            <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
+        <!-- Verified Rectangle -->
+        <div class="verified-box">
+          <div class="verified-circle">
+            <i class="fas fa-check"></i>
           </div>
+          <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
+        </div>
 
-          <!-- Student Name -->
-          <div class="student-name">
-            {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
-          </div>
+        <!-- Student Name -->
+        <div class="student-name">
+          {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
+        </div>
 
-          <!-- Student ID -->
-          <div class="student-id">
-            {{ recentLog?.student_number || 'N/A' }}
-          </div>
+        <!-- Student ID -->
+        <div class="student-id">
+          {{ recentLog?.student_number || 'N/A' }}
+        </div>
 
-          <div class="enrolled">
-            {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
-          </div>
+        <div class="enrolled">
+          {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+        </div>
 
-          <div class="remarks">
-            Remarks
-          </div>
+        <div class="remarks">
+          Remarks
+        </div>
 
-          <div class="remarks-note">
-            {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
-          </div>
+        <div class="remarks-note">
+          {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
         </div>
       </div>
 
