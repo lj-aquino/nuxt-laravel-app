@@ -146,6 +146,9 @@ const studentEncodings = reactive({});
 
 const isRecognizing = ref(false); // Track if the recognize endpoint is being called
 
+const isVerified = ref(false); // Track if the student is verified
+const has_id = ref(true); // Track if the ID was entered
+
 const stopWebcam = () => {
   if (cameraStream) {
     cameraStream.getTracks().forEach((track) => track.stop()); // Stop all tracks
@@ -224,6 +227,8 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
       const isMatch = data.match;
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
       logs.value.push(`Comparison Result for ${studentNum}: ${isMatch ? "Match" : "No Match"}`);
+
+      isVerified.value = isMatch; // Update verification status
     } else {
       console.error("Comparison failed or unexpected response:", data);
       logs.value.push("Error: Comparison failed or unexpected response.");
@@ -297,10 +302,6 @@ const storeEncoding = (studentNum, encodingData) => {
 // Function to retrieve encoding for a student number
 const getEncoding = (studentNum) => {
   return studentEncodings[studentNum] || null;
-};
-
-const onEnterIdClick = () => {
-  enterIdMode.value = true; // Enable "Enter ID" mode
 };
 
 const navigateToLogsSummary = () => {
@@ -433,6 +434,11 @@ const loadSavedEncodings = () => {
   } catch (error) {
     console.error("Error loading saved encodings:", error);
   }
+};
+
+const onEnterIdClick = () => {
+  enterIdMode.value = true; // Enable "Enter ID" mode
+  has_id.value = false; // Update has_id to false
 };
 
 onMounted(() => {
