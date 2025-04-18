@@ -107,6 +107,11 @@
 
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
+
+    <!-- Loading Indicator -->
+    <div v-if="isRecognizing" class="loading-indicator">
+      <i class="fas fa-spinner fa-spin"></i> Recognizing face, please wait...
+    </div>
   </div>
 </template>
 
@@ -134,6 +139,8 @@ const studentNumber = ref(''); // Store the entered student number
 
 // Store student encodings with student numbers as keys
 const studentEncodings = reactive({});
+
+const isRecognizing = ref(false); // Track if the recognize endpoint is being called
 
 const stopWebcam = () => {
   if (cameraStream) {
@@ -176,7 +183,6 @@ const formatStudentName = (name) => {
   return formattedParts.join(" ");
 };
 
-
 const compareFaceEncoding = async (studentNum, scannedEncoding) => {
   console.log("compareFaceEncoding called with:", { studentNum, scannedEncoding });
 
@@ -185,6 +191,8 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     logs.value.push("Error: Invalid student number or scanned encoding.");
     return;
   }
+
+  isRecognizing.value = true; // Start loading indicator
 
   try {
     console.log("Preparing payload...");
@@ -208,9 +216,6 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     const data = await response.json();
     console.log("Response JSON parsed:", data);
 
-    console.log("Stored Encoding:", studentEncodings[studentNum]);
-    console.log("Scanned Encoding:", scannedEncoding);
-
     if (data && data.message === "Comparison done successfully") {
       const isMatch = data.match;
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
@@ -222,6 +227,8 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
   } catch (error) {
     console.error("Error during face encoding comparison:", error);
     logs.value.push(`Error during face encoding comparison: ${error.message}`);
+  } finally {
+    isRecognizing.value = false; // Stop loading indicator
   }
 };
 
@@ -441,4 +448,16 @@ onBeforeUnmount(() => {
   padding: 20px;
   box-sizing: border-box;
 }
+
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  z-index: 1000;
+}
+
 </style>
