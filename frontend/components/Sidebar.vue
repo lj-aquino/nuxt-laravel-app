@@ -49,6 +49,7 @@
               href="#"
               class="menu-item"
               :class="{ active: activeMenu === 'Logs Summary' }"
+              @click.prevent="$router.push('/logs-summary-page')"
             >
               <i class="fas fa-file-alt"></i>
               Logs Summary

@@ -195,7 +195,7 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     console.log("Payload prepared:", payload);
 
     console.log("Making API call...");
-    const response = await fetch('https://sp-j16t.onrender.com/api/face_encodings/recognize', {
+    const response = await $fetch('https://sp-j16t.onrender.com/api/face_encodings/recognize', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
