@@ -30,38 +30,41 @@
         <!-- Student Info Text -->
         <div class="student-info-text">Student Info</div>
 
-        <!-- Verified Rectangle -->
-        <div class="verified-box">
-          <div class="verified-circle">
-            <i class="fas fa-check"></i>
+        <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\pages\face-scanning.vue -->
+        <div v-if="!isRecognizing">
+          <!-- Verified Rectangle -->
+          <div class="verified-box">
+            <div class="verified-circle">
+              <i class="fas fa-check"></i>
+            </div>
+            <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
           </div>
-          <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
-        </div>
-
-        <!-- Student Name -->
-        <div class="student-name">
-          {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
-        </div>
-
-        <!-- Student ID -->
-        <div class="student-id">
-          {{ recentLog?.student_number || 'N/A' }}
-        </div>
-
-        <div class="enrolled">
-          {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
-        </div>
         
-        <div class="entry-time">
-          {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
-        </div>
+          <!-- Student Name -->
+          <div class="student-name">
+            {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
+          </div>
         
-        <div class="remarks">
-          Remarks
-        </div>
-
-        <div class="remarks-note">
-          {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
+          <!-- Student ID -->
+          <div class="student-id">
+            {{ recentLog?.student_number || 'N/A' }}
+          </div>
+        
+          <div class="enrolled">
+            {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+          </div>
+          
+          <div class="entry-time">
+            {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
+          </div>
+          
+          <div class="remarks">
+            Remarks
+          </div>
+        
+          <div class="remarks-note">
+            {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
+          </div>
         </div>
       </div>
 
