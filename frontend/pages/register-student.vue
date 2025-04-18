@@ -88,6 +88,8 @@ const logs = ref([]); // Logs for debugging
 const router = useRouter(); // Use the router for navigation
 const loading = ref(false); // Track if the register button is clicked
 
+let cameraStream = null; // Variable to store the camera stream
+
 // Define activeMenu and set the default value to 'Register Student'
 const activeMenu = ref('Register Student');
 
@@ -99,18 +101,24 @@ const onVideoPlay = () => {
   logs.value.push("Video started playing.");
 };
 
-// Initialize the webcam feed
 const initializeWebcam = async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
     const video = videoElement.value;
     if (video) {
-      video.srcObject = stream; // Set the webcam stream as the video source
+      video.srcObject = cameraStream; // Set the webcam stream as the video source
       video.play(); // Ensure the video starts playing
     }
   } catch (error) {
     console.error("Error accessing webcam:", error); // Log the error
     logs.value.push(`Error accessing webcam: ${error.message}`);
+  }
+};
+
+const stopWebcam = () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach((track) => track.stop()); // Stop all tracks
+    cameraStream = null;
   }
 };
 
@@ -217,6 +225,10 @@ const handleRegister = async () => {
 
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
+});
+
+onBeforeUnmount(() => {
+  stopWebcam(); // Stop the webcam feed when the component is unmounted
 });
 
 </script>

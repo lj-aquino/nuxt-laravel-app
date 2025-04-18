@@ -126,6 +126,7 @@ const recentLog = ref(null); // Store recent logs
 const videoElement = ref(null); // Ref for the video element
 const backendDebugMessages = ref([]); // Store backend debug messages
 let isCapturing = false; // Track if capturing is ongoing
+let cameraStream = null; // Store the camera stream
 const router = useRouter(); // Use the router for navigation
 
 const enterIdMode = ref(false); // Track if "Enter ID" mode is active
@@ -133,6 +134,13 @@ const studentNumber = ref(''); // Store the entered student number
 
 // Store student encodings with student numbers as keys
 const studentEncodings = reactive({});
+
+const stopWebcam = () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach((track) => track.stop()); // Stop all tracks
+    cameraStream = null;
+  }
+};
 
 const fetchRecentLog = async () => {
   try {
@@ -390,10 +398,10 @@ const captureAndSend = async () => {
 // Initialize the webcam feed
 const initializeWebcam = async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
     const video = videoElement.value;
     if (video) {
-      video.srcObject = stream; // Set the webcam stream as the video source
+      video.srcObject = cameraStream; // Set the webcam stream as the video source
       video.play(); // Ensure the video starts playing
     }
   } catch (error) {
@@ -420,6 +428,10 @@ onMounted(() => {
   initializeWebcam(); // Start the webcam feed
   loadSavedEncodings(); // Load any previously saved encodings
   fetchRecentLog(); // Fetch recent logs from the backend
+});
+
+onBeforeUnmount(() => {
+  stopWebcam(); // Stop the webcam feed when the component is unmounted
 });
 </script>
 
