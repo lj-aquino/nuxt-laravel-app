@@ -169,6 +169,10 @@
   position: absolute;
 }
 
+.square.student-info {
+  position: relative; /* Ensure child elements are positioned relative to this container */
+}
+
 .first-square {
   width: 400.1px;
   height: 582.8px;

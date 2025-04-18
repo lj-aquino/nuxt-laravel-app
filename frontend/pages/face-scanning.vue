@@ -30,6 +30,11 @@
         <!-- Student Info Text -->
         <div class="student-info-text">Student Info</div>
 
+        <!-- Loading Indicator -->
+        <div v-if="isRecognizing" class="loading-indicator">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+
         <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\pages\face-scanning.vue -->
         <div v-if="!isRecognizing">
           <!-- Verified Rectangle -->
@@ -111,10 +116,6 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
-    <!-- Loading Indicator -->
-    <div v-if="isRecognizing" class="loading-indicator">
-      <i class="fas fa-spinner fa-spin"></i> Recognizing face, please wait...
-    </div>
   </div>
 </template>
 
@@ -453,7 +454,7 @@ onBeforeUnmount(() => {
 }
 
 .loading-indicator {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
