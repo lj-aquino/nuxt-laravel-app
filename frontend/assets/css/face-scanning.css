@@ -1,3 +1,51 @@
+.notification-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.notification-content {
+  background-color: white;
+  padding: 2%;
+  border-radius: 12px;
+  text-align: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.notification-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+}
+
+.retry-button {
+  background-color: #71231c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  transform: scale(1.1);
+}
+
+.close-button {
+  background-color: #3871c1;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  transform: scale(1.1);
+}
+
 .enter-id-button {
   position: absolute;
   left: 5%;

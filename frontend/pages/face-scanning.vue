@@ -116,6 +116,19 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
+    <!-- Notification Modal -->
+    <div v-if="showNotification" class="notification-modal">
+      <div class="notification-content">
+        <p>
+          {{ isVerified ? 'Verification Successful!' : 'Verification Failed!' }}
+        </p>
+        <div class="notification-buttons">
+          <button class="close-button" @click="onOkay">Close</button>
+          <button class="retry-button" @click="onRetry">Retry</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -148,6 +161,17 @@ const isRecognizing = ref(false); // Track if the recognize endpoint is being ca
 
 const isVerified = ref(false); // Track if the student is verified
 const has_id = ref(true); // Track if the ID was entered
+const showNotification = ref(false); // Track if the notification is visible
+
+// Function to handle retry
+const onRetry = () => {
+  showNotification.value = false;
+};
+
+// Function to handle okay
+const onOkay = () => {
+  showNotification.value = false;
+};
 
 const stopWebcam = () => {
   if (cameraStream) {
@@ -218,20 +242,20 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
       },
       body: JSON.stringify(payload),
     });
-    console.log("API call completed. Response received.");
+    console.log("API call completed. Response received:", response);
 
-    const data = await response.json();
-    console.log("Response JSON parsed:", data);
-
-    if (data && data.message === "Comparison done successfully") {
-      const isMatch = data.match;
+    if (response) {
+      const isMatch = response.match;
+      isVerified.value = isMatch; // Update verification status
+      showNotification.value = true; // Show notification
+      console.log("show notification:", showNotification.value);
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
       logs.value.push(`Comparison Result for ${studentNum}: ${isMatch ? "Match" : "No Match"}`);
-
-      isVerified.value = isMatch; // Update verification status
     } else {
-      console.error("Comparison failed or unexpected response:", data);
+      showNotification.value = false; // Hide notification if not a match
+      console.error("Comparison failed or unexpected response:", response);
       logs.value.push("Error: Comparison failed or unexpected response.");
+      console.log("show notification:", showNotification.value);
     }
   } catch (error) {
     console.error("Error during face encoding comparison:", error);
@@ -240,7 +264,6 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     isRecognizing.value = false; // Stop loading indicator
   }
 };
-
 // Function to store encoding with student number
 const storeEncoding = (studentNum, encodingData) => {
   if (!studentNum || !encodingData) {
