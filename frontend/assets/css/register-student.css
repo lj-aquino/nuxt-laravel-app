@@ -1,7 +1,7 @@
 .student-name-input,
 .student-number-input {
   background-color: #fcfcfd; /* Background color */
-  border: 1px solid #776f6e; /* Border color and weight */
+  border: 1px solid #e8e8e8; /* Border color and weight */
   border-radius: 20px; /* Corner rounding */
   padding: 8px 12px; /* Padding for better spacing */
   font-size: 16px; /* Font size */
