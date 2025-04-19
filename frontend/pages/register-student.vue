@@ -69,6 +69,41 @@
     @update:activeMenu="activeMenu = $event"
     />
 
+    <!-- Notification Modal -->
+    <div v-if="showNotification" class="notification-modal">
+      <div class="notification-content">
+        <!-- Close Button -->
+        <button class="close-button" @click="onOkay">×</button>
+    
+        <!-- Main content wrapper -->
+        <div class="modal-main-content">
+          <div class="icon-circle" :class="isRegistrationSuccessful ? 'success-icon' : 'failure-icon'">
+            <i :class="isRegistrationSuccessful ? 'fas fa-check' : 'fas fa-times'"></i>
+          </div>
+          <h2>{{ isRegistrationSuccessful ? 'Registration Successful' : 'Registration Failed' }}</h2>
+          <p class="subtitle">
+            {{ isRegistrationSuccessful ? 'Face encodings registered.' : "Face encoding registration failed." }}
+          </p>
+        </div>
+    
+        <!-- Buttons -->
+        <button
+          v-if="isRegistrationSuccessful"
+          class="green-button"
+          @click="onOkay"
+        >
+          Okay
+        </button>
+        <button
+          v-else
+          class="red-button"
+          @click="onRetry"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -92,6 +127,10 @@ const loading = ref(false); // Track if the register button is clicked
 let cameraStream = null; // Variable to store the camera stream
 const activeMenu = ref('Register Student'); // Default active menu
 const studentName = ref(''); // Ref for the student name input
+
+// Notification state
+const showNotification = ref(false); // Track if the notification is visible
+const isRegistrationSuccessful = ref(false); // Track if registration was successful
 
 // Webcam initialization
 const initializeWebcam = async () => {
@@ -152,84 +191,72 @@ const handleRegister = async () => {
     const formData = new FormData();
     formData.append('image', imageData);
 
-    let attempts = 0;
-    const maxAttempts = 3; // Retry up to 3 times
-    let success = false;
+    const response = await fetch('http://localhost:8000/api/encode', {
+      method: 'POST',
+      body: formData,
+    });
 
-    while (attempts < maxAttempts && !success) {
-      const response = await fetch('http://localhost:8000/api/encode', {
+    const rawData = await response.json();
+    console.log('Backend Response:', rawData);
+
+    const encodingString = rawData.encoding.replace(/^Face encoding: /, "").trim();
+
+    const jsonCompatible = encodingString
+      .replace(/'/g, '"')
+      .replace(/\bTrue\b/g, 'true')
+      .replace(/\bFalse\b/g, 'false');
+
+    const faceData = JSON.parse(jsonCompatible);
+
+    if (faceData.success) {
+      encoding.value = faceData.encoding;
+      logs.value.push(`Encoding: ${faceData.encoding}`);
+      logs.value.push(`Student Number: ${studentNumber.value}`);
+
+      const dbResponse = await fetch('https://sp-j16t.onrender.com/api/face_encodings', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+        },
+        body: JSON.stringify({
+          student_number: studentNumber.value,
+          student_name: studentName.value,
+          encoding: faceData.encoding,
+        }),
       });
 
-      const rawData = await response.json();
-      console.log('Backend Response:', rawData);
-
-      // Extract the encoding string and remove the debug prefix
-      const encodingString = rawData.encoding.replace(/^Face encoding: /, "").trim();
-
-      try {
-        // Convert Python-style JSON to JavaScript-compatible JSON
-        const jsonCompatible = encodingString
-          .replace(/'/g, '"') // Replace single quotes with double quotes
-          .replace(/\bTrue\b/g, 'true') // Replace True with true
-          .replace(/\bFalse\b/g, 'false'); // Replace False with false
-
-        // Parse the inner JSON
-        const faceData = JSON.parse(jsonCompatible);
-
-        // Access the success value
-        if (faceData.success) {
-          encoding.value = faceData.encoding;
-          logs.value.push(`Encoding: ${faceData.encoding}`);
-          logs.value.push(`Student Number: ${studentNumber.value}`);
-          success = true;
-
-          // Send the face encoding and student number to the database
-          const dbResponse = await fetch('https://sp-j16t.onrender.com/api/face_encodings', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
-            },
-            body: JSON.stringify({
-              student_number: studentNumber.value,
-              student_name: studentName.value, // Include the student name
-              encoding: faceData.encoding,
-            }),
-          });
-
-          const dbResult = await dbResponse.json();
-          if (dbResponse.ok) {
-            console.log('Database Response:', dbResult);
-            alert('Registration successful!');
-          } else {
-            console.error('Database Error:', dbResult);
-            alert('Failed to save face encoding to the database.');
-          }
-        } else {
-          attempts++;
-          logs.value.push(`Attempt ${attempts}: Backend returned success = ${faceData.success}`);
-          if (attempts < maxAttempts) {
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing face encoding:", error);
-        logs.value.push(`Error parsing face encoding: ${error.message}`);
+      const dbResult = await dbResponse.json();
+      if (dbResponse.ok) {
+        console.log('Database Response:', dbResult);
+        isRegistrationSuccessful.value = true;
+        showNotification.value = true;
+      } else {
+        console.error('Database Error:', dbResult);
+        isRegistrationSuccessful.value = false;
+        showNotification.value = true;
       }
-    }
-
-    if (!success) {
-      alert('Failed to get face encoding after multiple attempts.');
+    } else {
+      isRegistrationSuccessful.value = false;
+      showNotification.value = true;
     }
   } catch (error) {
     console.error('Error capturing face encoding:', error);
     logs.value.push(`Error: ${error.message}`);
-    alert('An error occurred during registration.');
+    isRegistrationSuccessful.value = false;
+    showNotification.value = true;
   } finally {
     loading.value = false;
   }
+};
+
+// Notification handlers
+const onOkay = () => {
+  showNotification.value = false;
+};
+
+const onRetry = () => {
+  showNotification.value = false;
 };
 
 // Lifecycle hooks
