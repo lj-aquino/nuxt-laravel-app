@@ -119,12 +119,27 @@
     <!-- Notification Modal -->
     <div v-if="showNotification" class="notification-modal">
       <div class="notification-content">
-        <p>
-          {{ isVerified ? 'Verification Successful!' : 'Verification Failed!' }}
-        </p>
-        <div class="notification-buttons">
-          <button class="close-button" @click="onOkay">Close</button>
-          <button class="retry-button" @click="onRetry">Retry</button>
+        <!-- Close Button -->
+        <button class="close-button" @click="onOkay">×</button>
+    
+        <!-- Success Modal -->
+        <div v-if="isVerified" class="success-modal">
+          <div class="icon-circle success-icon">
+            <i class="fas fa-check"></i>
+          </div>
+          <h2>Verification Successful</h2>
+          <p class="subtitle">Face encodings matched.</p>
+          <button class="green-button" @click="onOkay">Go Dashboard</button>
+        </div>
+    
+        <!-- Failure Modal -->
+        <div v-else class="failure-modal">
+          <div class="icon-circle failure-icon">
+            <i class="fas fa-times"></i>
+          </div>
+          <h2>Verification Failed</h2>
+          <p class="subtitle">Face encoding didn't match.</p>
+          <button class="red-button" @click="onRetry">Try Again</button>
         </div>
       </div>
     </div>
