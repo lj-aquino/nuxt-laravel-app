@@ -185,13 +185,53 @@ const isVerified = ref(false); // Track if the student is verified
 const has_id = ref(true); // Track if the ID was entered
 const showNotification = ref(false); // Track if the notification is visible
 
-// Function to handle retry
-const onRetry = () => {
-  showNotification.value = false;
+const recordEntryAttempt = async () => {
+  try {
+    if (!studentNumber.value.trim()) {
+      console.error('Student number is required.');
+      logs.value.push('Error: Student number is required.');
+      return;
+    }
+
+    const payload = {
+      student_number: studentNumber.value,
+      has_id: has_id.value,
+      remarks: "No remarks", //this should be no longer required
+      status: isVerified.value ? 'verified' : 'unverified',
+    };
+
+    console.log('Payload being sent:', payload);
+
+    const response = await $fetch('https://sp-j16t.onrender.com/api/logs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response && response.message === 'Log created successfully') {
+      console.log('Log created successfully:', response.data);
+      logs.value.push(`Log created successfully for student: ${studentNumber.value}`);
+      await fetchRecentLog(); // Refresh the recent log
+    } else {
+      console.error('Failed to create log:', response);
+      logs.value.push('Error: Failed to create log.');
+    }
+  } catch (error) {
+    console.error('Error recording entry attempt:', error);
+    logs.value.push(`Error recording entry attempt: ${error.message}`);
+  }
 };
 
-// Function to handle okay
-const onOkay = () => {
+const onOkay = async () => {
+  showNotification.value = false;
+  await recordEntryAttempt(); // Call the function to record the entry attempt
+};
+
+// Function to handle retry
+const onRetry = () => {
   showNotification.value = false;
 };
 
@@ -440,9 +480,6 @@ const captureAndSend = async () => {
     } else {
       logs.value.push("Failed to extract encoding or success value.");
     }
-
-    // Clear the student number input after successful scan
-    studentNumber.value = '';
     
   } catch (error) {
     console.error("Error sending the image:", error);
