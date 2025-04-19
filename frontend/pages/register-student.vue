@@ -34,6 +34,7 @@
           type="text"
           class="student-name-input"
           placeholder="Enter student name"
+          v-model="studentName"
         />
 
         <div class="student-number-text">Student Number:</div>
@@ -72,35 +73,26 @@
 </template>
 
 <script setup>
+// Import necessary components and modules
 import LogsSummary from '~/components/LogsSummary.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
-
-// Import the Sidebar and TopBar components
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 
+// Define reactive variables and refs
 const videoElement = ref(null); // Ref for the video element
 const studentNumber = ref(''); // Ref for the student number input
 const encoding = ref(null); // Ref to store the face encoding
 const logs = ref([]); // Logs for debugging
 const router = useRouter(); // Use the router for navigation
 const loading = ref(false); // Track if the register button is clicked
-
 let cameraStream = null; // Variable to store the camera stream
+const activeMenu = ref('Register Student'); // Default active menu
+const studentName = ref(''); // Ref for the student name input
 
-// Define activeMenu and set the default value to 'Register Student'
-const activeMenu = ref('Register Student');
-
-const onVideoCanPlay = () => {
-  logs.value.push("Video is ready to play.");
-};
-
-const onVideoPlay = () => {
-  logs.value.push("Video started playing.");
-};
-
+// Webcam initialization
 const initializeWebcam = async () => {
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -110,18 +102,29 @@ const initializeWebcam = async () => {
       video.play(); // Ensure the video starts playing
     }
   } catch (error) {
-    console.error("Error accessing webcam:", error); // Log the error
+    console.error("Error accessing webcam:", error);
     logs.value.push(`Error accessing webcam: ${error.message}`);
   }
 };
 
+// Stop webcam
 const stopWebcam = () => {
   if (cameraStream) {
-    cameraStream.getTracks().forEach((track) => track.stop()); // Stop all tracks
+    cameraStream.getTracks().forEach((track) => track.stop());
     cameraStream = null;
   }
 };
 
+// Handle video events
+const onVideoCanPlay = () => {
+  logs.value.push("Video is ready to play.");
+};
+
+const onVideoPlay = () => {
+  logs.value.push("Video started playing.");
+};
+
+// Handle registration
 const handleRegister = async () => {
   if (!studentNumber.value.trim()) {
     alert('Student number cannot be empty.');
@@ -159,54 +162,60 @@ const handleRegister = async () => {
       });
 
       const rawData = await response.json();
-      console.log('Backend Response:', rawData); // Log the raw response
+      console.log('Backend Response:', rawData);
 
       // Extract the encoding string and remove the debug prefix
-      const encodingString = rawData.encoding.replace("Debug: Face encoding: ", "");
+      const encodingString = rawData.encoding.replace(/^Face encoding: /, "").trim();
 
-      // Convert Python-style JSON to JavaScript-compatible JSON
-      const jsonCompatible = encodingString
-        .replace(/'/g, '"')
-        .replace(/True/g, 'true')
-        .replace(/False/g, 'false');
+      try {
+        // Convert Python-style JSON to JavaScript-compatible JSON
+        const jsonCompatible = encodingString
+          .replace(/'/g, '"') // Replace single quotes with double quotes
+          .replace(/\bTrue\b/g, 'true') // Replace True with true
+          .replace(/\bFalse\b/g, 'false'); // Replace False with false
 
-      // Parse the inner JSON
-      const faceData = JSON.parse(jsonCompatible);
+        // Parse the inner JSON
+        const faceData = JSON.parse(jsonCompatible);
 
-      // Access the success value
-      if (faceData.success) {
-        encoding.value = faceData.encoding;
-        logs.value.push(`Encoding: ${faceData.encoding}`);
-        logs.value.push(`Student Number: ${studentNumber.value}`);
-        success = true;
+        // Access the success value
+        if (faceData.success) {
+          encoding.value = faceData.encoding;
+          logs.value.push(`Encoding: ${faceData.encoding}`);
+          logs.value.push(`Student Number: ${studentNumber.value}`);
+          success = true;
 
-        // Send the face encoding and student number to the database
-        const dbResponse = await fetch('https://sp-j16t.onrender.com/api/face_encodings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q', // Add the API key here
-          },
-          body: JSON.stringify({
-            student_number: studentNumber.value,
-            encoding: faceData.encoding,
-          }),
-        });
+          // Send the face encoding and student number to the database
+          const dbResponse = await fetch('https://sp-j16t.onrender.com/api/face_encodings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+            },
+            body: JSON.stringify({
+              student_number: studentNumber.value,
+              student_name: studentName.value, // Include the student name
+              encoding: faceData.encoding,
+            }),
+          });
 
-        const dbResult = await dbResponse.json();
-        if (dbResponse.ok) {
-          console.log('Database Response:', dbResult);
-          alert('Registration successful!'); // Visual remark for success
+          const dbResult = await dbResponse.json();
+          if (dbResponse.ok) {
+            console.log('Database Response:', dbResult);
+            alert('Registration successful!');
+          } else {
+            console.error('Database Error:', dbResult);
+            alert('Failed to save face encoding to the database.');
+          }
         } else {
-          console.error('Database Error:', dbResult);
-          alert('Failed to save face encoding to the database.');
+          attempts++;
+          logs.value.push(`Attempt ${attempts}: Backend returned success = ${faceData.success}`);
+          if (attempts < maxAttempts) {
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
+          }
         }
-      } else {
-        attempts++;
-        logs.value.push(`Attempt ${attempts}: Backend returned success = ${faceData.success}`);
-        if (attempts < maxAttempts) {
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retrying
-        }
+      } catch (error) {
+        console.error("Error parsing face encoding:", error);
+        logs.value.push(`Error parsing face encoding: ${error.message}`);
       }
     }
 
@@ -222,7 +231,7 @@ const handleRegister = async () => {
   }
 };
 
-
+// Lifecycle hooks
 onMounted(() => {
   initializeWebcam(); // Start the webcam feed
 });
@@ -230,7 +239,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   stopWebcam(); // Stop the webcam feed when the component is unmounted
 });
-
 </script>
 
 <style scoped>
