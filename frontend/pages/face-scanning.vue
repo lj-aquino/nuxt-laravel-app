@@ -39,8 +39,11 @@
         <div v-if="!isRecognizing">
           <!-- Verified Rectangle -->
           <div class="verified-box">
-            <div class="verified-circle">
+            <div v-if="recentLog?.status === 'verified'" class="verified-circle">
               <i class="fas fa-check"></i>
+            </div>
+            <div v-else class="unverified-circle">
+              <i class="fas fa-exclamation"></i> <!-- Use exclamation point icon -->
             </div>
             <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
           </div>
