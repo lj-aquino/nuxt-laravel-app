@@ -74,6 +74,7 @@
 
 <script setup>
 // Import necessary components and modules
+import '~/assets/css/register-student.css'; // Import the CSS file for styles
 import LogsSummary from '~/components/LogsSummary.vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
@@ -240,66 +241,3 @@ onBeforeUnmount(() => {
   stopWebcam(); // Stop the webcam feed when the component is unmounted
 });
 </script>
-
-<style scoped>
-.student-name-input,
-.student-number-input {
-  background-color: #fcfcfd; /* Background color */
-  border: 1px solid #776f6e; /* Border color and weight */
-  border-radius: 20px; /* Corner rounding */
-  padding: 8px 12px; /* Padding for better spacing */
-  font-size: 16px; /* Font size */
-  width: 80%; /* Full width of the container */
-}
-
-.student-name-input {
-  margin-top: 22%;
-  margin-left: 5%;
-}
-
-.student-number-input {
-  margin-top: 12%;
-  margin-left: 6%;
-}
-
-.student-name-text,
-.student-number-text {
-  position: absolute;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.student-name-text{
-  margin-top: 15%;
-  margin-left: 5%;
-}
-
-.student-number-text{
-  margin-top:5%;
-  margin-left: 5%;
-}
-
-.student-name-input::placeholder,
-.student-number-input::placeholder {
-  font-family: 'Bricolage Grotesque', sans-serif;
-}
-
-.register-button {
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  transform: translate(-50%, -50%);
-  background-color: #71231c; /* Background color */
-  border: none; /* No border */
-  border-radius: 20px; /* Rounded corners */
-  padding: 10px 20px; /* Padding for better spacing */
-  font-size: 16px; /* Font size */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-family: 'Bricolage Grotesque', sans-serif; /* Font family */
-  color: white; /* Text color */ 
-  font-weight: bold; /* Font weight */
-  width: 90%;
-}
-
-</style>
