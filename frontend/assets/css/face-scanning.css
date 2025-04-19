@@ -55,6 +55,7 @@
   margin: 0 auto 20px;
   font-size: 40px;
   color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow around the circle */
 }
 
 .success-icon {
