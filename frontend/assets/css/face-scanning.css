@@ -13,15 +13,19 @@
 
 .notification-content {
   background: white;
-  padding: 15px; /* Reduce padding */
+  padding: 15px;
   border-radius: 10px;
   text-align: center;
   position: relative;
-  width: 80%; /* Reduce width percentage */
-  max-width: 300px; /* Reduce maximum width */
-  aspect-ratio: 1 / 1; /* Maintain square shape */
+  width: 80%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-family: 'Bricolage Grotesque', sans-serif;
+  display: flex; /* Enable Flexbox */
+  flex-direction: column; /* Stack items vertically */
+  justify-content: center; /* Center items vertically */
+  align-items: center; /* Center items horizontally */
 }
 
 .close-button {
@@ -31,7 +35,14 @@
   background: none;
   border: none;
   font-size: 20px;
+  font-weight: bold;
+  color: #333;
   cursor: pointer;
+  z-index: 10; /* Ensure it appears above other elements */
+}
+
+.close-button:hover {
+  color: #000;
 }
 
 .icon-circle {

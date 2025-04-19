@@ -116,31 +116,38 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
-    <!-- Notification Modal -->
+    <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\pages\face-scanning.vue -->
     <div v-if="showNotification" class="notification-modal">
       <div class="notification-content">
         <!-- Close Button -->
         <button class="close-button" @click="onOkay">×</button>
     
-        <!-- Success Modal -->
-        <div v-if="isVerified" class="success-modal">
-          <div class="icon-circle success-icon">
-            <i class="fas fa-check"></i>
+        <!-- Main content wrapper -->
+        <div class="modal-main-content">
+          <div class="icon-circle" :class="isVerified ? 'success-icon' : 'failure-icon'">
+            <i :class="isVerified ? 'fas fa-check' : 'fas fa-times'"></i>
           </div>
-          <h2>Verification Successful</h2>
-          <p class="subtitle">Face encodings matched.</p>
-          <button class="green-button" @click="onOkay">Go Dashboard</button>
+          <h2>{{ isVerified ? 'Verification Successful' : 'Verification Failed' }}</h2>
+          <p class="subtitle">
+            {{ isVerified ? 'Face encodings matched.' : "Face encoding didn't match." }}
+          </p>
         </div>
     
-        <!-- Failure Modal -->
-        <div v-else class="failure-modal">
-          <div class="icon-circle failure-icon">
-            <i class="fas fa-times"></i>
-          </div>
-          <h2>Verification Failed</h2>
-          <p class="subtitle">Face encoding didn't match.</p>
-          <button class="red-button" @click="onRetry">Try Again</button>
-        </div>
+        <!-- Buttons -->
+        <button
+          v-if="isVerified"
+          class="green-button"
+          @click="onOkay"
+        >
+          Go Dashboard
+        </button>
+        <button
+          v-else
+          class="red-button"
+          @click="onRetry"
+        >
+          Try Again
+        </button>
       </div>
     </div>
 
