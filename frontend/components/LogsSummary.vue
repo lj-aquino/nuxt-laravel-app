@@ -1,4 +1,3 @@
-<!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue -->
 <template>
   <div class="logs-summary-container">
     <!-- Conditionally render these elements based on the minimalView prop -->
@@ -39,7 +38,12 @@
     <div class="table-container-wrapper">
       <table class="info-table">
         <tbody>
-          <tr v-for="log in filteredLogs.slice(0, 5)" :key="log.id" style="border-bottom: 1px solid #e8e8e8;">
+          <!-- Render all rows in minimal view, otherwise limit to 5 -->
+          <tr
+            v-for="log in (minimalView ? filteredLogs : filteredLogs.slice(0, 5))"
+            :key="log.id"
+            style="border-bottom: 1px solid #e8e8e8;"
+          >
             <td>
               <div class="student-number">{{ log.student_number }}</div>
               <div class="student-name-logs">{{ formatStudentName(log.student_name) }}</div>
@@ -68,7 +72,9 @@
               </div>
             </td>
           </tr>
-          <tr>
+
+          <!-- Conditionally render "Show All Logs" only if not in minimal view -->
+          <tr v-if="!minimalView">
             <td colspan="4" style="text-align: center; padding: 10px;">
               <div class="show-all" @click="navigateToLogsSummary" style="cursor: pointer; display: inline-block; text-align: center;">
                 <span>Show All Logs</span>
