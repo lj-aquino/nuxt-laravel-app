@@ -5,19 +5,36 @@
 
 .top-details {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;  /* Changed from space-between */
+  gap: 20px;  /* Add specific gap between items */
   margin-left: 20%;
   margin-right: 2%;
   margin-top: 1%;
+  width: 85%;
+}
+
+.total-entries-today,
+.verified-entries,
+.presented-id,
+.repeat-offenders {
+  width: 22%;
+  height: 150px;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+  box-sizing: border-box;
+  font-weight: bold; /* Make the text bold */
+  font-size: 1.2em; /* Increase font size for better readability */
+  font-family: 'Bricolage Grotesque', sans-serif; /* Use a specific font for the text */
+  
 }
 
 .detail-box {
   width: 22%; /* Adjust the width of each box */
   height: 150px; /* Set a fixed height for the boxes */
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
-  margin: 0 10px; /* Add spacing between the boxes */
   box-sizing: border-box; /* Ensure padding doesn't affect width/height */
 }
 
@@ -28,13 +45,19 @@
   margin-left: 16.5%; /* Adjust margin to align with the layout */
   margin-right: 2%; /* Add some space on the right */
   height: 100%;
+  gap: 20px; /* Increase the gap to create more space */
+  margin-top: 20px; /* Add some space on top */
 }
 
 .summary-box {
-  flex: none; /* Disable flex-grow to allow custom width */
-  width: 60%; /* Set a custom width for the summary box */
-  height: 500px; /* Set a custom height for the summary box */
-  margin-right: 20px; /* Add spacing between the summary box and pie chart */
+  flex: none;
+  width: 60%;
+  height: 100%; /* Set height to 100% to fill the container */
+  background-color: blue;
+  margin-left: 5%;
+  overflow: auto; /* Add scrollbars if content exceeds the container */
+  box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
+  padding: 10px; /* Optional: Add padding for better spacing */
 }
 
 .pie-chart {
@@ -43,4 +66,15 @@
   height: 500px; /* Set a custom height for the pie chart */
   text-align: center; /* Center the content inside the pie chart */
   background-color: aqua; /* Keep the background color for visualization */
+  margin-right: 2%;
+}
+
+.logs-table-summary-page {
+  position: absolute;
+  border-collapse: collapse;
+  background-color: #71231c;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  color: white;
+  text-align: left;
+  border-radius: 10px;
 }

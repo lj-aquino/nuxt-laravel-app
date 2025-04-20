@@ -6,24 +6,30 @@
 
     <!-- Top Four Details -->
     <div class="top-details">
-      <div class="detail-box" style="background-color: #e2ffed;">First Square</div>
-      <div class="detail-box" style="background-color: #fbffe0;">Second Square</div>
-      <div class="detail-box" style="background-color: #eef6ff;">Third Square</div>
-      <div class="detail-box" style="background-color: #ffefef;">Fourth Square</div>
+      <div class="total-entries-today" style="background-color: #e2ffed;">Total Entries Today</div>
+      <div class="verified-entries" style="background-color: #fbffe0;">Verified Entries</div>
+      <div class="presented-id" style="background-color: #eef6ff;">Presented ID</div>
+      <div class="repeat-offenders" style="background-color: #ffefef;">Repeat Offenders</div>
     </div>
 
     <div class="summary-plus-pie-chart">
       <div class="summary-box">
-        <!-- Pass minimalView as true -->
-        <LogsSummary :logs="logs" :minimalView="true" />
+        <table class="logs-table-summary-page">
+          <thead>
+            <tr>
+              <th>Student No.</th>
+              <th>Entry Time</th>
+              <th>Status</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+        </table>
       </div>
 
       <div class="pie-chart">
         Pie Chart
       </div>
-
     </div>
-
   </div>
 </template>
 
@@ -31,4 +37,18 @@
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 import '~/assets/css/logs-summary-page.css';
+
+export default {
+  data() {
+    return {
+      logs: [] // Replace with actual data source
+    };
+  },
+  methods: {
+    formatStudentName(name) {
+      // Add logic to format student name if needed
+      return name;
+    }
+  }
+};
 </script>
