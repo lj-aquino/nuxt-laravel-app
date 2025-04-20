@@ -1,20 +1,28 @@
 <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue -->
 <template>
   <div class="logs-summary-container">
-    <div class="logs-summary">
-      Logs Summary
-    </div>
+    <!-- Conditionally render these elements based on the minimalView prop -->
+    <div v-if="!minimalView">
+      <div class="logs-summary">
+        Logs Summary
+      </div>
 
-    <div class="status-filter">
-      Status:
-    </div>
+      <div class="status-filter">
+        Status:
+      </div>
 
-    <!-- Dropdown for Verified/Unverified -->
-    <select class="status-dropdown" v-model="selectedStatus" @change="filterLogs">
-      <option value="verified">Verified</option>
-      <option value="unverified">Unverified</option>
-      <option value="all">All</option>
-    </select>
+      <!-- Dropdown for Verified/Unverified -->
+      <select class="status-dropdown" v-model="selectedStatus" @change="filterLogs">
+        <option value="verified">Verified</option>
+        <option value="unverified">Unverified</option>
+        <option value="all">All</option>
+      </select>
+
+      <button class="print-button" @click="printLogs">
+        <i class="fas fa-print"></i>
+        Print
+      </button>
+    </div>
 
     <!-- Table -->
     <table class="logs-table">
@@ -71,11 +79,6 @@
         </tbody>
       </table>
     </div>
-
-    <button class="print-button" @click="printLogs">
-      <i class="fas fa-print"></i>
-      Print
-    </button>
   </div>
 </template>
 
@@ -85,6 +88,12 @@ import '~/assets/css/logs-summary.css';
 
 export default {
   name: "LogsSummary",
+  props: {
+    minimalView: {
+      type: Boolean,
+      default: false, // Default to false to show all elements
+    },
+  },
   data() {
     return {
       logs: [], // Store logs fetched from the backend

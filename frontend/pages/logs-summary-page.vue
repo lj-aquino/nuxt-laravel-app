@@ -11,6 +11,19 @@
       <div class="detail-box" style="background-color: #eef6ff;">Third Square</div>
       <div class="detail-box" style="background-color: #ffefef;">Fourth Square</div>
     </div>
+
+    <div class="summary-plus-pie-chart">
+      <div class="summary-box">
+        <!-- Pass minimalView as true -->
+        <LogsSummary :logs="logs" :minimalView="true" />
+      </div>
+
+      <div class="pie-chart">
+        Pie Chart
+      </div>
+
+    </div>
+
   </div>
 </template>
 
@@ -19,22 +32,3 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 import '~/assets/css/logs-summary-page.css';
 </script>
-
-<style scoped>
-/* Add your CSS here */
-.logs-summary-page {
-  display: flex;
-  flex-direction: column;
-}
-
-.top-details {
-  display: flex;
-  justify-content: space-between;
-}
-
-.detail-box {
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-</style>

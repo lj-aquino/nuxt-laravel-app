@@ -1,11 +1,46 @@
+.logs-summary-page {
+  display: flex;
+  flex-direction: column;
+}
+
 .top-details {
   display: flex;
-  gap: 16px; /* Space between squares */
-  margin-top: 16px; /* Space from the top bar */
+  justify-content: space-between;
+  margin-left: 20%;
+  margin-right: 2%;
+  margin-top: 1%;
 }
 
 .detail-box {
-  flex: 1; /* Equal width for all squares */
-  padding: 16px;
+  width: 22%; /* Adjust the width of each box */
+  height: 150px; /* Set a fixed height for the boxes */
+  padding: 20px;
+  border-radius: 8px;
   text-align: center;
+  margin: 0 10px; /* Add spacing between the boxes */
+  box-sizing: border-box; /* Ensure padding doesn't affect width/height */
+}
+
+.summary-plus-pie-chart {
+  display: flex; /* Use flexbox to align items horizontally */
+  justify-content: space-between; /* Add space between the two elements */
+  align-items: center; /* Align items vertically in the center */
+  margin-left: 16.5%; /* Adjust margin to align with the layout */
+  margin-right: 2%; /* Add some space on the right */
+  height: 100%;
+}
+
+.summary-box {
+  flex: none; /* Disable flex-grow to allow custom width */
+  width: 60%; /* Set a custom width for the summary box */
+  height: 500px; /* Set a custom height for the summary box */
+  margin-right: 20px; /* Add spacing between the summary box and pie chart */
+}
+
+.pie-chart {
+  flex: none; /* Disable flex-grow to allow custom width */
+  width: 35%; /* Set a custom width for the pie chart */
+  height: 500px; /* Set a custom height for the pie chart */
+  text-align: center; /* Center the content inside the pie chart */
+  background-color: aqua; /* Keep the background color for visualization */
 }
