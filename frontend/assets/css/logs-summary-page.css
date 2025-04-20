@@ -44,7 +44,7 @@
   align-items: center; /* Align items vertically in the center */
   margin-left: 16.5%; /* Adjust margin to align with the layout */
   margin-right: 2%; /* Add some space on the right */
-  height: 100%;
+  height: 440px;;
   gap: 20px; /* Increase the gap to create more space */
   margin-top: 20px; /* Add some space on top */
 }
@@ -52,11 +52,10 @@
 .summary-box {
   flex: none;
   width: 60%;
-  height: 100%; /* Set height to 100% to fill the container */
+  height: 440px; /* Set height to 100% to fill the container */
   margin-left: 5%;
   overflow: auto; /* Add scrollbars if content exceeds the container */
   box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
-  padding: 10px; /* Optional: Add padding for better spacing */
 }
 
 .pie-chart {
@@ -126,11 +125,10 @@
 }
 
 .table-container-wrapper-page {
-  max-height: 400px;
+  max-height: 250px;
   overflow-y: auto;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
-  margin-top: 50px;
   width: 100%;
 }
 
