@@ -58,9 +58,9 @@ body {
   align-items: center;
   background-color: #71231c;
   color: white;
-  padding: 16px 24px;
-  width: 110%;
-  height: 22%;
+  padding: 8px 16px; /* Adjusted padding */
+  width: 100%; /* Ensure it fits the parent container */
+  height: 150px; /* Fixed height for consistency */
   box-sizing: border-box;
   font-family: 'Bricolage Grotesque', sans-serif;
 }
