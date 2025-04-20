@@ -137,7 +137,7 @@
   padding: 10px 15px;
 }
 
-.table-container-wrapper {
+.table-container-wrapper-page {
   max-height: 400px; /* Set a maximum height for the table */
   overflow-y: auto; /* Enable vertical scrolling */
 }
