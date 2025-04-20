@@ -52,10 +52,11 @@
 .summary-box {
   flex: none;
   width: 60%;
-  height: 440px; /* Set height to 100% to fill the container */
+  height: 440px;
   margin-left: 5%;
-  overflow: auto; /* Add scrollbars if content exceeds the container */
-  box-sizing: border-box; /* Ensure padding doesn't affect dimensions */
+  overflow-y: auto; /* Changed from overflow: auto to overflow-y: auto */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  box-sizing: border-box;
 }
 
 .pie-chart {
@@ -127,6 +128,7 @@
 .table-container-wrapper-page {
   max-height: 250px;
   overflow-y: auto;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
   border: 1px solid #e8e8e8;
   border-radius: 10px;
   width: 100%;
