@@ -61,18 +61,19 @@
 
 .pie-chart {
   flex: none;
-  width: 34%;
-  height: 440px;
-  margin-right: 2%;
+  width: 380px;
+  height: 380px;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
   margin-top: 6px;
-  overflow: hidden; /* Add this line to ensure content respects border radius */
+  overflow: hidden;
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: bold;
-  font-size: 1.2em; /* Increase font size for better readability */
-  padding-top: 15px;
-  padding-left: 15px;;
+  font-size: 1.2em;
+  display: flex;           /* Add these new properties */
+  flex-direction: column;  /* Add these new properties */
+  align-items: center;     /* Add these new properties */
+  padding: 20px;          /* Update padding to be uniform */
 }
 
 .table-summary-page {

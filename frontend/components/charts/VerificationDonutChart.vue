@@ -108,26 +108,41 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
-  padding: 20px;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+  height: 100%;
+  max-width: 340px; /* Adjust to fit parent with padding */
+  max-height: 340px; /* Adjust to fit parent with padding */
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 200px; /* Reduced to leave space for legend */
+  max-height: 200px;
 }
 
 .legend {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 15px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 12px; /* Smaller font size */
 }
 
 .color-box {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
   border-radius: 3px;
+  flex-shrink: 0;
 }
 </style>
