@@ -78,13 +78,13 @@
                   <div class="date">{{ log.date }}</div>
                 </td>
                 <td style="justify-content: center; align-items: center; text-align: center;">
-                  <div v-if="log.status === 'verified'" style="color: #3871c1; display: flex; align-items: center; gap: 8px;">
+                  <div v-if="log.status === 'verified'" style="color: #3871c1; display: flex; align-items: center; justify-content: center; width: 100%;">
                     <div class="verified-circle-page">
                       <i class="fas fa-check"></i>
                     </div>
-                    <span>Verified</span>
+                    <span style="margin-left: 8px;">Verified</span>
                   </div>
-                  <div v-else style="color: #3871c1;">
+                  <div v-else style="color: #3871c1; display: flex; justify-content: center; width: 100%;">
                     <span>Unverified</span>
                   </div>
                 </td>
