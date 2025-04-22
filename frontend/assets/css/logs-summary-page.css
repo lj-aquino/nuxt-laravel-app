@@ -23,10 +23,50 @@
   border-radius: 12px;
   text-align: left;
   box-sizing: border-box;
-  font-weight: bold; /* Make the text bold */
-  font-size: 1.2em; /* Increase font size for better readability */
-  font-family: 'Bricolage Grotesque', sans-serif; /* Use a specific font for the text */
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.stat-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stat-number {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 37px;
+  font-weight: bold;
+  color: #000;
+  margin: 8px 0;
+}
+
+.stat-subtitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.percentage {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ff4d4d;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.percentage.positive {
+  color: #00c853;
+}
+
+.wtd {
+  font-size: 14px;
+  color: #666;
+  font-weight: normal;
+  font-family: 'Bricolage Grotesque', sans-serif;
 }
 
 .detail-box {
@@ -106,6 +146,10 @@
 
 .info-table-page td:not(:last-child) {
   padding-right: 20px;
+}
+
+.info-table-page td:nth-child(3) {
+  text-align: center;
 }
 
 .student-name-logs-page {

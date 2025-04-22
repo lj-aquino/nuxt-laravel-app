@@ -6,10 +6,46 @@
 
     <!-- Top Four Details -->
     <div class="top-details">
-      <div class="total-entries-today" style="background-color: #e2ffed;">Total Entries Today</div>
-      <div class="verified-entries" style="background-color: #fbffe0;">Verified Entries</div>
-      <div class="presented-id" style="background-color: #eef6ff;">Presented ID</div>
-      <div class="repeat-offenders" style="background-color: #ffefef;">Repeat Offenders</div>
+      <div class="total-entries-today" style="background-color: #e2ffed;">
+        <div class="stat-title">Total Entries Today</div>
+        <div class="stat-number">{{ todayStats.totalEntries }}</div>
+        <div class="stat-subtitle">
+          <span class="percentage" :class="{ positive: todayStats.entryPercentage > 0 }">
+            {{ formatPercentage(todayStats.entryPercentage) }}
+          </span>
+          <span class="wtd">WTD: {{ weekStats.totalEntries }}</span>
+        </div>
+      </div>
+
+      <div class="verified-entries" style="background-color: #fbffe0;">
+        <div class="stat-title">Verified Entries</div>
+        <div class="stat-number">{{ todayStats.verifiedEntries }}</div>
+        <div class="stat-subtitle">
+          <span class="percentage" :class="{ positive: todayStats.verifiedPercentage > 0 }">
+            {{ formatPercentage(todayStats.verifiedPercentage) }}
+          </span>
+          <span class="wtd">WTD: {{ weekStats.verifiedEntries }}</span>
+        </div>
+      </div>
+
+      <div class="presented-id" style="background-color: #eef6ff;">
+        <div class="stat-title">Presented ID</div>
+        <div class="stat-number">{{ todayStats.presentedId }}</div>
+        <div class="stat-subtitle">
+          <span class="percentage" :class="{ positive: todayStats.presentedIdPercentage > 0 }">
+            {{ formatPercentage(todayStats.presentedIdPercentage) }}
+          </span>
+          <span class="wtd">WTD: {{ weekStats.presentedId }}</span>
+        </div>
+      </div>
+
+      <div class="repeat-offenders" style="background-color: #ffefef;">
+        <div class="stat-title">Repeat Offenders</div>
+        <div class="stat-number">{{ weekStats.repeatOffenders }}</div>
+        <div class="stat-subtitle">
+          <span class="wtd">WTD: {{ weekStats.repeatOffendersTotal }}</span>
+        </div>
+      </div>
     </div>
 
     <div class="summary-plus-pie-chart">
@@ -88,7 +124,22 @@ export default {
   },
   data() {
     return {
-      logs: [], // Store logs fetched from the backend
+      logs: [],
+      todayStats: {
+        totalEntries: 0,
+        verifiedEntries: 0,
+        presentedId: 0,
+        entryPercentage: 0,
+        verifiedPercentage: 0,
+        presentedIdPercentage: 0,
+      },
+      weekStats: {
+        totalEntries: 0,
+        verifiedEntries: 0,
+        presentedId: 0,
+        repeatOffenders: 0,
+        repeatOffendersTotal: 0,
+      },
     };
   },
   methods: {
@@ -116,6 +167,88 @@ export default {
         console.error("Error fetching logs:", error);
       }
     },
+    calculateStats() {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      // Calculate today's stats
+      const todayLogs = this.logs.filter(log => {
+        const logDate = new Date(log.entry_time);
+        return logDate.toDateString() === today.toDateString();
+      });
+
+      // Calculate yesterday's stats for percentage comparison
+      const yesterdayLogs = this.logs.filter(log => {
+        const logDate = new Date(log.entry_time);
+        return logDate.toDateString() === yesterday.toDateString();
+      });
+
+      // Get week stats (Monday to Sunday)
+      const currentWeekLogs = this.getWeekLogs();
+
+      // Calculate repeat offenders
+      const repeatOffenders = this.calculateRepeatOffenders(currentWeekLogs);
+
+      this.todayStats = {
+        totalEntries: todayLogs.length,
+        verifiedEntries: todayLogs.filter(log => log.status === 'verified').length,
+        presentedId: todayLogs.filter(log => log.has_id).length,
+        entryPercentage: this.calculatePercentageChange(todayLogs.length, yesterdayLogs.length),
+        verifiedPercentage: this.calculatePercentageChange(
+          todayLogs.filter(log => log.status === 'verified').length,
+          yesterdayLogs.filter(log => log.status === 'verified').length
+        ),
+        presentedIdPercentage: this.calculatePercentageChange(
+          todayLogs.filter(log => log.has_id).length,
+          yesterdayLogs.filter(log => log.has_id).length
+        ),
+      };
+
+      this.weekStats = {
+        totalEntries: currentWeekLogs.length,
+        verifiedEntries: currentWeekLogs.filter(log => log.status === 'verified').length,
+        presentedId: currentWeekLogs.filter(log => log.has_id).length,
+        repeatOffenders: repeatOffenders.length,
+        repeatOffendersTotal: this.calculateRepeatOffendersTotal(repeatOffenders),
+      };
+    },
+
+    getWeekLogs() {
+      const today = new Date();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1));
+      monday.setHours(0, 0, 0, 0);
+
+      return this.logs.filter(log => {
+        const logDate = new Date(log.entry_time);
+        return logDate >= monday && logDate <= today;
+      });
+    },
+
+    calculateRepeatOffenders(weekLogs) {
+      const studentCounts = {};
+      weekLogs.forEach(log => {
+        studentCounts[log.student_number] = (studentCounts[log.student_number] || 0) + 1;
+      });
+      return Object.entries(studentCounts)
+        .filter(([_, count]) => count > 1)
+        .map(([studentNumber]) => studentNumber);
+    },
+
+    calculateRepeatOffendersTotal(repeatOffenders) {
+      return repeatOffenders.length;
+    },
+
+    calculatePercentageChange(current, previous) {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return ((current - previous) / previous) * 100;
+    },
+
+    formatPercentage(value) {
+      return `${value >= 0 ? '+' : ''}${value.toFixed(0)}%`;
+    },
+
     formatStudentName(name) {
       const parts = name.split(" ");
       const formattedParts = parts.map((part, index) => {
@@ -129,7 +262,9 @@ export default {
     }
   },
   mounted() {
-    this.fetchLogs(); // Fetch logs when the component is mounted
+    this.fetchLogs().then(() => {
+      this.calculateStats();
+    });
   },
 };
 </script>
