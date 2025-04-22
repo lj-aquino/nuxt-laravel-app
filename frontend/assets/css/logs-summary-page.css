@@ -44,9 +44,9 @@
   align-items: center; /* Align items vertically in the center */
   margin-left: 16.5%; /* Adjust margin to align with the layout */
   margin-right: 2%; /* Add some space on the right */
-  height: 440px;;
+  height: 450px;;
   gap: 20px; /* Increase the gap to create more space */
-  margin-top: 20px; /* Add some space on top */
+  margin-top: 10px; /* Add some space on top */
 }
 
 .summary-box {
@@ -60,12 +60,19 @@
 }
 
 .pie-chart {
-  flex: none; /* Disable flex-grow to allow custom width */
-  width: 35%; /* Set a custom width for the pie chart */
-  height: 500px; /* Set a custom height for the pie chart */
-  text-align: center; /* Center the content inside the pie chart */
-  background-color: aqua; /* Keep the background color for visualization */
+  flex: none;
+  width: 34%;
+  height: 440px;
   margin-right: 2%;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  margin-top: 6px;
+  overflow: hidden; /* Add this line to ensure content respects border radius */
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: bold;
+  font-size: 1.2em; /* Increase font size for better readability */
+  padding-top: 15px;
+  padding-left: 15px;;
 }
 
 .table-summary-page {

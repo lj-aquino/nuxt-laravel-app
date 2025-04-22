@@ -67,7 +67,8 @@
       </div>
 
       <div class="pie-chart">
-        Pie Chart
+        <h3>Verification Breakdown</h3>
+        <VerificationDonutChart :logs="logs" />
       </div>
     </div>
   </div>
@@ -76,12 +77,14 @@
 <script>
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
+import VerificationDonutChart from '~/components/charts/VerificationDonutChart.vue';
 import '~/assets/css/logs-summary-page.css';
 
 export default {
   components: {
     Sidebar,
-    TopBar
+    TopBar,
+    VerificationDonutChart
   },
   data() {
     return {
