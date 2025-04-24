@@ -149,6 +149,7 @@
               href="#"
               class="menu-item"
               :class="{ active: activeMenu === 'Log Out' }"
+              @click.prevent="$router.push('/login')"
             >
               <i class="fas fa-sign-out-alt"></i>
               Log Out
@@ -175,6 +176,12 @@ export default {
     activeMenu: {
       type: String,
       required: true,
+    },
+  },
+  methods: {
+    handleLogout() {
+      // Handle logout logic here
+      this.$router.push('/login'); // Redirect to login page
     },
   },
   data() {
