@@ -166,6 +166,20 @@
     >
       ☰
     </button>
+    <div v-if="showLogoutModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-buttons">
+          <button class="modal-button confirm" @click="confirmLogout">
+            Yes, Logout
+          </button>
+          <button class="modal-button cancel" @click="showLogoutModal = false">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -181,19 +195,25 @@ export default {
     },
   },
   methods: {
-    async handleLogout() {
+    handleLogout() {
+      // Simply show the modal instead of logging out directly
+      this.showLogoutModal = true;
+    },
+    async confirmLogout() {
       try {
         const { error } = await supabase.auth.signOut()
         if (error) throw error
+        this.showLogoutModal = false;
         this.$router.push('/login')
       } catch (error) {
         console.error('Error logging out:', error.message)
       }
-    },
+    }
   },
   data() {
     return {
       isCollapsed: false, // State to toggle sidebar
+      showLogoutModal: false, // State to show logout confirmation modal
     };
   },
 };
@@ -261,6 +281,75 @@ export default {
   padding: 8px 12px;
   cursor: pointer;
   z-index: 1000;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #252525;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content h2 {
+  color: white;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+.modal-content p {
+  color: white;
+  margin-bottom: 24px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.modal-button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-button.confirm {
+  background-color: #eead2b;
+  color: white;
+}
+
+.modal-button.confirm:hover {
+  background-color: #d69b24;
+}
+
+.modal-button.cancel {
+  background-color: #444;
+  color: white;
+}
+
+.modal-button.cancel:hover {
+  background-color: #555;
 }
 
 /* Responsive Styles */
