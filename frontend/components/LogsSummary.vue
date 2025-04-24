@@ -17,9 +17,9 @@
         <option value="all">All</option>
       </select>
 
-      <button class="print-button" @click="printLogs">
-        <i class="fas fa-print"></i>
-        Print
+      <button class="download-button" @click="downloadLogs">
+        <i class="fas fa-download"></i>
+          Download
       </button>
     </div>
 
@@ -91,6 +91,9 @@
 <script>
 // filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue
 import '~/assets/css/logs-summary.css';
+import 'jspdf-autotable';
+import { jsPDF } from 'jspdf'; // Change this import
+import autoTable from 'jspdf-autotable'; // Add this import
 
 export default {
   name: "LogsSummary",
@@ -155,9 +158,48 @@ export default {
     navigateToLogsSummary() {
       this.$router.push("/logs-summary-page");
     },
-    printLogs() {
-      window.print();
-    },
+    downloadLogs() {
+      try {
+        const doc = new jsPDF();
+        
+        // Add the plugin to the jsPDF instance
+        autoTable(doc, {
+          startY: 35,
+          head: [[
+            'Student Number',
+            'Has ID',
+            'Entry Time',
+            'Status'
+          ]],
+          body: this.filteredLogs.map(log => [
+            log.student_number,
+            log.has_id ? 'Yes' : 'No',
+            `${log.date} ${log.time}`,
+            log.status
+          ]),
+          theme: 'grid',
+          headStyles: {
+            fillColor: [56, 113, 193],
+            textColor: [255, 255, 255]
+          },
+          alternateRowStyles: {
+            fillColor: [245, 245, 245]
+          }
+        });
+
+        // Add title and date before the table
+        doc.setFontSize(16);
+        doc.text('Logs Summary Report', 14, 15);
+        
+        doc.setFontSize(11);
+        doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
+        
+        // Save the PDF
+        doc.save('logs-summary.pdf');
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+      }
+    }
   },
   mounted() {
     this.fetchLogs(); // Fetch logs when the component is mounted
