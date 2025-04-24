@@ -88,6 +88,11 @@ body {
   font-family: 'Bricolage Grotesque', sans-serif;
 }
 
+.error {
+    color: red;
+    margin-top: 10px;
+  }  
+
 .form-options {
   display: flex;
   justify-content: space-between;
