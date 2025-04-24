@@ -119,7 +119,6 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
-    <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\pages\face-scanning.vue -->
     <div v-if="showNotification" class="notification-modal">
       <div class="notification-content">
         <!-- Close Button -->
@@ -130,27 +129,36 @@
           <div class="icon-circle" :class="isVerified ? 'success-icon' : 'failure-icon'">
             <i :class="isVerified ? 'fas fa-check' : 'fas fa-times'"></i>
           </div>
-          <h2>{{ isVerified ? 'Verification Successful' : 'Verification Failed' }}</h2>
+          <h2>{{ notificationTitle || (isVerified ? 'Verification Successful' : 'Verification Failed') }}</h2>
           <p class="subtitle">
-            {{ isVerified ? 'Face encodings matched.' : "Face encoding didn't match." }}
+            {{ notificationMessage || (isVerified ? 'Face encodings matched.' : "Face encoding didn't match.") }}
           </p>
         </div>
     
         <!-- Buttons -->
         <button
-          v-if="isVerified"
+          v-if="notificationAction"
           class="green-button"
-          @click="onOkay"
+          @click="notificationAction.handler"
         >
-          Go Dashboard
+          {{ notificationAction.label }}
         </button>
-        <button
-          v-else
-          class="red-button"
-          @click="onRetry"
-        >
-          Try Again
-        </button>
+        <template v-else>
+          <button
+            v-if="isVerified"
+            class="green-button"
+            @click="onOkay"
+          >
+            Go Dashboard
+          </button>
+          <button
+            v-else
+            class="red-button"
+            @click="onRetry"
+          >
+            Try Again
+          </button>
+        </template>
       </div>
     </div>
 
@@ -187,6 +195,11 @@ const isRecognizing = ref(false); // Track if the recognize endpoint is being ca
 const isVerified = ref(false); // Track if the student is verified
 const has_id = ref(true); // Track if the ID was entered
 const showNotification = ref(false); // Track if the notification is visible
+
+// Add new reactive references
+const notificationTitle = ref('');
+const notificationMessage = ref('');
+const notificationAction = ref(null);
 
 const recordEntryAttempt = async () => {
   try {
@@ -404,12 +417,54 @@ const onVideoPlay = () => {
   backendDebugMessages.value.push("Video started playing.");
 };
 
-const onScanFaceClick = () => {
+const checkFaceEncoding = async (studentNum) => {
+  try {
+    const response = await $fetch('https://sp-j16t.onrender.com/api/face_encodings/show', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+      body: JSON.stringify({
+        student_number: studentNum
+      }),
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error checking face encoding:', error);
+    return null;
+  }
+};
+
+const navigateToRegister = () => {
+  router.push('/register-student');
+};
+
+const onScanFaceClick = async () => {
   if (studentNumber.value.trim() === '') {
     alert('Please enter a valid student number.');
     return;
   }
-  captureAndSend(); // Call the face encoding API
+
+  // First check if face encoding exists
+  const encodingResult = await checkFaceEncoding(studentNumber.value);
+
+  if (!encodingResult || !encodingResult.data) {
+    // Show notification for unregistered face
+    showNotification.value = true;
+    isVerified.value = false;
+    notificationTitle.value = 'Face Not Registered';
+    notificationMessage.value = 'Face still not registered.';
+    notificationAction.value = {
+      label: 'Register Face',
+      handler: navigateToRegister
+    };
+    return;
+  }
+
+  // If face encoding exists, proceed with capture and comparison
+  captureAndSend();
 };
 
 const captureAndSend = async () => {
