@@ -91,6 +91,8 @@
 <script>
 // filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue
 import '~/assets/css/logs-summary.css';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export default {
   name: "LogsSummary",
@@ -156,7 +158,62 @@ export default {
       this.$router.push("/logs-summary-page");
     },
     printLogs() {
-      window.print();
+      // Create new PDF document
+      const doc = new jsPDF();
+      
+      // Add title
+      doc.setFontSize(16);
+      doc.text('Logs Summary Report', 14, 15);
+      
+      // Add timestamp
+      doc.setFontSize(10);
+      const timestamp = new Date().toLocaleString();
+      doc.text(`Generated on: ${timestamp}`, 14, 25);
+
+      // Define the columns
+      const columns = [
+        { header: 'Student No.', dataKey: 'student_number' },
+        { header: 'Student Name', dataKey: 'student_name' },
+        { header: 'Entry Time', dataKey: 'entry_time' },
+        { header: 'ID Status', dataKey: 'has_id' },
+        { header: 'Remarks', dataKey: 'remarks' },
+        { header: 'Status', dataKey: 'status' },
+        { header: 'Enrollment', dataKey: 'enrolled' }
+      ];
+
+      // Format the data
+      const data = this.filteredLogs.map(log => ({
+        ...log,
+        has_id: log.has_id ? 'Presented' : 'Not Presented',
+        remarks: log.remarks || 'No remarks',
+        enrolled: log.enrolled ? 'Enrolled' : 'Not Enrolled',
+        entry_time: new Date(log.entry_time).toLocaleString(),
+        student_name: this.formatStudentName(log.student_name)
+      }));
+
+      // Generate the table
+      doc.autoTable({
+        columns: columns,
+        body: data,
+        startY: 35,
+        styles: {
+          fontSize: 8,
+          cellPadding: 3
+        },
+        headerStyles: {
+          fillColor: [56, 113, 193],
+          textColor: 255,
+          fontSize: 8,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245]
+        },
+        margin: { top: 35 }
+      });
+
+      // Save the PDF
+      doc.save('logs-summary.pdf');
     },
   },
   mounted() {
