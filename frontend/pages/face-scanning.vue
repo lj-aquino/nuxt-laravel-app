@@ -201,6 +201,10 @@ const notificationTitle = ref('');
 const notificationMessage = ref('');
 const notificationAction = ref(null);
 
+definePageMeta({
+  middleware: ['auth']
+})
+
 const recordEntryAttempt = async () => {
   try {
     if (!studentNumber.value.trim()) {

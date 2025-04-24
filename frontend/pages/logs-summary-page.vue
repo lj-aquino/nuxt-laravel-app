@@ -116,6 +116,10 @@ import TopBar from '~/components/TopBar.vue';
 import VerificationDonutChart from '~/components/charts/VerificationDonutChart.vue';
 import '~/assets/css/logs-summary-page.css';
 
+definePageMeta({
+  middleware: ['auth']
+})
+
 export default {
   components: {
     Sidebar,

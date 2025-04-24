@@ -57,16 +57,23 @@ const errorMessage = ref('')
 const router = useRouter()
 
 const login = async () => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  })
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    })
 
-  if (error) {
-    errorMessage.value = error.message
-  } else {
-    // Redirect to /face-scanning after successful login
-    router.push('/face-scanning')
+    if (error) {
+      errorMessage.value = error.message
+    } else {
+      // Store session if needed
+      const { data: { session } } = await supabase.auth.getSession()
+      // Redirect to /face-scanning after successful login
+      router.push('/face-scanning')
+    }
+  } catch (e) {
+    errorMessage.value = 'An error occurred during login'
+    console.error(e)
   }
 }
 </script>

@@ -149,7 +149,7 @@
               href="#"
               class="menu-item"
               :class="{ active: activeMenu === 'Log Out' }"
-              @click.prevent="$router.push('/login')"
+              @click.prevent="handleLogout"
             >
               <i class="fas fa-sign-out-alt"></i>
               Log Out
@@ -170,6 +170,8 @@
 </template>
 
 <script>
+import { supabase } from '../lib/supabase'
+
 export default {
   name: 'Sidebar',
   props: {
@@ -179,9 +181,14 @@ export default {
     },
   },
   methods: {
-    handleLogout() {
-      // Handle logout logic here
-      this.$router.push('/login'); // Redirect to login page
+    async handleLogout() {
+      try {
+        const { error } = await supabase.auth.signOut()
+        if (error) throw error
+        this.$router.push('/login')
+      } catch (error) {
+        console.error('Error logging out:', error.message)
+      }
     },
   },
   data() {

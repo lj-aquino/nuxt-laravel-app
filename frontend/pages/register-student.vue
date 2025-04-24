@@ -132,6 +132,10 @@ const studentName = ref(''); // Ref for the student name input
 const showNotification = ref(false); // Track if the notification is visible
 const isRegistrationSuccessful = ref(false); // Track if registration was successful
 
+definePageMeta({
+  middleware: ['auth']
+})
+
 // Webcam initialization
 const initializeWebcam = async () => {
   try {
