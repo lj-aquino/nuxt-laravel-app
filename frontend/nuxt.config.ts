@@ -13,6 +13,12 @@ export default defineNuxtConfig({
   // Link TailwindCSS CSS file
   css: [
     '~/assets/css/tailwind.css',  // Path to your TailwindCSS file
+    '@fortawesome/fontawesome-svg-core/styles.css', // Add Font Awesome styles
+  ],
+
+  // Add plugins configuration
+  plugins: [
+    '~/plugins/fontawesome.js'
   ],
 
   build: {
@@ -24,5 +30,10 @@ export default defineNuxtConfig({
         },
       },
     },
+    transpile: [
+      '@fortawesome/vue-fontawesome',
+      '@fortawesome/fontawesome-svg-core',
+      '@fortawesome/free-solid-svg-icons',
+    ],
   },
 });

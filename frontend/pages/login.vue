@@ -17,14 +17,14 @@
       <div class="login-form">
         <div class="input-group">
           <span class="icon">
-            <i class="fas fa-envelope"></i>
+            <font-awesome-icon icon="envelope" />
           </span>
           <input type="email" placeholder="Email">
         </div>
 
         <div class="input-group">
           <span class="icon">
-            <i class="fas fa-lock"></i>
+            <font-awesome-icon icon="lock" />
           </span>
           <input type="password" placeholder="Password">
         </div>
@@ -45,5 +45,5 @@
 </template>
 
 <script setup>
-import '~/assets/css/login.css'; // Import the CSS file for styles
+import '~/assets/css/login.css';
 </script>
