@@ -1,3 +1,32 @@
+.stream {
+  border-radius: 22px;
+  background-color: #9f9f9f;
+  width: 355.7px;
+  height: 210px;
+  position: absolute;
+  left: 22px;
+  top: 55.2px;
+  z-index: 10;
+}
+
+.square {
+  border: 1px solid #e8e8e8;
+  border-radius: 22px;
+  position: absolute;
+}
+
+.first-square {
+  width: 400.1px;
+  height: 582.8px;
+  left: 350px;
+  top: 180.2px;
+}
+
+.viewport {
+  display: flex;
+  flex-direction: column;
+}
+
 .student-name-input,
 .student-number-input {
   background-color: #fcfcfd; /* Background color */

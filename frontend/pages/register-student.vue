@@ -112,7 +112,6 @@
 import '~/assets/css/register-student.css'; // Import the CSS file for styles
 import LogsSummary from '~/components/LogsSummary.vue';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
