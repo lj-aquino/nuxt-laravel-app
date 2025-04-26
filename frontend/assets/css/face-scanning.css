@@ -1,23 +1,17 @@
 .camera-select-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #eead2b;
+  top: 15px;
+  right: 22px;
+  background: none; /* Remove background */
   border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
   cursor: pointer;
   z-index: 10;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.3s;
+  color: black; /* Change color to black */
+  font-size: 20px; /* Adjust size as needed */
 }
 
 .camera-select-btn:hover {
-  background: #d69b24;
+  opacity: 0.7;
 }
 
 .notification-modal {
