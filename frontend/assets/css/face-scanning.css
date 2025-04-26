@@ -1,3 +1,34 @@
+.video-container {
+  position: relative;
+  width: 355.7px; /* Match the video width */
+  height: 210px;  /* Match the video height */
+  left: 22px;
+  top: 55.2px;
+}
+
+.face-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;  /* Slightly smaller than video height */
+  height: 160px; /* Maintain square aspect ratio */
+  border: 3px solid #00ff00;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.face-subtitle {
+  text-align: center;
+  margin-top: 10px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
 .camera-select-btn {
   position: absolute;
   top: 15px;
@@ -309,14 +340,28 @@ h2 {
 }
 
 .square.student-info {
-  position: relative; /* Ensure child elements are positioned relative to this container */
+  /* Update positioning to be relative to first-square */
+  position: absolute;
+  width: 89%;
+  height: 210px;
+  left: 5%;
+  top: 48%;  /* Adjust this value to move up/down */
+  background-color: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 22px;
 }
 
 .first-square {
   width: 400.1px;
-  height: 582.8px;
+  min-height: 582.8px; /* Change height to min-height */
   left: 350px;
   top: 180.2px;
+  position: absolute;
+  padding-bottom: 80px; /* Add padding at bottom for buttons */
+  overflow: visible; /* Allow content to be visible outside the container */
+  display: flex;
+  flex-direction: column;
+  /* Remove duplicate position declaration */
 }
 
 .second-square {
@@ -327,14 +372,11 @@ h2 {
 }
 
 .stream {
+  width: 100%;
+  height: 100%;
   border-radius: 22px;
   background-color: #9f9f9f;
-  width: 355.7px;
-  height: 210px;
-  position: absolute;
-  left: 22px;
-  top: 55.2px;
-  z-index: 10;
+  z-index: 1;
 }
 
 .debug-messages {
