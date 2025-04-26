@@ -24,16 +24,21 @@
         @camera-change="handleCameraChange"
       />
       
+
       <div class="rotated-wrapper">
-        <video
-          ref="videoElement"
-          autoplay
-          playsinline
-          muted
-          class="stream"
-          @canplay="onVideoCanPlay"
-          @play="onVideoPlay"
-        ></video>
+        <div class="video-container">
+          <video
+            ref="videoElement"
+            autoplay
+            playsinline
+            muted
+            class="stream"
+            @canplay="onVideoCanPlay"
+            @play="onVideoPlay"
+          ></video>
+          <div class="face-square"></div>
+        </div>
+        <div class="face-subtitle">Put your face here</div>
       </div>
 
       <div class="square student-info">

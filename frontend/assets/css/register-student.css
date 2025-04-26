@@ -1,3 +1,71 @@
+.video-container {
+  position: relative;
+  width: 355.7px; /* Match the video width */
+  height: 210px;  /* Match the video height */
+  left: 22px;
+  top: 55.2px;
+}
+
+.face-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  pointer-events: none;
+  z-index: 2;
+  background: transparent; /* Make background transparent */
+}
+
+/* Add corner elements */
+.face-square::before,
+.face-square::after,
+.face-square > :first-child::before,
+.face-square > :first-child::after {
+  content: '';
+  position: absolute;
+  width: 20px; /* Length of corner lines */
+  height: 20px;
+  border-color: #ffffff; /* White color for corners */
+  border-style: solid;
+  border-width: 3px;
+}
+
+/* Top left corner */
+.face-square::before {
+  top: -3px;
+  left: -3px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Top right corner */
+.face-square::after {
+  top: -3px;
+  right: -3px;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* Bottom left corner */
+.face-square > :first-child::before {
+  bottom: -3px;
+  left: -3px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Bottom right corner */
+.face-square > :first-child::after {
+  bottom: -3px;
+  right: -3px;
+  border-left: none;
+  border-top: none;
+}
+
 .camera-select-btn {
   position: absolute;
   top: 15px;
@@ -14,15 +82,13 @@
   opacity: 0.7;
 }
 
+
 .stream {
+  width: 100%;
+  height: 100%;
   border-radius: 22px;
   background-color: #9f9f9f;
-  width: 355.7px;
-  height: 210px;
-  position: absolute;
-  left: 22px;
-  top: 55.2px;
-  z-index: 10;
+  z-index: 1;
 }
 
 .square {
@@ -33,9 +99,14 @@
 
 .first-square {
   width: 400.1px;
-  height: 582.8px;
+  min-height: 582.8px; /* Change height to min-height */
   left: 350px;
   top: 180.2px;
+  position: absolute;
+  padding-bottom: 80px; /* Add padding at bottom for buttons */
+  overflow: visible; /* Allow content to be visible outside the container */
+  display: flex;
+  flex-direction: column;
 }
 
 .viewport {
