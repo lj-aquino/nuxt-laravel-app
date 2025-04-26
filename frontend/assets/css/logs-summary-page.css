@@ -101,8 +101,8 @@
 
 .pie-chart {
   flex: none;
-  width: 380px;
-  height: 380px;
+  width: 420px;
+  height: 440px;
   border: 1px solid #e8e8e8;
   border-radius: 10px;
   margin-top: 6px;
@@ -110,10 +110,8 @@
   font-family: 'Bricolage Grotesque', sans-serif;
   font-weight: bold;
   font-size: 1.2em;
-  display: flex;           /* Add these new properties */
-  flex-direction: column;  /* Add these new properties */
-  align-items: center;     /* Add these new properties */
-  padding: 20px;          /* Update padding to be uniform */
+  position: relative;  /* Add this */
+  padding: 20px;
 }
 
 .table-summary-page {

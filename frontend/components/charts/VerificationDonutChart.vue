@@ -110,33 +110,34 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 15px;
-  width: 100%;
-  height: 100%;
-  max-width: 340px; /* Adjust to fit parent with padding */
-  max-height: 340px; /* Adjust to fit parent with padding */
+  width: calc(100% - 40px); /* Account for parent padding */
+  height: calc(100% - 80px); /* Account for parent padding and title */
+  position: absolute;
+  top: 60px; /* Give space for title */
+  left: 20px;
 }
 
 canvas {
   width: 100% !important;
   height: auto !important;
-  max-width: 200px; /* Reduced to leave space for legend */
+  max-width: 200px;
   max-height: 200px;
 }
 
 .legend {
+  width: 100%;
+  margin-top: 15px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  width: 100%;
-  padding: 0 10px;
-  margin-top: 15px;
+  gap: 10px;
+  padding: 0 20px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px; /* Smaller font size */
+  font-size: 12px;
 }
 
 .color-box {
