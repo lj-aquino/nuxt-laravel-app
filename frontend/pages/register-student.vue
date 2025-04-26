@@ -36,7 +36,9 @@
             @canplay="onVideoCanPlay"
             @play="onVideoPlay"
           ></video>
-          <div class="face-square"></div>
+          <div class="face-square">
+            <span></span>
+          </div>
         </div>
         <div class="face-subtitle">Put your face here</div>
       </div>
