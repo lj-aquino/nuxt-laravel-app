@@ -13,6 +13,17 @@
 
     <!-- First Square -->
     <div class="square first-square">
+
+      <button class="camera-select-btn" @click="showCameraSelect = true">
+        <i class="fas fa-camera"></i>
+      </button>
+
+      <!-- Camera Select Component -->
+      <CameraSelect 
+        v-model="showCameraSelect"
+        @camera-change="handleCameraChange"
+      />
+      
       <div class="rotated-wrapper">
         <video
           ref="videoElement"
@@ -115,6 +126,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router'; // Import the router for navigation
 import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
+import CameraSelect from '~/components/SelectCamera.vue'; // Import the camera selection component
 
 // Define reactive variables and refs
 const videoElement = ref(null); // Ref for the video element
@@ -126,6 +138,7 @@ const loading = ref(false); // Track if the register button is clicked
 let cameraStream = null; // Variable to store the camera stream
 const activeMenu = ref('Register Student'); // Default active menu
 const studentName = ref(''); // Ref for the student name input
+const showCameraSelect = ref(false); // Track if the camera selection modal is visible
 
 // Notification state
 const showNotification = ref(false); // Track if the notification is visible
@@ -134,6 +147,27 @@ const isRegistrationSuccessful = ref(false); // Track if registration was succes
 definePageMeta({
   middleware: ['auth']
 })
+
+const handleCameraChange = async (deviceId) => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+  }
+  
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: deviceId ? { exact: deviceId } : true }
+    });
+    
+    const video = videoElement.value;
+    if (video) {
+      video.srcObject = cameraStream;
+      video.play();
+    }
+  } catch (error) {
+    console.error("Error switching camera:", error);
+    logs.value.push(`Error switching camera: ${error.message}`);
+  }
+};
 
 // Webcam initialization
 const initializeWebcam = async () => {
