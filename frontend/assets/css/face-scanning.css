@@ -11,13 +11,59 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 160px;  /* Slightly smaller than video height */
-  height: 160px; /* Maintain square aspect ratio */
-  border: 3px solid #00ff00;
+  width: 160px;
+  height: 160px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
   pointer-events: none;
   z-index: 2;
+  background: transparent; /* Make background transparent */
+}
+
+/* Add corner elements */
+.face-square::before,
+.face-square::after,
+.face-square > :first-child::before,
+.face-square > :first-child::after {
+  content: '';
+  position: absolute;
+  width: 20px; /* Length of corner lines */
+  height: 20px;
+  border-color: #ffffff; /* White color for corners */
+  border-style: solid;
+  border-width: 3px;
+}
+
+/* Top left corner */
+.face-square::before {
+  top: -3px;
+  left: -3px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Top right corner */
+.face-square::after {
+  top: -3px;
+  right: -3px;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* Bottom left corner */
+.face-square > :first-child::before {
+  bottom: -3px;
+  left: -3px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Bottom right corner */
+.face-square > :first-child::after {
+  bottom: -3px;
+  right: -3px;
+  border-left: none;
+  border-top: none;
 }
 
 .face-subtitle {
