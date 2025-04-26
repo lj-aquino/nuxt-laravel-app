@@ -104,6 +104,7 @@
         
         <button
           class="scan-id-button animated-button"
+          @click="showBarcodeScanner = true"
         >
           <i class="fas fa-qrcode"></i>
           Scan ID
@@ -177,6 +178,11 @@
         </template>
       </div>
     </div>
+    
+    <BarcodeScanner
+        v-model:show="showBarcodeScanner"
+        @barcode-scanned="handleBarcodeScan"
+      />
 
   </div>
 </template>
@@ -184,6 +190,7 @@
 <script setup>
 import LogsSummary from '~/components/LogsSummary.vue';
 import CameraSelect from '~/components/SelectCamera.vue'; // Import the camera selection component
+import BarcodeScanner from '~/components/BarcodeScanner.vue';
 import { ref, onMounted, reactive } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
@@ -219,10 +226,18 @@ const notificationMessage = ref('');
 const notificationAction = ref(null);
 
 const showCameraSelect = ref(false); // Track if the camera selection modal is visible
+const showBarcodeScanner = ref(false); // Track if the barcode scanner modal is visible
 
 definePageMeta({
   middleware: ['auth']
 })
+
+const handleBarcodeScan = (scannedBarcode) => {
+  studentNumber.value = scannedBarcode;
+  has_id.value = true;
+  // Automatically trigger face scanning after successful barcode scan
+  onScanFaceClick();
+};
 
 const handleCameraChange = async (deviceId) => {
   if (cameraStream) {
