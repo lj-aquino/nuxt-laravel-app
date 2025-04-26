@@ -40,7 +40,6 @@
             <span></span>
           </div>
         </div>
-        <div class="face-subtitle">Put your face here</div>
       </div>
 
       <div class="square student-info">

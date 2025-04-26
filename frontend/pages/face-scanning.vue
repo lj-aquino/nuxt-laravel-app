@@ -39,7 +39,6 @@
             <span></span>
           </div>
         </div>
-        <div class="face-subtitle">Put your face here</div>
       </div>
 
       <!-- Student Info Text -->
