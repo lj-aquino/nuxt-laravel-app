@@ -13,6 +13,17 @@
 
     <!-- First Square -->
     <div class="square first-square">
+
+      <button class="camera-select-btn" @click="showCameraSelect = true">
+        <i class="fas fa-camera"></i>
+      </button>
+
+      <!-- Camera Select Component -->
+      <CameraSelect 
+        v-model="showCameraSelect"
+        @camera-change="handleCameraChange"
+      />
+
       <div class="rotated-wrapper">
         <video
           ref="videoElement"
@@ -167,6 +178,7 @@
 
 <script setup>
 import LogsSummary from '~/components/LogsSummary.vue';
+import CameraSelect from '~/components/SelectCamera.vue'; // Import the camera selection component
 import { ref, onMounted, reactive } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
@@ -201,9 +213,32 @@ const notificationTitle = ref('');
 const notificationMessage = ref('');
 const notificationAction = ref(null);
 
+const showCameraSelect = ref(false); // Track if the camera selection modal is visible
+
 definePageMeta({
   middleware: ['auth']
 })
+
+const handleCameraChange = async (deviceId) => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+  }
+  
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: deviceId ? { exact: deviceId } : true }
+    });
+    
+    const video = videoElement.value;
+    if (video) {
+      video.srcObject = cameraStream;
+      video.play();
+    }
+  } catch (error) {
+    console.error("Error switching camera:", error);
+    logs.value.push(`Error switching camera: ${error.message}`);
+  }
+};
 
 const recordEntryAttempt = async () => {
   try {
