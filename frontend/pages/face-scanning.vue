@@ -162,8 +162,9 @@
         <button
           class="scan-face-button animated-button"
           @click="onScanFaceClick"
+          :disabled="isScanning"
         >
-          Scan Face
+          {{ isScanning ? 'Scanning...' : 'Scan Face' }}
         </button>
       </div>
     </div>
@@ -184,8 +185,8 @@
     
         <!-- Main content wrapper -->
         <div class="modal-main-content">
-          <div class="icon-circle" :class="isVerified ? 'success-icon' : 'failure-icon'">
-            <i :class="isVerified ? 'fas fa-check' : 'fas fa-times'"></i>
+          <div class="icon-circle" :class="notificationTitle === 'ID Scanned Successfully' ? 'success-icon' : (isVerified ? 'success-icon' : 'failure-icon')">
+            <i :class="notificationTitle === 'ID Scanned Successfully' ? 'fas fa-check' : (isVerified ? 'fas fa-check' : 'fas fa-times')"></i>
           </div>
           <h2>{{ notificationTitle || (isVerified ? 'Verification Successful' : 'Verification Failed') }}</h2>
           <p class="subtitle">
@@ -269,6 +270,8 @@ const notificationAction = ref(null);
 const showCameraSelect = ref(false); // Track if the camera selection modal is visible
 const showBarcodeScanner = ref(false); // Track if the barcode scanner modal is visible
 const hasRecordedEntry = ref(false); // Track if an entry has been recorded
+const idScanSuccess = ref(false); // Track if ID scan was successful
+const isScanning = ref(false); // Track if scanning is in progress
 
 definePageMeta({
   middleware: ['auth']
@@ -282,17 +285,36 @@ const onScanIdClick = () => {
 const handleBarcodeScan = (scannedBarcode) => {
   studentNumber.value = scannedBarcode;
   has_id.value = true;
+  idScanSuccess.value = true;
   
   // Show notification with scanned number
   notificationTitle.value = 'ID Scanned Successfully';
   notificationMessage.value = `Student Number: ${scannedBarcode}`;
   showNotification.value = true;
   
-  // Add a delay before proceeding to face scanning
-  setTimeout(() => {
-    showNotification.value = false;
-    onScanFaceClick();
-  }, 2000);
+  // Add button action for proceeding to face scan
+  notificationAction.value = {
+    label: 'Proceed to Face Scan',
+    handler: async () => {
+      // Check if face encoding exists
+      const encodingResult = await checkFaceEncoding(studentNumber.value);
+      
+      if (!encodingResult || !encodingResult.data) {
+        // Update notification for unregistered face
+        notificationTitle.value = 'Face Not Registered';
+        notificationMessage.value = 'Face still not registered.';
+        notificationAction.value = {
+          label: 'Register Face',
+          handler: navigateToRegister
+        };
+        return;
+      }
+      
+      // If face encoding exists, proceed with face scanning
+      showNotification.value = false;
+      onScanFaceClick();
+    }
+  };
 };
 
 const handleCameraChange = async (deviceId) => {
@@ -358,8 +380,30 @@ const recordEntryAttempt = async () => {
 };
 
 const onOkay = async () => {
-  showNotification.value = false;
-  await recordEntryAttempt(); // Call the function to record the entry attempt
+  // Check if this is after ID scan
+  if (notificationTitle.value === 'ID Scanned Successfully') {
+    // Check if face encoding exists for the scanned student
+    const encodingResult = await checkFaceEncoding(studentNumber.value);
+    
+    if (!encodingResult || !encodingResult.data) {
+      // Show notification for unregistered face
+      notificationTitle.value = 'Face Not Registered';
+      notificationMessage.value = 'Face still not registered.';
+      notificationAction.value = {
+        label: 'Register Face',
+        handler: navigateToRegister
+      };
+      return; // Don't close notification, show registration prompt instead
+    }
+    
+    // If face encoding exists, proceed with face scanning
+    showNotification.value = false;
+    onScanFaceClick();
+  } else {
+    // Handle other notifications (verification results, etc.)
+    showNotification.value = false;
+    await recordEntryAttempt();
+  }
 };
 
 // Function to handle retry
@@ -441,7 +485,12 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     if (response) {
       const isMatch = response.match;
       isVerified.value = isMatch; // Update verification status
-      showNotification.value = true; // Show notification
+      
+      // Reset any previous notification messages
+      notificationTitle.value = '';
+      notificationMessage.value = '';
+      
+      showNotification.value = true; // Show notification with default verification messages
       console.log("show notification:", showNotification.value);
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
       logs.value.push(`Comparison Result for ${studentNum}: ${isMatch ? "Match" : "No Match"}`);
@@ -458,6 +507,7 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
     isRecognizing.value = false; // Stop loading indicator
   }
 };
+
 // Function to store encoding with student number
 const storeEncoding = (studentNum, encodingData) => {
   if (!studentNum || !encodingData) {
@@ -563,24 +613,30 @@ const onScanFaceClick = async () => {
     return;
   }
 
-  // First check if face encoding exists
-  const encodingResult = await checkFaceEncoding(studentNumber.value);
+  isScanning.value = true; // Set scanning state to true
 
-  if (!encodingResult || !encodingResult.data) {
-    // Show notification for unregistered face
-    showNotification.value = true;
-    isVerified.value = false;
-    notificationTitle.value = 'Face Not Registered';
-    notificationMessage.value = 'Face still not registered.';
-    notificationAction.value = {
-      label: 'Register Face',
-      handler: navigateToRegister
-    };
-    return;
+  try {
+    // First check if face encoding exists
+    const encodingResult = await checkFaceEncoding(studentNumber.value);
+
+    if (!encodingResult || !encodingResult.data) {
+      // Show notification for unregistered face
+      showNotification.value = true;
+      isVerified.value = false;
+      notificationTitle.value = 'Face Not Registered';
+      notificationMessage.value = 'Face still not registered.';
+      notificationAction.value = {
+        label: 'Register Face',
+        handler: navigateToRegister
+      };
+      return;
+    }
+
+    // If face encoding exists, proceed with capture and comparison
+    await captureAndSend();
+  } finally {
+    isScanning.value = false; // Reset scanning state
   }
-
-  // If face encoding exists, proceed with capture and comparison
-  captureAndSend();
 };
 
 const captureAndSend = async () => {
