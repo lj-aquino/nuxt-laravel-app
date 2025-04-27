@@ -1,3 +1,39 @@
+.scanned-number-display {
+  position: absolute;
+  bottom: 15%;
+  left: 5%;
+  right: 5%;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.scanned-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #333;
+}
+
+.scanned-info i {
+  color: #71231c;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .video-container {
   position: relative;
   width: 355.7px; /* Match the video width */

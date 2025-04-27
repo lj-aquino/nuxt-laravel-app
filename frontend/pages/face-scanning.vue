@@ -104,11 +104,18 @@
         
         <button
           class="scan-id-button animated-button"
-          @click="showBarcodeScanner = true"
+          @click="onScanIdClick" 
         >
           <i class="fas fa-qrcode"></i>
           Scan ID
         </button>
+
+        <div v-if="studentNumber" class="scanned-number-display">
+          <div class="scanned-info">
+            <i class="fas fa-barcode"></i>
+            <span>Scanned ID: {{ studentNumber }}</span>
+          </div>
+        </div>
       </div>
 
       <div v-else>
@@ -232,11 +239,25 @@ definePageMeta({
   middleware: ['auth']
 })
 
+const onScanIdClick = () => {
+  has_id.value = true;
+  showBarcodeScanner.value = true;
+};
+
 const handleBarcodeScan = (scannedBarcode) => {
   studentNumber.value = scannedBarcode;
   has_id.value = true;
-  // Automatically trigger face scanning after successful barcode scan
-  onScanFaceClick();
+  
+  // Show notification with scanned number
+  notificationTitle.value = 'ID Scanned Successfully';
+  notificationMessage.value = `Student Number: ${scannedBarcode}`;
+  showNotification.value = true;
+  
+  // Add a delay before proceeding to face scanning
+  setTimeout(() => {
+    showNotification.value = false;
+    onScanFaceClick();
+  }, 2000);
 };
 
 const handleCameraChange = async (deviceId) => {
