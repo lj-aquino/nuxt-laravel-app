@@ -51,15 +51,51 @@
           <i class="fas fa-spinner fa-spin"></i>
         </div>
 
-        <!-- filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\pages\face-scanning.vue -->
-        <div v-if="!isRecognizing">
+        <!-- Ready for Scan State -->
+        <div v-else-if="!recentLog">
+          <!-- Ready Box -->
+          <div class="verified-box ready-box">
+            <div class="ready-circle">
+              <div class="recording-indicator"></div>
+            </div>
+            <span>Ready</span>
+          </div>
+          
+          <!-- Placeholder Info -->
+          <div class="student-name ready-placeholder">
+            Ready for scan
+          </div>
+          
+          <div class="student-id">
+            Position face in camera
+          </div>
+          
+          <div class="enrolled">
+            Waiting
+          </div>
+          
+          <div class="remarks">
+            Remarks
+          </div>
+          
+          <div class="remarks-note">
+            Waiting for student
+          </div>
+          
+          <div class="entry-time">
+            {{ new Date().toLocaleString() }}
+          </div>
+        </div>
+
+        <!-- Student Info Display - Only shown when there's a recent log -->
+        <div v-else>
           <!-- Verified Rectangle -->
           <div class="verified-box">
             <div v-if="recentLog?.status === 'verified'" class="verified-circle">
               <i class="fas fa-check"></i>
             </div>
             <div v-else class="unverified-circle">
-              <i class="fas fa-exclamation"></i> <!-- Use exclamation point icon -->
+              <i class="fas fa-exclamation"></i>
             </div>
             <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
           </div>
