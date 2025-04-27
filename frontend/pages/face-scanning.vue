@@ -52,12 +52,10 @@
         </div>
 
         <!-- Ready for Scan State -->
-        <div v-else-if="!recentLog">
+        <div v-if="!hasRecordedEntry && !isRecognizing">
           <!-- Ready Box -->
           <div class="verified-box ready-box">
-            <div class="ready-circle">
-              <div class="recording-indicator"></div>
-            </div>
+            <div class="recording-indicator"></div>
             <span>Ready</span>
           </div>
           
@@ -270,6 +268,7 @@ const notificationAction = ref(null);
 
 const showCameraSelect = ref(false); // Track if the camera selection modal is visible
 const showBarcodeScanner = ref(false); // Track if the barcode scanner modal is visible
+const hasRecordedEntry = ref(false); // Track if an entry has been recorded
 
 definePageMeta({
   middleware: ['auth']
@@ -328,7 +327,7 @@ const recordEntryAttempt = async () => {
     const payload = {
       student_number: studentNumber.value,
       has_id: has_id.value,
-      remarks: "No remarks", //this should be no longer required
+      remarks: "No remarks",
       status: isVerified.value ? 'verified' : 'unverified',
     };
 
@@ -346,7 +345,8 @@ const recordEntryAttempt = async () => {
     if (response && response.message === 'Log created successfully') {
       console.log('Log created successfully:', response.data);
       logs.value.push(`Log created successfully for student: ${studentNumber.value}`);
-      await fetchRecentLog(); // Refresh the recent log
+      hasRecordedEntry.value = true; // Set to true after successful record
+      await fetchRecentLog();
     } else {
       console.error('Failed to create log:', response);
       logs.value.push('Error: Failed to create log.');

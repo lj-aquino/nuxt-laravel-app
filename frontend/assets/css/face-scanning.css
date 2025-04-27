@@ -3,6 +3,7 @@
 }
 
 .recording-indicator {
+  margin-left: 20px;
   width: 8px;
   height: 8px;
   background-color: #ff0000;
@@ -23,17 +24,6 @@
     transform: scale(0.8);
     opacity: 0.5;
   }
-}
-
-.ready-circle {
-  margin-left: 15%;
-  width: 24px;
-  height: 24px;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .ready-placeholder {
