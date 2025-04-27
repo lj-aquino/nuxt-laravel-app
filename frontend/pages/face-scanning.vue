@@ -178,46 +178,42 @@
     <!-- Add the Sidebar component -->
     <Sidebar activeMenu="Dashboard" />
 
-    <div v-if="showNotification" class="notification-modal">
+    <!-- ID Scan Notification Modal -->
+    <div v-if="showIdScanNotification" class="notification-modal">
       <div class="notification-content">
-        <!-- Close Button -->
-        <button class="close-button" @click="onOkay">×</button>
-    
-        <!-- Main content wrapper -->
+        <button class="close-button" @click="onIdScanOkay">×</button>
         <div class="modal-main-content">
-          <div class="icon-circle" :class="notificationTitle === 'ID Scanned Successfully' ? 'success-icon' : (isVerified ? 'success-icon' : 'failure-icon')">
-            <i :class="notificationTitle === 'ID Scanned Successfully' ? 'fas fa-check' : (isVerified ? 'fas fa-check' : 'fas fa-times')"></i>
+          <div class="icon-circle success-icon">
+            <i class="fas fa-check"></i>
           </div>
-          <h2>{{ notificationTitle || (isVerified ? 'Verification Successful' : 'Verification Failed') }}</h2>
+          <h2>ID Scanned Successfully</h2>
+          <p class="subtitle">Student Number: {{ studentNumber }}</p>
+        </div>
+        <button class="green-button" @click="proceedToFaceScan">
+          Proceed to Face Scan
+        </button>
+      </div>
+    </div>
+
+    <!-- Verification Notification Modal -->
+    <div v-if="showVerificationNotification" class="notification-modal">
+      <div class="notification-content">
+        <button class="close-button" @click="onVerificationOkay">×</button>
+        <div class="modal-main-content">
+          <div class="icon-circle" :class="isVerified ? 'success-icon' : 'failure-icon'">
+            <i :class="isVerified ? 'fas fa-check' : 'fas fa-times'"></i>
+          </div>
+          <h2>{{ isVerified ? 'Verification Successful' : 'Verification Failed' }}</h2>
           <p class="subtitle">
-            {{ notificationMessage || (isVerified ? 'Face encodings matched.' : "Face encoding didn't match.") }}
+            {{ isVerified ? 'Face encodings matched.' : "Face encoding didn't match." }}
           </p>
         </div>
-    
-        <!-- Buttons -->
         <button
-          v-if="notificationAction"
-          class="green-button"
-          @click="notificationAction.handler"
+          :class="isVerified ? 'green-button' : 'red-button'"
+          @click="isVerified ? onVerificationOkay : onRetry"
         >
-          {{ notificationAction.label }}
+          {{ isVerified ? 'Go Dashboard' : 'Try Again' }}
         </button>
-        <template v-else>
-          <button
-            v-if="isVerified"
-            class="green-button"
-            @click="onOkay"
-          >
-            Go Dashboard
-          </button>
-          <button
-            v-else
-            class="red-button"
-            @click="onRetry"
-          >
-            Try Again
-          </button>
-        </template>
       </div>
     </div>
     
@@ -274,6 +270,8 @@ const idScanSuccess = ref(false); // Track if ID scan was successful
 const isScanning = ref(false); // Track if scanning is in progress
 
 const showIdButtons = ref(false); // Track if ID buttons should be shown
+const showIdScanNotification = ref(false);
+const showVerificationNotification = ref(false);
 
 definePageMeta({
   middleware: ['auth']
@@ -289,35 +287,41 @@ const handleBarcodeScan = (scannedBarcode) => {
   studentNumber.value = scannedBarcode;
   has_id.value = true;
   idScanSuccess.value = true;
+  showIdScanNotification.value = true;
+};
+
+const onIdScanOkay = async () => {
+  const encodingResult = await checkFaceEncoding(studentNumber.value);
   
-  // Show notification with scanned number
-  notificationTitle.value = 'ID Scanned Successfully';
-  notificationMessage.value = `Student Number: ${scannedBarcode}`;
-  showNotification.value = true;
+  if (!encodingResult || !encodingResult.data) {
+    notificationTitle.value = 'Face Not Registered';
+    notificationMessage.value = 'Face still not registered.';
+    notificationAction.value = {
+      label: 'Register Face',
+      handler: navigateToRegister
+    };
+    return;
+  }
   
-  // Add button action for proceeding to face scan
-  notificationAction.value = {
-    label: 'Proceed to Face Scan',
-    handler: async () => {
-      // Check if face encoding exists
-      const encodingResult = await checkFaceEncoding(studentNumber.value);
-      
-      if (!encodingResult || !encodingResult.data) {
-        // Update notification for unregistered face
-        notificationTitle.value = 'Face Not Registered';
-        notificationMessage.value = 'Face still not registered.';
-        notificationAction.value = {
-          label: 'Register Face',
-          handler: navigateToRegister
-        };
-        return;
-      }
-      
-      // If face encoding exists, proceed with face scanning
-      showNotification.value = false;
-      onScanFaceClick();
-    }
-  };
+  showIdScanNotification.value = false;
+  onScanFaceClick();
+};
+
+const onVerificationOkay = async () => {
+  showVerificationNotification.value = false;
+  showIdButtons.value = true;
+  enterIdMode.value = false;
+  await recordEntryAttempt();
+};
+
+const onRetry = () => {
+  showVerificationNotification.value = false;
+  // Add any additional retry logic here
+};
+
+const proceedToFaceScan = async () => {
+  showIdScanNotification.value = false;
+  onScanFaceClick();
 };
 
 const handleCameraChange = async (deviceId) => {
@@ -411,10 +415,6 @@ const onOkay = async () => {
   }
 };
 
-// Function to handle retry
-const onRetry = () => {
-  showNotification.value = false;
-};
 
 const stopWebcam = () => {
   if (cameraStream) {
@@ -491,23 +491,27 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
       const isMatch = response.match;
       isVerified.value = isMatch; // Update verification status
       
-      // Reset any previous notification messages
-      notificationTitle.value = '';
-      notificationMessage.value = '';
+      // Show verification notification instead of generic notification
+      showVerificationNotification.value = true;
       
-      showNotification.value = true; // Show notification with default verification messages
-      console.log("show notification:", showNotification.value);
+      // Log the result
       console.log(`Comparison Result: ${isMatch ? "Match" : "No Match"}`);
       logs.value.push(`Comparison Result for ${studentNum}: ${isMatch ? "Match" : "No Match"}`);
+      
+      // Clear any previous notifications
+      showIdScanNotification.value = false;
+      showNotification.value = false;
     } else {
-      showNotification.value = false; // Hide notification if not a match
       console.error("Comparison failed or unexpected response:", response);
       logs.value.push("Error: Comparison failed or unexpected response.");
-      console.log("show notification:", showNotification.value);
     }
   } catch (error) {
     console.error("Error during face encoding comparison:", error);
     logs.value.push(`Error during face encoding comparison: ${error.message}`);
+    
+    // Show error in verification notification
+    isVerified.value = false;
+    showVerificationNotification.value = true;
   } finally {
     isRecognizing.value = false; // Stop loading indicator
   }
