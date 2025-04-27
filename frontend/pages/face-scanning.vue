@@ -269,7 +269,7 @@ const hasRecordedEntry = ref(false); // Track if an entry has been recorded
 const idScanSuccess = ref(false); // Track if ID scan was successful
 const isScanning = ref(false); // Track if scanning is in progress
 
-const showIdButtons = ref(false); // Track if ID buttons should be shown
+const showIdButtons = ref(true); // Track if ID buttons should be shown
 const showIdScanNotification = ref(false);
 const showVerificationNotification = ref(false);
 
@@ -767,6 +767,7 @@ onMounted(() => {
   initializeWebcam(); // Start the webcam feed
   loadSavedEncodings(); // Load any previously saved encodings
   fetchRecentLog(); // Fetch recent logs from the backend
+  showIdButtons.value = true; // Show ID buttons on initial load
 });
 
 onBeforeUnmount(() => {
