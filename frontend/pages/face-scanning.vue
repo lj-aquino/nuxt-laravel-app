@@ -127,7 +127,7 @@
       </div>
 
       <!-- Buttons -->
-      <div v-if="!enterIdMode">
+      <div v-if="!enterIdMode && showIdButtons">
         <button
           class="enter-id-button animated-button"
           @click="onEnterIdClick"
@@ -143,7 +143,7 @@
           <i class="fas fa-qrcode"></i>
           Scan ID
         </button>
-
+      
         <div v-if="studentNumber" class="scanned-number-display">
           <div class="scanned-info">
             <i class="fas fa-barcode"></i>
@@ -273,6 +273,8 @@ const hasRecordedEntry = ref(false); // Track if an entry has been recorded
 const idScanSuccess = ref(false); // Track if ID scan was successful
 const isScanning = ref(false); // Track if scanning is in progress
 
+const showIdButtons = ref(false); // Track if ID buttons should be shown
+
 definePageMeta({
   middleware: ['auth']
 })
@@ -280,6 +282,7 @@ definePageMeta({
 const onScanIdClick = () => {
   has_id.value = true;
   showBarcodeScanner.value = true;
+  showIdButtons.value = false; // Hide the buttons while scanner is active
 };
 
 const handleBarcodeScan = (scannedBarcode) => {
@@ -402,6 +405,8 @@ const onOkay = async () => {
   } else {
     // Handle other notifications (verification results, etc.)
     showNotification.value = false;
+    showIdButtons.value = true; // Restore the buttons
+    enterIdMode.value = false; // Reset enter ID mode
     await recordEntryAttempt();
   }
 };
@@ -749,8 +754,9 @@ const loadSavedEncodings = () => {
 };
 
 const onEnterIdClick = () => {
-  enterIdMode.value = true; // Enable "Enter ID" mode
-  has_id.value = false; // Update has_id to false
+  enterIdMode.value = true;
+  has_id.value = false;
+  showIdButtons.value = false; // Hide the buttons while in enter ID mode
 };
 
 onMounted(() => {
