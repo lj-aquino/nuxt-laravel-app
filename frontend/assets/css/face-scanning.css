@@ -477,7 +477,6 @@ h2 {
 }
 
 .square.student-info {
-  /* Update positioning to be relative to first-square */
   position: absolute;
   width: 89%;
   height: 210px;

@@ -45,86 +45,88 @@
       <div class="square student-info">
         <!-- Student Info Text -->
         <div class="student-info-text">Student Info</div>
-
-        <!-- Loading Indicator -->
-        <div v-if="isRecognizing" class="loading-indicator">
-          <i class="fas fa-spinner fa-spin"></i>
-        </div>
-
-        <!-- Ready for Scan State -->
-        <div v-if="!hasRecordedEntry && !isRecognizing">
-          <!-- Ready Box -->
-          <div class="verified-box ready-box">
-            <div class="recording-indicator"></div>
-            <span>Ready</span>
+      
+        <!-- Content Container -->
+        <div class="content-container">
+          <!-- Loading Indicator - Shown when recognizing -->
+          <div v-if="isRecognizing" class="loading-indicator">
+            <i class="fas fa-spinner fa-spin"></i>
           </div>
-          
-          <!-- Placeholder Info -->
-          <div class="student-name ready-placeholder">
-            Ready for scan
-          </div>
-          
-          <div class="student-id">
-            Position face in camera
-          </div>
-          
-          <div class="enrolled">
-            Waiting
-          </div>
-          
-          <div class="remarks">
-            Remarks
-          </div>
-          
-          <div class="remarks-note">
-            Waiting for student
-          </div>
-          
-          <div class="entry-time">
-            {{ new Date().toLocaleString() }}
-          </div>
-        </div>
-
-        <!-- Student Info Display - Only shown when there's a recent log -->
-        <div v-else>
-          <!-- Verified Rectangle -->
-          <div class="verified-box">
-            <div v-if="recentLog?.status === 'verified'" class="verified-circle">
-              <i class="fas fa-check"></i>
+      
+          <!-- Content shown when not recognizing -->
+          <template v-else>
+            <!-- Ready for Scan State -->
+            <div v-if="!hasRecordedEntry">
+              <div class="verified-box ready-box">
+                <div class="recording-indicator"></div>
+                <span>Ready</span>
+              </div>
+              
+              <div class="student-name ready-placeholder">
+                Ready for scan
+              </div>
+              
+              <div class="student-id">
+                Position face in camera
+              </div>
+              
+              <div class="enrolled">
+                Waiting
+              </div>
+              
+              <div class="remarks">
+                Remarks
+              </div>
+              
+              <div class="remarks-note">
+                Waiting for student
+              </div>
+              
+              <div class="entry-time">
+                {{ new Date().toLocaleString() }}
+              </div>
             </div>
-            <div v-else class="unverified-circle">
-              <i class="fas fa-exclamation"></i>
+      
+            <!-- Student Info Display - Only shown when there's a recent log -->
+            <div v-else>
+              <div class="verified-box">
+                <div v-if="recentLog?.status === 'verified'" class="verified-circle">
+                  <i class="fas fa-check"></i>
+                </div>
+                <div v-else class="unverified-circle">
+                  <i class="fas fa-exclamation"></i>
+                </div>
+                <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
+              </div>
+            
+              <div class="student-name">
+                {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
+              </div>
+            
+              <div class="student-id">
+                {{ recentLog?.student_number || 'N/A' }}
+              </div>
+            
+              <div class="enrolled">
+                {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+              </div>
+              
+              <div class="entry-time">
+                {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
+              </div>
+              
+              <div class="remarks">
+                Remarks
+              </div>
+            
+              <div class="remarks-note">
+                {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
+              </div>
             </div>
-            <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
-          </div>
-        
-          <!-- Student Name -->
-          <div class="student-name">
-            {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
-          </div>
-        
-          <!-- Student ID -->
-          <div class="student-id">
-            {{ recentLog?.student_number || 'N/A' }}
-          </div>
-        
-          <div class="enrolled">
-            {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
-          </div>
-          
-          <div class="entry-time">
-            {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
-          </div>
-          
-          <div class="remarks">
-            Remarks
-          </div>
-        
-          <div class="remarks-note">
-            {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
-          </div>
+          </template>
         </div>
       </div>
+
       <div class="scanned-number-display" v-if="showScannedInfo">
         <div class="scanned-info">
           <i class="fas fa-barcode"></i>
