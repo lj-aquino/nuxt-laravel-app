@@ -210,7 +210,7 @@
         </div>
         <button
           :class="isVerified ? 'green-button' : 'red-button'"
-          @click="isVerified ? onVerificationOkay : onRetry"
+          @click="handleVerificationButtonClick"
         >
           {{ isVerified ? 'Go Dashboard' : 'Try Again' }}
         </button>
@@ -273,6 +273,14 @@ const showIdButtons = ref(true); // Track if ID buttons should be shown
 const showIdScanNotification = ref(false);
 const showVerificationNotification = ref(false);
 
+const handleVerificationButtonClick = () => {
+  if (isVerified.value) {
+    onVerificationOkay();
+  } else {
+    onRetry();
+  }
+};
+
 definePageMeta({
   middleware: ['auth']
 })
@@ -308,6 +316,7 @@ const onIdScanOkay = async () => {
 };
 
 const onVerificationOkay = async () => {
+  console.log('Go Dashboard clicked');
   showVerificationNotification.value = false;
   showIdButtons.value = true;
   enterIdMode.value = false;
@@ -315,7 +324,9 @@ const onVerificationOkay = async () => {
 };
 
 const onRetry = () => {
+  console.log('Try Again clicked');
   showVerificationNotification.value = false;
+  showIdButtons.value = true;
   // Add any additional retry logic here
 };
 
