@@ -1,3 +1,19 @@
+.second-square {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+  z-index: 1000;
+}
+
 .ready-box {
   background-color: #3871c1; /* Blue color that matches your design */
 }

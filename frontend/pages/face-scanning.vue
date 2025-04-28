@@ -125,11 +125,18 @@
           </div>
         </div>
       </div>
+      <div class="scanned-number-display" v-if="showScannedInfo">
+        <div class="scanned-info">
+          <i class="fas fa-barcode"></i>
+          <span>Scanned ID: {{ studentNumber }}</span>
+        </div>
+      </div>
 
       <!-- Buttons -->
-      <div v-if="!enterIdMode && showIdButtons">
+      <div v-if="!enterIdMode && (showIdButtons || showScannedInfo)">
         <button
           class="enter-id-button animated-button"
+          v-if="showIdButtons"
           @click="onEnterIdClick"
         >
           <i class="fas fa-id-card"></i>
@@ -138,18 +145,12 @@
         
         <button
           class="scan-id-button animated-button"
+          v-if="showIdButtons"
           @click="onScanIdClick" 
         >
           <i class="fas fa-qrcode"></i>
           Scan ID
         </button>
-      
-        <div v-if="studentNumber" class="scanned-number-display">
-          <div class="scanned-info">
-            <i class="fas fa-barcode"></i>
-            <span>Scanned ID: {{ studentNumber }}</span>
-          </div>
-        </div>
       </div>
 
       <div v-else>
@@ -272,6 +273,14 @@ const isScanning = ref(false); // Track if scanning is in progress
 const showIdButtons = ref(true); // Track if ID buttons should be shown
 const showIdScanNotification = ref(false);
 const showVerificationNotification = ref(false);
+const showScannedInfo = ref(false); // Track if the scanned info div should be shown
+
+const resetStates = () => {
+  showScannedInfo.value = false;
+  studentNumber.value = '';
+  showIdButtons.value = true;
+  enterIdMode.value = false;
+};
 
 const handleVerificationButtonClick = () => {
   if (isVerified.value) {
@@ -320,6 +329,7 @@ const onVerificationOkay = async () => {
   showVerificationNotification.value = false;
   showIdButtons.value = true;
   enterIdMode.value = false;
+  showScannedInfo.value = false; // Hide the scanned info
   await recordEntryAttempt();
 };
 
@@ -332,6 +342,13 @@ const onRetry = () => {
 
 const proceedToFaceScan = async () => {
   showIdScanNotification.value = false;
+  showScannedInfo.value = true; // Show the scanned info
+  
+  // Set a timeout to hide the scanned info after 5 seconds
+  setTimeout(() => {
+    showScannedInfo.value = false;
+  }, 5000);
+  
   onScanFaceClick();
 };
 
@@ -775,33 +792,13 @@ const onEnterIdClick = () => {
 };
 
 onMounted(() => {
+  resetStates(); // Reset states on component mount
   initializeWebcam(); // Start the webcam feed
   loadSavedEncodings(); // Load any previously saved encodings
   fetchRecentLog(); // Fetch recent logs from the backend
-  showIdButtons.value = true; // Show ID buttons on initial load
 });
 
 onBeforeUnmount(() => {
   stopWebcam(); // Stop the webcam feed when the component is unmounted
 });
 </script>
-
-<style>
-/* Additional styles for the logs summary */
-.second-square {
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.loading-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 18px;
-  color: #333;
-  text-align: center;
-  z-index: 1000;
-}
-
-</style>

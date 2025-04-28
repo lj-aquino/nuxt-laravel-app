@@ -66,6 +66,8 @@
   padding: 20px;
   border-radius: 8px;
   width: 300px;
+  position: relative;
+  z-index: 1001;
 }
 
 .camera-modal-content h3 {
@@ -92,6 +94,8 @@
   cursor: pointer;
   width: 100%;
   font-family: 'Bricolage Grotesque', sans-serif;
+  position: relative;
+  z-index: 1002;
 }
 
 .close-btn:hover {
