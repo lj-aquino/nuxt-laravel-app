@@ -375,8 +375,18 @@ const onVerificationOkay = async () => {
   showVerificationNotification.value = false;
   showIdButtons.value = true;
   enterIdMode.value = false;
-  showScannedInfo.value = false; // Hide the scanned info
+  showScannedInfo.value = false;
   await recordEntryAttempt();
+
+  // After 5 seconds, reset to ready state
+  setTimeout(() => {
+    hasRecordedEntry.value = false;
+    studentName.value = '';
+    studentNumber.value = '';
+    isEnrolled.value = false;
+    has_id.value = true;
+    entryTime.value = '';
+  }, 5000);
 };
 
 const onRetry = () => {
