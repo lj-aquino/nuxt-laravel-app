@@ -90,29 +90,29 @@
             <!-- Student Info Display - Only shown when there's a recent log -->
             <div v-else>
               <div class="verified-box">
-                <div v-if="recentLog?.status === 'verified'" class="verified-circle">
+                <div v-if="isVerified" class="verified-circle">
                   <i class="fas fa-check"></i>
                 </div>
                 <div v-else class="unverified-circle">
                   <i class="fas fa-exclamation"></i>
                 </div>
-                <span>{{ recentLog?.status === 'verified' ? 'Verified' : 'Unverified' }}</span>
+                <span>{{ isVerified ? 'Verified' : 'Unverified' }}</span>
               </div>
             
               <div class="student-name">
-                {{ recentLog ? formatStudentName(recentLog.student_name) : 'N/A' }}
+                {{ studentName ? formatStudentName(studentName) : 'N/A' }}
               </div>
             
               <div class="student-id">
-                {{ recentLog?.student_number || 'N/A' }}
+                {{ studentNumber || 'N/A' }}
               </div>
             
               <div class="enrolled">
-                {{ recentLog?.enrolled ? 'Enrolled' : 'Not Enrolled' }}
+                {{ isEnrolled ? 'Enrolled' : 'Not Enrolled' }}
               </div>
               
               <div class="entry-time">
-                {{ recentLog?.entry_time ? new Date(recentLog.entry_time).toLocaleString() : 'No Entry Time Available' }}
+                {{ entryTime || new Date().toLocaleString() }}
               </div>
               
               <div class="remarks">
@@ -120,7 +120,7 @@
               </div>
             
               <div class="remarks-note">
-                {{ recentLog?.has_id ? 'Presented ID' : 'No ID Presented' }}
+                {{ has_id ? 'Presented ID' : 'No ID Presented' }}
               </div>
             </div>
           </template>
@@ -280,12 +280,42 @@ const showIdButtons = ref(true); // Track if ID buttons should be shown
 const showIdScanNotification = ref(false);
 const showVerificationNotification = ref(false);
 const showScannedInfo = ref(false); // Track if the scanned info div should be shown
+const studentName = ref(''); // Store the student's name
+const isEnrolled = ref(false); // Track if the student is enrolled
+const entryTime = ref(''); // Store the entry time
 
 const resetStates = () => {
   showScannedInfo.value = false;
   studentNumber.value = '';
   showIdButtons.value = true;
   enterIdMode.value = false;
+};
+
+const getStudentDetails = async (studentNum) => {
+  try {
+    const response = await $fetch('https://sp-j16t.onrender.com/api/students/show', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+      },
+      body: JSON.stringify({
+        student_number: studentNum
+      }),
+    });
+
+    if (response.message === 'Student found successfully') {
+      studentName.value = response.data.student_name;
+      isEnrolled.value = response.data.enrolled;
+      return response.data;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching student details:', error);
+    studentName.value = 'N/A';
+    isEnrolled.value = false;
+    return null;
+  }
 };
 
 const handleVerificationButtonClick = () => {
@@ -306,10 +336,14 @@ const onScanIdClick = () => {
   showIdButtons.value = false; // Hide the buttons while scanner is active
 };
 
-const handleBarcodeScan = (scannedBarcode) => {
+const handleBarcodeScan = async (scannedBarcode) => {
   studentNumber.value = scannedBarcode;
   has_id.value = true;
   idScanSuccess.value = true;
+  
+  // Get student details after successful scan
+  await getStudentDetails(scannedBarcode);
+  
   showIdScanNotification.value = true;
 };
 
@@ -392,6 +426,8 @@ const recordEntryAttempt = async () => {
       logs.value.push('Error: Student number is required.');
       return;
     }
+
+    entryTime.value = new Date().toLocaleString(); // Get the current date and time
 
     const payload = {
       student_number: studentNumber.value,
@@ -682,6 +718,7 @@ const onScanFaceClick = async () => {
     }
 
     // If face encoding exists, proceed with capture and comparison
+    await getStudentDetails(studentNumber.value);
     await captureAndSend();
   } finally {
     isScanning.value = false; // Reset scanning state
