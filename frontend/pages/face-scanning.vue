@@ -182,9 +182,13 @@
     <Sidebar activeMenu="Dashboard" />
 
     <!-- ID Scan Notification Modal -->
-    <div v-if="showIdScanNotification" class="notification-modal">
+    <div v-if="showIdScanNotification" class="notification-modal" @click.self="onIdScanOkay">
       <div class="notification-content">
-        <button class="close-button" @click="onIdScanOkay">×</button>
+        <button 
+          type="button" 
+          class="close-button" 
+          @click.stop="onIdScanOkay"
+        >×</button>
         <div class="modal-main-content">
           <div class="icon-circle success-icon">
             <i class="fas fa-check"></i>
@@ -310,20 +314,26 @@ const handleBarcodeScan = (scannedBarcode) => {
 };
 
 const onIdScanOkay = async () => {
-  const encodingResult = await checkFaceEncoding(studentNumber.value);
+  console.log('Close button clicked'); // Add this for debugging
   
-  if (!encodingResult || !encodingResult.data) {
-    notificationTitle.value = 'Face Not Registered';
-    notificationMessage.value = 'Face still not registered.';
-    notificationAction.value = {
-      label: 'Register Face',
-      handler: navigateToRegister
-    };
-    return;
+  try {
+    const encodingResult = await checkFaceEncoding(studentNumber.value);
+    
+    if (!encodingResult || !encodingResult.data) {
+      notificationTitle.value = 'Face Not Registered';
+      notificationMessage.value = 'Face still not registered.';
+      notificationAction.value = {
+        label: 'Register Face',
+        handler: navigateToRegister
+      };
+      return;
+    }
+    
+    showIdScanNotification.value = false;
+    onScanFaceClick();
+  } catch (error) {
+    console.error('Error in onIdScanOkay:', error);
   }
-  
-  showIdScanNotification.value = false;
-  onScanFaceClick();
 };
 
 const onVerificationOkay = async () => {

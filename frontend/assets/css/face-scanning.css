@@ -191,7 +191,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Increase this to ensure modal is on top */
+  z-index: 1000; /* Increase this to ensure modal is on top */
 }
 
 .notification-content {
@@ -209,7 +209,7 @@
   flex-direction: column; /* Stack items vertically */
   justify-content: center; /* Center items vertically */
   align-items: center; /* Center items horizontally */
-  z-index: 10000; /* Ensure it appears above other elements */
+  z-index: 1001; /* Ensure it appears above other elements */
 }
 
 .close-button {
@@ -222,7 +222,7 @@
   font-weight: bold;
   color: #333;
   cursor: pointer;
-  z-index: 10; /* Ensure it appears above other elements */
+  z-index: 1002; /* Ensure it appears above other elements */
 }
 
 .close-button:hover {
