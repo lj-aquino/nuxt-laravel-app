@@ -356,8 +356,27 @@ const onScanIdClick = () => {
   showIdButtons.value = false; // Hide the buttons while scanner is active
 };
 
+const formatStudentNumber = (studentNum) => {
+  // Remove any leading zeros
+  const cleanNum = studentNum.replace(/^0+/, '');
+  
+  // Check if the number has the correct length (9 digits)
+  if (cleanNum.length !== 9) {
+    console.error('Invalid student number length');
+    return null;
+  }
+  
+  // Split into year (4 digits) and sequence (5 digits)
+  const year = cleanNum.slice(0, 4);
+  const sequence = cleanNum.slice(4);
+  
+  // Return formatted string
+  return `${year}-${sequence}`;
+};
+
 const handleBarcodeScan = async (scannedBarcode) => {
-  studentNumber.value = scannedBarcode;
+  const formattedStudentNumber = formatStudentNumber(scannedBarcode);
+  studentNumber.value = formattedStudentNumber;
   has_id.value = true;
   idScanSuccess.value = true;
   
