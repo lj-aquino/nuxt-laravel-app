@@ -14,6 +14,24 @@
   z-index: 1000;
 }
 
+.warning-icon {
+  background-color: #ffd700;
+  color: #000;
+}
+
+.warning-icon i {
+  font-size: 24px;
+}
+
+.modal-main-content {
+  margin: 1rem 0;
+}
+
+.subtitle {
+  color: #666;
+  margin: 1rem 0;
+}
+
 .ready-box {
   background-color: #3871c1; /* Blue color that matches your design */
 }

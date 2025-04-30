@@ -228,6 +228,25 @@
         v-model:show="showBarcodeScanner"
         @barcode-scanned="handleBarcodeScan"
       />
+    <div v-if="showNotification" class="notification-modal">
+      <div class="notification-content">
+        <button class="close-button" @click="showNotification = false">×</button>
+        <div class="modal-main-content">
+          <div class="icon-circle warning-icon">
+            <i class="fas fa-exclamation"></i>
+          </div>
+          <h2>{{ notificationTitle }}</h2>
+          <p class="subtitle">{{ notificationMessage }}</p>
+        </div>
+        <button 
+          v-if="notificationAction"
+          class="green-button"
+          @click="notificationAction.handler"
+        >
+          {{ notificationAction.label }}
+        </button>
+      </div>
+    </div>
 
   </div>
 </template>
