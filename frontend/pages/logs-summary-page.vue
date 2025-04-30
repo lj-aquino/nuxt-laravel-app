@@ -69,10 +69,10 @@
                 :key="log.id"
                 style="border-bottom: 1px solid #e8e8e8;"
               >
-                <td>
-                  <div class="student-number-page">{{ log.student_number }}</div>
-                  <div class="student-name-logs-page">{{ formatStudentName(log.student_name) }}</div>
-                </td>
+              <td>
+                <div class="student-number-page">{{ getMaskedStudentNumber(log.student_number) }}</div>
+                <div class="student-name-logs-page">{{ formatStudentName(log.student_name) }}</div>
+              </td>
                 <td style="justify-content: center; align-items: center; text-align: center;">
                   <div class="time">{{ log.time }}</div>
                   <div class="date">{{ log.date }}</div>
@@ -115,6 +115,7 @@ import Sidebar from '~/components/Sidebar.vue';
 import TopBar from '~/components/TopBar.vue';
 import VerificationDonutChart from '~/components/charts/VerificationDonutChart.vue';
 import '~/assets/css/logs-summary-page.css';
+import { maskStudentNumber } from '~/utils/maskStudentNumber';
 
 definePageMeta({
   middleware: ['auth']
@@ -171,6 +172,7 @@ export default {
         console.error("Error fetching logs:", error);
       }
     },
+
     calculateStats() {
       const today = new Date();
       const yesterday = new Date(today);
@@ -251,6 +253,10 @@ export default {
 
     formatPercentage(value) {
       return `${value >= 0 ? '+' : ''}${value.toFixed(0)}%`;
+    },
+
+    getMaskedStudentNumber(number) {
+      return maskStudentNumber(number);
     },
 
     formatStudentName(name) {

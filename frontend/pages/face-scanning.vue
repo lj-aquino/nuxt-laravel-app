@@ -104,7 +104,7 @@
               </div>
             
               <div class="student-id">
-                {{ studentNumber || 'N/A' }}
+                {{ studentNumber ? maskStudentNumber(studentNumber) : 'N/A' }}
               </div>
             
               <div class="enrolled">
@@ -128,9 +128,9 @@
       </div>
 
       <div class="scanned-number-display" v-if="showScannedInfo">
-        <div class="scanned-info">
+        <div class="scanned-info" v-if="showScannedInfo">
           <i class="fas fa-barcode"></i>
-          <span>Scanned ID: {{ studentNumber }}</span>
+          <span>Scanned ID: {{ maskStudentNumber(studentNumber) }}</span>
         </div>
       </div>
 
@@ -239,6 +239,7 @@ import BarcodeScanner from '~/components/BarcodeScanner.vue';
 import { ref, onMounted, reactive } from 'vue';
 import '~/assets/css/face-scanning.css'; // Import the CSS file for styles
 import { useRouter } from 'vue-router'; // Import the router for navigation
+import { maskStudentNumber } from '~/utils/maskStudentNumber';
 
 // Import the Sidebar and TopBar components
 import Sidebar from '~/components/Sidebar.vue';

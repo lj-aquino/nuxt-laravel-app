@@ -44,10 +44,10 @@
             :key="log.id"
             style="border-bottom: 1px solid #e8e8e8;"
           >
-            <td>
-              <div class="student-number">{{ log.student_number }}</div>
-              <div class="student-name-logs">{{ formatStudentName(log.student_name) }}</div>
-            </td>
+          <td>
+            <div class="student-number">{{ getMaskedStudentNumber(log.student_number) }}</div>
+            <div class="student-name-logs">{{ formatStudentName(log.student_name) }}</div>
+          </td>
             <td style="justify-content: center; align-items: center; text-align: center;">
               <div class="time">{{ log.time }}</div>
               <div class="date">{{ log.date }}</div>
@@ -89,8 +89,8 @@
 </template>
 
 <script>
-// filepath: c:\Users\LJ\Desktop\Academics\2nd Sem 2024-2025\nuxt-laravel-app\frontend\components\LogsSummary.vue
 import '~/assets/css/logs-summary.css';
+import { maskStudentNumber } from '~/utils/maskStudentNumber';
 
 export default {
   name: "LogsSummary",
@@ -133,6 +133,9 @@ export default {
       } catch (error) {
         console.error("Error fetching logs:", error);
       }
+    },
+    getMaskedStudentNumber(number) {
+      return maskStudentNumber(number);
     },
     formatStudentName(name) {
       const parts = name.split(" ");
