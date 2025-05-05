@@ -1,0 +1,66 @@
+/* Additional styles for the home page */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+/* Import HK Gothic font */
+@font-face {
+  font-family: 'HK Gothic';
+  src: url('/assets/fonts/HKGrotesk-Bold.woff2') format('woff2'),
+       url('/assets/fonts/HKGrotesk-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Reset styles to ensure consistent rendering */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Ensure video has proper positioning */
+video.background-video {
+  position: fixed !important;
+  min-width: 100vw; 
+  min-height: 100vh;
+  width: auto;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -100;
+}
+
+/* Ensure content always appears above video */
+.content-wrapper {
+  position: relative;
+  z-index: 10 !important;
+}
+
+/* Add these styles to ensure all text content is visible over the video */
+.main-title, .subtitle, .bottom-subtitle, .nav-links a {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.fa-camera {
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-title span {
+    font-size: 2.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .camera-circle {
+    width: 40vw;
+    height: 40vw;
+  }
+}
