@@ -12,18 +12,37 @@
   font-style: normal;
 }
 
-/* Reset styles to ensure consistent rendering */
-html, body {
+/* Reset and base styles */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
   height: 100%;
   width: 100%;
   overflow: hidden;
 }
 
-/* Ensure video has proper positioning */
-video.background-video {
-  position: fixed !important;
+.home-container {
+  position: relative;
+  min-height: 100vh;
+  min-width: 100vw;
+  overflow: hidden;
+  color: white;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+/* Background video styling */
+.background-video {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100vw; 
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1; 
   min-width: 100vw; 
   min-height: 100vh;
   width: auto;
@@ -34,19 +53,220 @@ video.background-video {
   z-index: -100;
 }
 
-/* Ensure content always appears above video */
+/* Content wrapper */
 .content-wrapper {
   position: relative;
+  width: 100%;
+  height: 100vh;
+  z-index: 2; 
+  display: flex;
+  flex-direction: column;
   z-index: 10 !important;
 }
 
-/* Add these styles to ensure all text content is visible over the video */
-.main-title, .subtitle, .bottom-subtitle, .nav-links a {
+/* Logo styling */
+.logo-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+}
+
+.uplb-logo {
+  height: 60px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+}
+
+.uplb-text, .security-text {
+  font-weight: bold;
+  color: white;
+}
+
+.uplb-text {
+  font-size: 1.5rem;
+}
+
+.security-text {
+  font-size: 1.2rem;
+}
+
+/* Navigation links */
+.nav-links {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 10;
+  display: flex;
+  gap: 70px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.nav-links a:hover {
+  opacity: 0.8;
+}
+
+.nav-links a.active {
+  border-bottom: 2px solid white;
+  font-weight: bold;
+}
+
+/* Content container */
+.content-container {
+  position: absolute;
+  top: 50%;
+  left: 32%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  z-index: 10;
+}
+
+.title-section {
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.main-title {
+  font-family: 'HK Gothic', sans-serif;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.main-title span {
+  display: block;
+  font-size: 3rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
+  font-weight: normal;
+  opacity: 0.9;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  max-width: 600px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 50px;
+  width: 100%;
+  max-width: 400px;
+  margin-left: 15px;
+}
+
+.input-button-container {
+  position: relative;
+  width: 100%;
+  margin-left: 10px;
+}
+
+.student-id-input {
+  padding: 12px 15px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.1rem;
+  font-family: inherit;
+  width: 100%;
+  padding-right: 120px;
+}
+
+.scan-button {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+  padding: 0 15px;
+  border-radius: 50px;
+  border: none;
+  background-color: #eead2b;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.scan-button:hover {
+  background-color: #d69b24;
+}
+
+.bottom-info {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  z-index: 10;
+}
+
+.bottom-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.camera-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.camera-icon:hover {
+  transform: scale(1.1);
 }
 
 .fa-camera {
   filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.5));
+}
+
+.camera-circle {
+  position: absolute;
+  bottom: -15vh;
+  right: -10vh;
+  width: 50vw;
+  height: 50vw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 5px solid #eead2b;
+  z-index: 5;
+}
+
+.webcam-feed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Responsive adjustments */
