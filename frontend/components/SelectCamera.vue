@@ -59,6 +59,7 @@
   z-index: 1000;
   font-family: 'Bricolage Grotesque', sans-serif;
   border-radius: 8px;
+  color: black;
 }
 
 .camera-modal-content {

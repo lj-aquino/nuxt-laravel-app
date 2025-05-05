@@ -254,10 +254,70 @@ html, body {
   z-index: 5;
 }
 
+.webcam-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .webcam-feed {
   width: 100%;
   height: 100%;
+  border-radius: 50%;
   object-fit: cover;
+}
+
+.face-square-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  border: none;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* Corner edges */
+.face-square-overlay::before,
+.face-square-overlay::after,
+.face-square-overlay > span::before,
+.face-square-overlay > span::after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-color: rgba(255, 255, 255, 0.8);
+  border-style: solid;
+}
+
+/* Top left corner */
+.face-square-overlay::before {
+  top: 0;
+  left: 0;
+  border-width: 5px 0 0 5px;
+}
+
+/* Top right corner */
+.face-square-overlay::after {
+  top: 0;
+  right: 0;
+  border-width: 5px 5px 0 0;
+}
+
+/* Bottom left corner */
+.face-square-overlay > span::before {
+  bottom: 0;
+  left: 0;
+  border-width: 0 0 5px 5px;
+}
+
+/* Bottom right corner */
+.face-square-overlay > span::after {
+  bottom: 0;
+  right: 0;
+  border-width: 0 5px 5px 0;
 }
 
 /* Responsive adjustments */

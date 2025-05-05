@@ -54,7 +54,10 @@
       
       <!-- Camera circle -->
       <div class="camera-circle">
-        <video ref="webcam" class="webcam-feed" autoplay playsinline></video>
+        <div class="webcam-container">
+          <video ref="webcam" class="webcam-feed" autoplay playsinline></video>
+          <div class="face-square-overlay"><span></span></div>
+        </div>
       </div>
     </div>
     
