@@ -48,7 +48,7 @@
           </div>
           <!-- Student verification feedback -->
           <div v-if="verificationAttempted" class="verification-feedback">
-            <p v-if="studentVerified" class="verification-success">Student number found...</p>
+            <p v-if="studentVerified" class="current-process">{{ processingMessage }}</p>
             <p v-else class="verification-error">
               Student number not found... 
               <NuxtLink to="/register" class="register-link">Register</NuxtLink>
@@ -90,6 +90,8 @@ const showCameraSelect = ref(false);
 const studentId = ref('');
 const studentVerified = ref(false);
 const verificationAttempted = ref(false);
+const processingMessage = ref('Student number found...');
+const isProcessing = ref(false);
 
 // Function to validate student and then open camera if verified
 const checkIfStudentNoExists = async () => {
@@ -118,6 +120,8 @@ const checkIfStudentNoExists = async () => {
     
     if (response.ok && data.message === "Student found successfully") {
       studentVerified.value = true;
+      // Process face encoding after student is verified
+      getFaceEncoding();
     } else {
       studentVerified.value = false;
     }

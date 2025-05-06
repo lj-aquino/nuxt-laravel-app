@@ -833,6 +833,61 @@ const captureAndSend = async () => {
   }
 };
 
+// Function to get face encoding from API
+const getFaceEncoding = async () => {
+  if (!studentVerified.value || !stream.value) {
+    return;
+  }
+  
+  try {
+    isProcessing.value = true;
+    processingMessage.value = "Scanning face, please position your face in the square...";
+    
+    // Create a canvas to capture the current webcam frame
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = webcam.value.videoWidth;
+    canvas.height = webcam.value.videoHeight;
+    
+    // Draw the current webcam frame on the canvas
+    context.drawImage(webcam.value, 0, 0, canvas.width, canvas.height);
+    
+    // Convert the canvas to a base64 image
+    const imageDataUrl = canvas.toDataURL('image/jpeg');
+    const base64Image = imageDataUrl.split(',')[1]; // Remove the data URL prefix
+    
+    const apiUrl = useRuntimeConfig().public.apiUrl;
+    const apiKey = useRuntimeConfig().public.apiKey;
+    
+    // Send the image to the API for encoding
+    const response = await fetch(`${apiUrl}/encode`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey
+      },
+      body: JSON.stringify({
+        student_number: studentId.value,
+        image_data: base64Image
+      }),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
+      processingMessage.value = "Face encoding done...";
+      // You might want to store the encoding or proceed with authentication
+    } else {
+      processingMessage.value = "Face encoding failed. Please try again.";
+    }
+  } catch (error) {
+    console.error('Error processing face encoding:', error);
+    processingMessage.value = "Error processing face. Please try again.";
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
 // Initialize the webcam feed
 const initializeWebcam = async () => {
   try {
