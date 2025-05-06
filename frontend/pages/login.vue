@@ -48,7 +48,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { supabase } from '../lib/supabase'
+import { api } from '../lib/api'
 import '~/assets/css/login.css'
 
 const email = ref('')
@@ -58,7 +58,7 @@ const router = useRouter()
 
 const login = async () => {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await api.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     })
@@ -66,8 +66,6 @@ const login = async () => {
     if (error) {
       errorMessage.value = error.message
     } else {
-      // Store session if needed
-      const { data: { session } } = await supabase.auth.getSession()
       // Redirect to /face-scanning after successful login
       router.push('/face-scanning')
     }

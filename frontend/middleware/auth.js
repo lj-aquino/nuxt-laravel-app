@@ -1,9 +1,11 @@
-import { supabase } from '~/lib/supabase'
+// middleware/auth.js
+import { api } from '~/lib/api'
 
 export default defineNuxtRouteMiddleware(async (to) => {
   try {
     // Get the current session
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data } = await api.auth.getSession()
+    const session = data.session
     
     // List of public routes that don't require authentication
     const publicRoutes = ['/', '/login', '/signup', '/about', '/contact']
