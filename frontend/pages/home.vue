@@ -35,11 +35,24 @@
           <h2 class="subtitle">Enhancing UPLB's Curfew System with Face Recognition and School ID Authentication</h2>
         </div>
         
+        
         <!-- Input field and scan button -->
         <div class="input-section">
           <div class="input-button-container">
-            <input type="text" placeholder="Enter your student ID" class="student-id-input">
-            <button class="scan-button" @click="openCameraSelect">SCAN FACE</button>
+            <input 
+              type="text" 
+              placeholder="Enter your student ID" 
+              class="student-id-input"
+              v-model="studentId">
+            <button class="scan-button" @click="checkIfStudentNoExists">SCAN FACE</button>
+          </div>
+          <!-- Student verification feedback -->
+          <div v-if="verificationAttempted" class="verification-feedback">
+            <p v-if="studentVerified" class="verification-success">Student number found...</p>
+            <p v-else class="verification-error">
+              Student number not found... 
+              <NuxtLink to="/register" class="register-link">Register</NuxtLink>
+            </p>
           </div>
         </div>
       </div>
@@ -74,6 +87,46 @@ import '~/assets/css/home.css'; // Import the external CSS file
 const webcam = ref(null);
 const stream = ref(null);
 const showCameraSelect = ref(false);
+const studentId = ref('');
+const studentVerified = ref(false);
+const verificationAttempted = ref(false);
+
+// Function to validate student and then open camera if verified
+const checkIfStudentNoExists = async () => {
+  if (!studentId.value) {
+    alert("Please enter your student ID");
+    return;
+  }
+  
+  try {
+    const apiUrl = useRuntimeConfig().public.apiUrl;
+    const apiKey = useRuntimeConfig().public.apiKey;
+    
+    const response = await fetch(`${apiUrl}/students/show`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey
+      },
+      body: JSON.stringify({
+        student_number: studentId.value,
+      }),
+    });
+    
+    const data = await response.json();
+    verificationAttempted.value = true;
+    
+    if (response.ok && data.message === "Student found successfully") {
+      studentVerified.value = true;
+    } else {
+      studentVerified.value = false;
+    }
+  } catch (error) {
+    console.error('Error validating student ID:', error);
+    verificationAttempted.value = true;
+    studentVerified.value = false;
+  }
+};
 
 // Function to open camera selection modal
 const openCameraSelect = () => {

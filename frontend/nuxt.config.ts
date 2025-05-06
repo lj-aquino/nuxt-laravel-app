@@ -7,6 +7,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: 'http://127.0.0.1:8000/api',
+      apiKey: process.env.NUXT_PUBLIC_API_KEY,
+      apiUrl: process.env.NUXT_PUBLIC_API_URL
     },
   },
 
