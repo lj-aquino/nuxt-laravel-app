@@ -128,23 +128,35 @@ const checkIfStudentNoExists = async () => {
   }
 };
 
-// Function to open camera selection modal
-const openCameraSelect = () => {
-  showCameraSelect.value = true;
-};
+// Initialize default camera on page load
+onMounted(async () => {
+  try {
+    // Get available video devices
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+    
+    if (videoDevices.length > 0) {
+      // Use the first available camera (usually the laptop's built-in camera)
+      const defaultCamera = videoDevices[0].deviceId;
+      
+      // Start the camera
+      await startCamera(defaultCamera);
+    }
+  } catch (error) {
+    console.error('Error initializing default camera:', error);
+  }
+});
 
-// Function to handle camera change
-const onCameraChange = async (deviceId) => {
+// Function to start camera with specified deviceId
+const startCamera = async (deviceId) => {
   if (stream.value) {
     stopCamera();
   }
 
-  if (!deviceId) return;
-
   try {
     stream.value = await navigator.mediaDevices.getUserMedia({
       video: { 
-        deviceId: { exact: deviceId },
+        deviceId: deviceId ? { exact: deviceId } : undefined,
         width: { ideal: 480 },
         height: { ideal: 480 }
       }
@@ -156,6 +168,17 @@ const onCameraChange = async (deviceId) => {
   } catch (error) {
     console.error('Error accessing camera:', error);
   }
+};
+
+// Function to open camera selection modal
+const openCameraSelect = () => {
+  showCameraSelect.value = true;
+};
+
+// Function to handle camera change
+const onCameraChange = async (deviceId) => {
+  if (!deviceId) return;
+  await startCamera(deviceId);
 };
 
 // Function to stop camera
