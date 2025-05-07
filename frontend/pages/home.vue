@@ -20,7 +20,7 @@
       <div class="nav-links">
         <a href="#" class="active">Home</a>
         <a href="#">Contact</a>
-        <a href="#">Register</a>
+        <a href="#">About</a>
         <a href="#">Login</a>
       </div>
       
