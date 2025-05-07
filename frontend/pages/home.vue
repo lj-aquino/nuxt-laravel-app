@@ -111,6 +111,7 @@ import SelectCamera from '~/components/SelectCamera.vue';
 import LoadingSpinner from '~/components/LoadingSpinner.vue'; // Import the loading spinner component
 import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
 import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
+import { registerStudent as registerStudentUtil } from '~/utils/registerStudent.js'; // Import the register student utility
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -135,46 +136,6 @@ const toggleRegistrationForm = () => {
   if (showRegistrationForm.value) {
     registrationName.value = '';
     registrationStudentId.value = '';
-  }
-};
-
-// Function to handle student registration
-const registerStudent = async () => {
-  // Validate input fields
-  if (!registrationName.value || !registrationStudentId.value) {
-    alert('Please fill in all fields.');
-    return;
-  }
-  
-  try {
-    const apiUrl = useRuntimeConfig().public.apiUrl;
-    const apiKey = useRuntimeConfig().public.apiKey;
-    
-    const response = await fetch(`${apiUrl}/students/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-KEY': apiKey
-      },
-      body: JSON.stringify({
-        name: registrationName.value,
-        student_number: registrationStudentId.value,
-      }),
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-      alert('Registration successful!');
-      // Auto-fill the login form with the registered student ID
-      studentId.value = registrationStudentId.value;
-      toggleRegistrationForm();
-    } else {
-      alert(`Registration failed: ${data.message || 'Unknown error'}`);
-    }
-  } catch (error) {
-    console.error('Error registering student:', error);
-    alert('An error occurred during registration. Please try again.');
   }
 };
 
@@ -277,6 +238,49 @@ const handleFaceEncoding = async () => {
     console.error('Error in face encoding process:', error);
     processingMessage.value = "Unexpected error occurred. Please try again.";
     faceMatchStatus.value = 'error';
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
+// Function to handle student registration via register button
+const registerStudent = async () => {
+  // Validate input fields
+  if (!registrationName.value || !registrationStudentId.value) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  
+  // Show processing state
+  isProcessing.value = true;
+  processingMessage.value = "Starting registration process...";
+  
+  try {
+    const apiConfig = useRuntimeConfig().public;
+    
+    // Call the utility function to handle face encoding and registration
+    const result = await registerStudentUtil({
+      webcam: webcam.value,
+      studentId: registrationStudentId.value,
+      studentName: registrationName.value,
+      updateMessage: (message) => {
+        processingMessage.value = message;
+      },
+      apiKey: apiConfig.apiKey
+    });
+    
+    if (result.success) {
+      alert("Registration complete! You can now scan your face to log in.");
+      // Auto-fill the login form with the registered student ID
+      studentId.value = registrationStudentId.value;
+      toggleRegistrationForm(); // Switch back to login form
+    } else {
+      alert(`Registration failed: ${result.message}`);
+    }
+    
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('An unexpected error occurred during registration.');
   } finally {
     isProcessing.value = false;
   }
