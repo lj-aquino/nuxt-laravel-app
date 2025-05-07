@@ -82,6 +82,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import SelectCamera from '~/components/SelectCamera.vue';
+import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -215,21 +216,25 @@ const getFaceEncoding = async () => {
     const match = data.encoding ? data.encoding.match(/'success':\s*(true|false)/i) : null;
     const success = match ? match[1].toLowerCase() === 'true' : false;
     
-    const encodingMatch = data.encoding ? data.encoding.match(/\[([^\]]+)\]/) : null; // Match the array inside square brackets
-    let encodingArray = null;
+    if (!success) {
+      processingMessage.value = "Failed to encode face. Please try again.";
+      isProcessing.value = false;
+      return;
+    }
     
-    if (encodingMatch) {
-      try {
-        encodingArray = JSON.parse(`[${encodingMatch[1]}]`); // Parse the matched array
-        processingMessage.value = "Face encoding done...";
-        console.log("Face encoding received:", encodingArray.length, "values");
-      } catch (error) {
-        console.error("Failed to parse encoding array:", error);
-        processingMessage.value = "Error processing face encoding.";
-      }
+    processingMessage.value = "Face encoding done... comparing with database";
+    
+    // Compare the face encoding with the stored one
+    const apiKey = useRuntimeConfig().public.apiKey;
+    
+    // Update the compareFaceEncoding function to use apiKey
+    const isMatch = await compareFaceEncoding(studentId.value, data, apiKey);
+    
+    // Update processing message based on match result
+    if (isMatch) {
+      processingMessage.value = "Face encoding matched!";
     } else {
-      console.error("No encoding array found in response");
-      processingMessage.value = "No face encoding detected. Please try again.";
+      processingMessage.value = "Face did not match. Please try again.";
     }
     
   } catch (error) {
