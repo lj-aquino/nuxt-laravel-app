@@ -50,6 +50,10 @@
             <div v-if="verificationAttempted" class="verification-feedback">
               <p v-if="studentVerified" class="current-process">
                 {{ processingMessage }}
+                <span v-if="faceMatchStatus === 'error'" class="retry-links">
+                  <a href="#" @click.prevent="retryFaceEncoding">Yes</a> / 
+                  <a href="#" @click.prevent="logEntryAnyway">No</a>
+                </span>
                 <!-- Add LoadingSpinner component -->
                 <LoadingSpinner :status="spinnerStatus" />
               </p>
@@ -225,12 +229,11 @@ const handleFaceEncoding = async () => {
       apiKey
     );
     
-    // Update UI based on match result
     if (isMatch) {
       processingMessage.value = "Face encoding matched!";
       faceMatchStatus.value = 'success';
     } else {
-      processingMessage.value = "Face did not match. Please try again.";
+      processingMessage.value = "Face did not match. Try again?";
       faceMatchStatus.value = 'error';
     }
     
@@ -241,6 +244,19 @@ const handleFaceEncoding = async () => {
   } finally {
     isProcessing.value = false;
   }
+};
+
+// Add these methods inside the script setup section
+const retryFaceEncoding = () => {
+  // Call handleFaceEncoding again
+  handleFaceEncoding();
+};
+
+const logEntryAnyway = () => {
+  faceMatchStatus.value = 'none'; // Reset match status
+  processingMessage.value = "Entry log will be added";
+  // Here you would add code to log the entry despite failed face recognition
+  // For example, make an API call to log the entry
 };
 
 // Function to handle student registration via register button

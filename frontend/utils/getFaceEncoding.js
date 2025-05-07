@@ -1,6 +1,6 @@
 // Define standard messages to ensure consistency
 export const MESSAGES = {
-  SCANNING: "Scanning face, please position your face in the square...",
+  SCANNING: "Scanning face, position your face in the square...",
   CAMERA_NOT_READY: "Camera not ready. Please try again.",
   ENCODING_FAILED: "Failed to encode face. Please try again.",
   ENCODING_SUCCESS: "Face encoding captured successfully!",

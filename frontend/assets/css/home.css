@@ -11,6 +11,20 @@
   font-style: normal;
 }
 
+.retry-links {
+  margin-left: 5px;
+}
+
+.retry-links a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.retry-links a:hover {
+  text-decoration: underline;
+}
+
 /* Registration form styles */
 .registration-form {
   display: flex;
