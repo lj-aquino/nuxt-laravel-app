@@ -52,7 +52,7 @@
             <div v-if="verificationAttempted" class="verification-feedback">
               <p v-if="studentVerified" class="current-process">
                 {{ processingMessage }}
-                <span v-if="faceMatchStatus === 'error'" class="retry-links">
+                <span v-if="loadingStatus === 'error'" class="retry-links">
                   <a href="#" @click.prevent="retryFaceEncoding">Yes</a> / 
                   <a href="#" @click.prevent="logEntryAnyway">No</a>
                 </span>
@@ -129,7 +129,8 @@ const studentVerified = ref(false);
 const verificationAttempted = ref(false);
 const processingMessage = ref('Student number found...');
 const isProcessing = ref(false);
-const faceMatchStatus = ref('none'); // Status for face matching
+const loadingStatus = ref('none'); // Status for face matching
+const faceMatched = ref(false); // Flag to indicate if face matching was successful
 
 // registering form variables
 const showRegistrationForm = ref(false);
@@ -187,15 +188,15 @@ const toggleRegistrationForm = () => {
 // Compute spinner status based on processing state and match status
 const spinnerStatus = computed(() => {
   if (isProcessing.value) return 'loading';
-  if (faceMatchStatus.value === 'success') return 'success';
-  if (faceMatchStatus.value === 'error') return 'error';
+  if (loadingStatus.value === 'success') return 'success';
+  if (loadingStatus.value === 'error') return 'error';
   return 'none';
 });
 
 // Modify your checkIfStudentNoExists function
 const checkIfStudentNoExists = async () => {
   // Reset previous state
-  faceMatchStatus.value = 'none';
+  loadingStatus.value = 'none';
   if (!studentId.value) {
     alert("Please enter your student no.");
     return;
@@ -237,15 +238,15 @@ const checkIfStudentNoExists = async () => {
   }
 };
 
-// Update this function in your home.vue
 const handleFaceEncoding = async () => {
+  faceMatched.value = false; // Reset face matched status
   if (!studentVerified.value) {
     return;
   }
   
   try {
     isProcessing.value = true;
-    faceMatchStatus.value = 'none'; // Reset match status
+    loadingStatus.value = 'none'; // Reset match status
     
     const apiKey = useRuntimeConfig().public.apiKey;
     
@@ -259,7 +260,7 @@ const handleFaceEncoding = async () => {
     
     // If we couldn't get a face encoding, exit early
     if (!faceEncodingResult || !faceEncodingResult.success) {
-      faceMatchStatus.value = 'error';
+      loadingStatus.value = 'error';
       return;
     }
     
@@ -275,17 +276,20 @@ const handleFaceEncoding = async () => {
     
     if (isMatch) {
       processingMessage.value = "Face encoding matched!";
-      faceMatchStatus.value = 'success';
+      loadingStatus.value = 'success';
+      faceMatched.value = true; // Set the flag to true
+      console.log("faceMatched = Face matched successfully!");
       await recordStudentEntry(true);
     } else {
       processingMessage.value = "Face did not match. Try again?";
-      faceMatchStatus.value = 'error';
+      loadingStatus.value = 'error';
+      faceMatched.value = false; // Set the flag to false
     }
     
   } catch (error) {
     console.error('Error in face encoding process:', error);
     processingMessage.value = "Unexpected error occurred. Please try again.";
-    faceMatchStatus.value = 'error';
+    loadingStatus.value = 'error';
   } finally {
     isProcessing.value = false;
   }
@@ -300,8 +304,9 @@ const retryFaceEncoding = () => {
 const recordStudentEntry = async (verificationSuccess = false) => {
   try {
     isProcessing.value = true;
-    faceMatchStatus.value = 'none';
+    loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
+    console.log ("face matched value: ", faceMatched.value);
     
     const apiKey = useRuntimeConfig().public.apiKey;
     
@@ -312,7 +317,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
       remarks: verificationSuccess 
         ? (wasScanned.value ? "Face verified with ID scan" : "Face verified without ID scan") 
         : "Face verification bypassed",
-      status: verificationSuccess ? "verified" : "manual",
+      status: faceMatched.value ? "verified" : "unverified",
       apiKey: apiKey
     });
     
@@ -320,15 +325,15 @@ const recordStudentEntry = async (verificationSuccess = false) => {
       processingMessage.value = wasScanned.value 
         ? "Entry recorded with ID scan." 
         : "Entry recorded without ID scan.";
-      faceMatchStatus.value = 'success';
+      loadingStatus.value = 'success';
     } else {
       processingMessage.value = "Failed to record entry.";
-      faceMatchStatus.value = 'error';
+      loadingStatus.value = 'error';
     }
   } catch (error) {
     console.error('Error recording entry:', error);
     processingMessage.value = "Error recording entry.";
-    faceMatchStatus.value = 'error';
+    loadingStatus.value = 'error';
   } finally {
     isProcessing.value = false;
     // Reset scanner detection for next entry
@@ -337,7 +342,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
 };
 
 const logEntryAnyway = async () => {
-  faceMatchStatus.value = 'none'; // Reset match status
+  loadingStatus.value = 'none'; // Reset match status
   processingMessage.value = "Entry log will be added..";
   await recordStudentEntry(true);
   // Here you would add code to log the entry despite failed face recognition
