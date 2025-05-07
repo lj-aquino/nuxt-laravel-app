@@ -73,7 +73,7 @@
             <input 
               type="text" 
               placeholder="Enter Full Name" 
-              class="student-id-input"
+              class="student-name-input"
               v-model="registrationName">
             <input 
               type="text" 
@@ -119,6 +119,7 @@ import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import 
 import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
 import { registerStudent as registerStudentUtil } from '~/utils/registerStudent.js'; // Import the register student utility
 import { recordEntry } from '~/utils/recordEntry.js'; // Import the record entry utility
+import { fixStudentNumberFormat } from '~/utils/fixStudentNumberFormat.js'; // Import the student number formatting utility
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -197,6 +198,7 @@ const spinnerStatus = computed(() => {
 const checkIfStudentNoExists = async () => {
   // Reset previous state
   loadingStatus.value = 'none';
+  studentId.value = fixStudentNumberFormat(studentId.value);
   if (!studentId.value) {
     alert("Please enter your student no.");
     return;
@@ -352,6 +354,7 @@ const logEntryAnyway = async () => {
 // Function to handle student registration via register button
 const registerStudent = async () => {
   // Validate input fields
+  registrationStudentId.value = fixStudentNumberFormat(registrationStudentId.value);
   if (!registrationName.value || !registrationStudentId.value) {
     alert('Please fill in all fields.');
     return;
