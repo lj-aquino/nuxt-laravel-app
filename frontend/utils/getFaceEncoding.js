@@ -1,13 +1,9 @@
-import { compareFaceEncoding } from './compareFaceEncoding.js';
-
 // Define standard messages to ensure consistency
 export const MESSAGES = {
   SCANNING: "Scanning face, please position your face in the square...",
   CAMERA_NOT_READY: "Camera not ready. Please try again.",
   ENCODING_FAILED: "Failed to encode face. Please try again.",
-  COMPARING: "Face encoding done... comparing with database",
-  MATCH_SUCCESS: "Face encoding matched!",
-  MATCH_FAILURE: "Face did not match. Please try again.",
+  ENCODING_SUCCESS: "Face encoding captured successfully!",
   ERROR_PROCESSING: "Error processing face. Please try again.",
   API_NOT_FOUND: "API endpoint not found. Please check server configuration.",
   SERVER_ERROR: "Server error processing the request. Check server logs.",
@@ -15,15 +11,13 @@ export const MESSAGES = {
 };
 
 /**
- * Process face encoding from webcam and compare with stored encoding
+ * Process face encoding from webcam and return the encoding array
  * @param {Object} options - Configuration options
  * @param {HTMLVideoElement} options.webcam - Reference to webcam element
- * @param {string} options.studentId - Student ID to match
  * @param {Function} options.updateMessage - Function to update processing message
- * @param {string} options.apiKey - API key for authentication
- * @returns {Promise<boolean>} - Promise resolving to whether face matched
+ * @returns {Promise<Object|null>} - Promise resolving to encoding object or null on failure
  */
-export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey }) => {
+export const getFaceEncoding = async ({ webcam, updateMessage }) => {
   try {
     updateMessage(MESSAGES.SCANNING);
     
@@ -34,7 +28,7 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
     // Make sure webcam is initialized and has dimensions
     if (!webcam || !webcam.videoWidth) {
       updateMessage(MESSAGES.CAMERA_NOT_READY);
-      return false;
+      return null;
     }
     
     canvas.width = webcam.videoWidth;
@@ -82,7 +76,7 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
         updateMessage(MESSAGES.GENERIC_SERVER_ERROR.replace('{status}', response.status));
       }
       
-      return false;
+      return null;
     }
     
     const data = await response.json();
@@ -94,26 +88,38 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
     
     if (!success) {
       updateMessage(MESSAGES.ENCODING_FAILED);
-      return false;
+      return null;
     }
     
-    updateMessage(MESSAGES.COMPARING);
-    
-    // Compare the face encoding with the stored one
-    const isMatch = await compareFaceEncoding(studentId, data, apiKey);
-    
-    // Update processing message based on match result
-    if (isMatch) {
-      updateMessage(MESSAGES.MATCH_SUCCESS);
-    } else {
-      updateMessage(MESSAGES.MATCH_FAILURE);
+    // Extract the encoding array from the response string
+    const encodingMatch = data.encoding.match(/\'encoding\':\s*\[(.*?)\]/);
+    if (!encodingMatch || !encodingMatch[1]) {
+      console.error('Could not extract encoding array from response');
+      updateMessage(MESSAGES.ENCODING_FAILED);
+      return null;
     }
     
-    return isMatch;
+    // Parse the encoding string into an array of numbers
+    const encodingArrayString = encodingMatch[1];
+    const encodingArray = encodingArrayString.split(',').map(num => parseFloat(num.trim()));
+    
+    if (!encodingArray.length) {
+      console.error('Failed to parse encoding array');
+      updateMessage(MESSAGES.ENCODING_FAILED);
+      return null;
+    }
+    
+    updateMessage(MESSAGES.ENCODING_SUCCESS);
+    
+    // Return the extracted face encoding array
+    return {
+      success: true,
+      encoding: encodingArray
+    };
     
   } catch (error) {
     console.error('Error processing face encoding:', error);
     updateMessage(MESSAGES.ERROR_PROCESSING);
-    return false;
+    return null;
   }
 };

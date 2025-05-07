@@ -228,6 +228,7 @@ const checkIfStudentNoExists = async () => {
   }
 };
 
+// Update this function in your home.vue
 const handleFaceEncoding = async () => {
   if (!studentVerified.value) {
     return;
@@ -239,22 +240,38 @@ const handleFaceEncoding = async () => {
     
     const apiKey = useRuntimeConfig().public.apiKey;
     
-    // Call the extracted function with needed parameters
-    const result = await getFaceEncoding({
+    // Get the face encoding
+    const faceEncodingResult = await getFaceEncoding({
       webcam: webcam.value,
-      studentId: studentId.value,
       updateMessage: (message) => {
         processingMessage.value = message;
-        
-        // Update match status based on message
-        if (message === "Face encoding matched!") {
-          faceMatchStatus.value = 'success';
-        } else if (message === "Face did not match. Please try again.") {
-          faceMatchStatus.value = 'error';
-        }
-      },
-      apiKey
+      }
     });
+    
+    // If we couldn't get a face encoding, exit early
+    if (!faceEncodingResult || !faceEncodingResult.success) {
+      faceMatchStatus.value = 'error';
+      return;
+    }
+    
+    // Now proceed with the comparison
+    processingMessage.value = "Comparing face with database...";
+    
+    // Call compare function with the extracted encoding
+    const isMatch = await compareFaceEncoding(
+      studentId.value, 
+      { encoding: JSON.stringify({ encoding: faceEncodingResult.encoding }) }, 
+      apiKey
+    );
+    
+    // Update UI based on match result
+    if (isMatch) {
+      processingMessage.value = "Face encoding matched!";
+      faceMatchStatus.value = 'success';
+    } else {
+      processingMessage.value = "Face did not match. Please try again.";
+      faceMatchStatus.value = 'error';
+    }
     
   } catch (error) {
     console.error('Error in face encoding process:', error);
