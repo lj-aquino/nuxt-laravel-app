@@ -116,6 +116,7 @@ import LoadingSpinner from '~/components/LoadingSpinner.vue'; // Import the load
 import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
 import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
 import { registerStudent as registerStudentUtil } from '~/utils/registerStudent.js'; // Import the register student utility
+import { recordEntry } from '~/utils/recordEntry.js'; // Import the record entry utility
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -232,6 +233,7 @@ const handleFaceEncoding = async () => {
     if (isMatch) {
       processingMessage.value = "Face encoding matched!";
       faceMatchStatus.value = 'success';
+      await recordStudentEntry(true);
     } else {
       processingMessage.value = "Face did not match. Try again?";
       faceMatchStatus.value = 'error';
@@ -252,9 +254,43 @@ const retryFaceEncoding = () => {
   handleFaceEncoding();
 };
 
-const logEntryAnyway = () => {
+const recordStudentEntry = async (verificationSuccess = false) => {
+  try {
+    isProcessing.value = true;
+    faceMatchStatus.value = 'none';
+    processingMessage.value = "Recording entry...";
+    
+    const apiKey = useRuntimeConfig().public.apiKey;
+    
+    // Call recordEntry function
+    const result = await recordEntry({
+      studentNumber: studentId.value,
+      hasId: true, // Assuming all students have ID by default, modify if needed
+      remarks: verificationSuccess ? "Face verified" : "Face verification bypassed",
+      status: verificationSuccess ? "verified" : "manual",
+      apiKey: apiKey
+    });
+    
+    if (result.success) {
+      processingMessage.value = "Entry recorded.";
+      faceMatchStatus.value = 'success';
+    } else {
+      processingMessage.value = "Failed to record entry.";
+      faceMatchStatus.value = 'error';
+    }
+  } catch (error) {
+    console.error('Error recording entry:', error);
+    processingMessage.value = "Error recording entry.";
+    faceMatchStatus.value = 'error';
+  } finally {
+    isProcessing.value = false;
+  }
+};
+
+const logEntryAnyway = async () => {
   faceMatchStatus.value = 'none'; // Reset match status
-  processingMessage.value = "Entry log will be added";
+  processingMessage.value = "Entry log will be added..";
+  await recordStudentEntry(true);
   // Here you would add code to log the entry despite failed face recognition
   // For example, make an API call to log the entry
 };
