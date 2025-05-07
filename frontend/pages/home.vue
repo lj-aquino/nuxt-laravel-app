@@ -325,8 +325,12 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     
     if (result.success) {
       processingMessage.value = wasScanned.value 
-        ? "Entry recorded with ID scan." 
-        : "Entry recorded without ID scan.";
+        ? (faceMatched.value 
+            ? "Entry recorded: Student is verified, presented ID."
+            : "Entry recorded: Student unverified, presented ID.")
+        : (faceMatched.value
+            ? "Entry recorded: Student is verified, no ID presented."
+            : "Entry recorded: Student unverified, no ID presented.");
       loadingStatus.value = 'success';
       
       // Clear the student ID input field after successful entry recording
