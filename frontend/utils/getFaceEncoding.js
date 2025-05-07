@@ -1,5 +1,19 @@
 import { compareFaceEncoding } from './compareFaceEncoding.js';
 
+// Define standard messages to ensure consistency
+export const MESSAGES = {
+  SCANNING: "Scanning face, please position your face in the square...",
+  CAMERA_NOT_READY: "Camera not ready. Please try again.",
+  ENCODING_FAILED: "Failed to encode face. Please try again.",
+  COMPARING: "Face encoding done... comparing with database",
+  MATCH_SUCCESS: "Face encoding matched!",
+  MATCH_FAILURE: "Face did not match. Please try again.",
+  ERROR_PROCESSING: "Error processing face. Please try again.",
+  API_NOT_FOUND: "API endpoint not found. Please check server configuration.",
+  SERVER_ERROR: "Server error processing the request. Check server logs.",
+  GENERIC_SERVER_ERROR: "Server error: {status}. Please try again."
+};
+
 /**
  * Process face encoding from webcam and compare with stored encoding
  * @param {Object} options - Configuration options
@@ -11,7 +25,7 @@ import { compareFaceEncoding } from './compareFaceEncoding.js';
  */
 export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey }) => {
   try {
-    updateMessage("Scanning face, please position your face in the square...");
+    updateMessage(MESSAGES.SCANNING);
     
     // Create a canvas to capture the current webcam frame
     const canvas = document.createElement('canvas');
@@ -19,7 +33,7 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
     
     // Make sure webcam is initialized and has dimensions
     if (!webcam || !webcam.videoWidth) {
-      updateMessage("Camera not ready. Please try again.");
+      updateMessage(MESSAGES.CAMERA_NOT_READY);
       return false;
     }
     
@@ -60,12 +74,12 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
       }
       
       if (response.status === 404) {
-        updateMessage("API endpoint not found. Please check server configuration.");
+        updateMessage(MESSAGES.API_NOT_FOUND);
       } else if (response.status === 500) {
-        updateMessage("Server error processing the request. Check server logs.");
+        updateMessage(MESSAGES.SERVER_ERROR);
         console.error("Server returned 500 error. Possible causes:", errorDetails);
       } else {
-        updateMessage(`Server error: ${response.status}. Please try again.`);
+        updateMessage(MESSAGES.GENERIC_SERVER_ERROR.replace('{status}', response.status));
       }
       
       return false;
@@ -79,27 +93,27 @@ export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey
     const success = match ? match[1].toLowerCase() === 'true' : false;
     
     if (!success) {
-      updateMessage("Failed to encode face. Please try again.");
+      updateMessage(MESSAGES.ENCODING_FAILED);
       return false;
     }
     
-    updateMessage("Face encoding done... comparing with database");
+    updateMessage(MESSAGES.COMPARING);
     
     // Compare the face encoding with the stored one
     const isMatch = await compareFaceEncoding(studentId, data, apiKey);
     
     // Update processing message based on match result
     if (isMatch) {
-      updateMessage("Face encoding matched!");
+      updateMessage(MESSAGES.MATCH_SUCCESS);
     } else {
-      updateMessage("Face did not match. Please try again.");
+      updateMessage(MESSAGES.MATCH_FAILURE);
     }
     
     return isMatch;
     
   } catch (error) {
     console.error('Error processing face encoding:', error);
-    updateMessage("Error processing face. Please try again.");
+    updateMessage(MESSAGES.ERROR_PROCESSING);
     return false;
   }
 };

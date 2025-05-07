@@ -46,14 +46,20 @@
               v-model="studentId">
             <button class="scan-button" @click="checkIfStudentNoExists">SCAN FACE</button>
           </div>
+
           <!-- Student verification feedback -->
           <div v-if="verificationAttempted" class="verification-feedback">
-            <p v-if="studentVerified" class="current-process">{{ processingMessage }}</p>
+            <p v-if="studentVerified" class="current-process">
+              {{ processingMessage }}
+              <!-- Add LoadingSpinner component -->
+              <LoadingSpinner :status="spinnerStatus" />
+            </p>
             <p v-else class="verification-error">
               Student number not found... 
               <NuxtLink to="/register" class="register-link">Register</NuxtLink>
             </p>
           </div>
+
         </div>
       </div>
       
@@ -82,6 +88,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import SelectCamera from '~/components/SelectCamera.vue';
+import LoadingSpinner from '~/components/LoadingSpinner.vue'; // Import the loading spinner component
 import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
 import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
 import '~/assets/css/home.css'; // Import the external CSS file
@@ -94,9 +101,20 @@ const studentVerified = ref(false);
 const verificationAttempted = ref(false);
 const processingMessage = ref('Student number found...');
 const isProcessing = ref(false);
+const faceMatchStatus = ref('none'); // Status for face matching
+
+// Compute spinner status based on processing state and match status
+const spinnerStatus = computed(() => {
+  if (isProcessing.value) return 'loading';
+  if (faceMatchStatus.value === 'success') return 'success';
+  if (faceMatchStatus.value === 'error') return 'error';
+  return 'none';
+});
 
 // Function to validate student and then open camera if verified
 const checkIfStudentNoExists = async () => {
+  // Reset previous state
+  faceMatchStatus.value = 'none';
   if (!studentId.value) {
     alert("Please enter your student ID");
     return;
@@ -142,15 +160,23 @@ const handleFaceEncoding = async () => {
   
   try {
     isProcessing.value = true;
+    faceMatchStatus.value = 'none'; // Reset match status
     
     const apiKey = useRuntimeConfig().public.apiKey;
     
     // Call the extracted function with needed parameters
-    await getFaceEncoding({
+    const result = await getFaceEncoding({
       webcam: webcam.value,
       studentId: studentId.value,
       updateMessage: (message) => {
         processingMessage.value = message;
+        
+        // Update match status based on message
+        if (message === "Face encoding matched!") {
+          faceMatchStatus.value = 'success';
+        } else if (message === "Face did not match. Please try again.") {
+          faceMatchStatus.value = 'error';
+        }
       },
       apiKey
     });
@@ -158,6 +184,7 @@ const handleFaceEncoding = async () => {
   } catch (error) {
     console.error('Error in face encoding process:', error);
     processingMessage.value = "Unexpected error occurred. Please try again.";
+    faceMatchStatus.value = 'error';
   } finally {
     isProcessing.value = false;
   }
