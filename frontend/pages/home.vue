@@ -55,8 +55,10 @@
               <LoadingSpinner :status="spinnerStatus" />
             </p>
             <p v-else class="verification-error">
-              Student number not found... 
-              <NuxtLink to="/register" class="register-link">Register</NuxtLink>
+              Student number not found...
+              <span style="margin-left: 2%;">
+                <NuxtLink to="/register" class="register-link">Register</NuxtLink>
+              </span>
             </p>
           </div>
 
