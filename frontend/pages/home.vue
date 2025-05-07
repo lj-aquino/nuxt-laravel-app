@@ -43,7 +43,9 @@
               type="text" 
               placeholder="Enter your student no." 
               class="student-id-input"
-              v-model="studentId">
+              v-model="studentId"
+              @input="checkInputMethod"
+              @keydown="resetTypingTimer">
             <button class="scan-button" @click="checkIfStudentNoExists">SCAN FACE</button>
           
             <!-- Student verification feedback -->
@@ -134,6 +136,44 @@ const showRegistrationForm = ref(false);
 const registrationName = ref('');
 const registrationStudentId = ref('');
 
+// Add these variables to your script setup section
+const wasScanned = ref(false);
+const lastInputTime = ref(0);
+const typingTimer = ref(null);
+const typingSpeed = ref(0);
+
+// Function to detect if input was scanned or typed
+const checkInputMethod = () => {
+  const now = Date.now();
+  
+  // Calculate typing speed (time between inputs in ms)
+  if (lastInputTime.value > 0) {
+    typingSpeed.value = now - lastInputTime.value;
+  }
+  
+  // Update last input time
+  lastInputTime.value = now;
+  
+  // If input is very fast (less than 50ms between characters) and length is significant,
+  // it's likely from a scanner
+  if (typingSpeed.value < 50 && studentId.value.length > 3) {
+    wasScanned.value = true;
+  }
+};
+
+// Reset typing timer on each keydown
+const resetTypingTimer = () => {
+  // Clear any existing timer
+  if (typingTimer.value) clearTimeout(typingTimer.value);
+  
+  // Set a new timer that will reset the wasScanned flag after 2 seconds of inactivity
+  typingTimer.value = setTimeout(() => {
+    // If it's been 2 seconds since last input, reset for next input session
+    lastInputTime.value = 0;
+    // Don't reset wasScanned here, we want to preserve the detection
+  }, 2000);
+};
+
 // Function to toggle between login and registration forms
 const toggleRegistrationForm = () => {
   showRegistrationForm.value = !showRegistrationForm.value;
@@ -152,14 +192,17 @@ const spinnerStatus = computed(() => {
   return 'none';
 });
 
-// Function to validate student and then open camera if verified
+// Modify your checkIfStudentNoExists function
 const checkIfStudentNoExists = async () => {
   // Reset previous state
   faceMatchStatus.value = 'none';
   if (!studentId.value) {
-    alert("Please enter your student mo.");
+    alert("Please enter your student no.");
     return;
   }
+  
+  // Log whether scanner was used for debugging
+  console.log("Was scanner used:", wasScanned.value);
   
   try {
     const apiUrl = useRuntimeConfig().public.apiUrl;
@@ -265,14 +308,18 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     // Call recordEntry function
     const result = await recordEntry({
       studentNumber: studentId.value,
-      hasId: true, // Assuming all students have ID by default, modify if needed
-      remarks: verificationSuccess ? "Face verified" : "Face verification bypassed",
+      hasId: wasScanned.value, // Now using the scanner detection variable
+      remarks: verificationSuccess 
+        ? (wasScanned.value ? "Face verified with ID scan" : "Face verified without ID scan") 
+        : "Face verification bypassed",
       status: verificationSuccess ? "verified" : "manual",
       apiKey: apiKey
     });
     
     if (result.success) {
-      processingMessage.value = "Entry recorded.";
+      processingMessage.value = wasScanned.value 
+        ? "Entry recorded with ID scan." 
+        : "Entry recorded without ID scan.";
       faceMatchStatus.value = 'success';
     } else {
       processingMessage.value = "Failed to record entry.";
@@ -284,6 +331,8 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     faceMatchStatus.value = 'error';
   } finally {
     isProcessing.value = false;
+    // Reset scanner detection for next entry
+    wasScanned.value = false;
   }
 };
 
