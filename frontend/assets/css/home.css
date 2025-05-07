@@ -11,7 +11,57 @@
   font-style: normal;
 }
 
-/* Reset and base styles */
+/* Registration form styles */
+.registration-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.registration-form .student-id-input {
+  width: 100%;
+}
+
+.register-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* Make these selectors more specific by prefixing with .register-buttons */
+.register-buttons .register-button {
+  flex: 2;
+  background-color: #fdd935;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.register-buttons .register-button:hover {
+  background-color: #b79f34;
+}
+
+.register-buttons .cancel-button {
+  flex: 1;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.register-buttons .cancel-button:hover {
+  background-color: #c0392b;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -20,7 +70,7 @@
 
 .verification-feedback {
   margin-top: 2px;
-  margin-left: 15px;
+  margin-left: 10px;
   font-size: 0.9rem;
 }
 
@@ -30,6 +80,7 @@
 }
 
 .verification-error {
+  margin-top: 5%;
   color: #F44336;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
@@ -217,8 +268,8 @@ html, body {
 .scan-button {
   position: absolute;
   right: 5px;
-  top: 5px;
-  bottom: 5px;
+  top: 4px;
+  height: 45%;
   padding: 0 15px;
   border-radius: 50px;
   border: none;

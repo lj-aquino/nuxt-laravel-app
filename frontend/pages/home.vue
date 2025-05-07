@@ -35,34 +35,52 @@
           <h2 class="subtitle">Enhancing UPLB's Curfew System with Face Recognition and School ID Authentication</h2>
         </div>
         
-        
         <!-- Input field and scan button -->
         <div class="input-section">
-          <div class="input-button-container">
+          <!-- Login form (default) -->
+          <div v-if="!showRegistrationForm" class="input-button-container">
             <input 
               type="text" 
-              placeholder="Enter your student ID" 
+              placeholder="Enter your student no." 
               class="student-id-input"
               v-model="studentId">
             <button class="scan-button" @click="checkIfStudentNoExists">SCAN FACE</button>
+          
+            <!-- Student verification feedback -->
+            <div v-if="verificationAttempted" class="verification-feedback">
+              <p v-if="studentVerified" class="current-process">
+                {{ processingMessage }}
+                <!-- Add LoadingSpinner component -->
+                <LoadingSpinner :status="spinnerStatus" />
+              </p>
+              <p v-else class="verification-error">
+                Student number not found...
+                <span style="margin-left: 2%;">
+                  <a href="#" class="register-link" @click.prevent="toggleRegistrationForm">Register</a>
+                </span>
+              </p>
+            </div>
           </div>
-
-          <!-- Student verification feedback -->
-          <div v-if="verificationAttempted" class="verification-feedback">
-            <p v-if="studentVerified" class="current-process">
-              {{ processingMessage }}
-              <!-- Add LoadingSpinner component -->
-              <LoadingSpinner :status="spinnerStatus" />
-            </p>
-            <p v-else class="verification-error">
-              Student number not found...
-              <span style="margin-left: 2%;">
-                <NuxtLink to="/register" class="register-link">Register</NuxtLink>
-              </span>
-            </p>
+          
+          <!-- Registration form -->
+          <div v-else class="registration-form">
+            <input 
+              type="text" 
+              placeholder="Enter Full Name" 
+              class="student-id-input"
+              v-model="registrationName">
+            <input 
+              type="text" 
+              placeholder="Enter Student no." 
+              class="student-id-input"
+              v-model="registrationStudentId">
+            <div class="register-buttons">
+              <button class="register-button" @click="registerStudent">REGISTER</button>
+              <button class="cancel-button" @click="toggleRegistrationForm">CANCEL</button>
+            </div>
           </div>
-
         </div>
+
       </div>
       
       <!-- Bottom info section - moved to bottom right -->
@@ -105,6 +123,61 @@ const processingMessage = ref('Student number found...');
 const isProcessing = ref(false);
 const faceMatchStatus = ref('none'); // Status for face matching
 
+// registering form variables
+const showRegistrationForm = ref(false);
+const registrationName = ref('');
+const registrationStudentId = ref('');
+
+// Function to toggle between login and registration forms
+const toggleRegistrationForm = () => {
+  showRegistrationForm.value = !showRegistrationForm.value;
+  // Reset form fields when toggling
+  if (showRegistrationForm.value) {
+    registrationName.value = '';
+    registrationStudentId.value = '';
+  }
+};
+
+// Function to handle student registration
+const registerStudent = async () => {
+  // Validate input fields
+  if (!registrationName.value || !registrationStudentId.value) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  
+  try {
+    const apiUrl = useRuntimeConfig().public.apiUrl;
+    const apiKey = useRuntimeConfig().public.apiKey;
+    
+    const response = await fetch(`${apiUrl}/students/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-KEY': apiKey
+      },
+      body: JSON.stringify({
+        name: registrationName.value,
+        student_number: registrationStudentId.value,
+      }),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      alert('Registration successful!');
+      // Auto-fill the login form with the registered student ID
+      studentId.value = registrationStudentId.value;
+      toggleRegistrationForm();
+    } else {
+      alert(`Registration failed: ${data.message || 'Unknown error'}`);
+    }
+  } catch (error) {
+    console.error('Error registering student:', error);
+    alert('An error occurred during registration. Please try again.');
+  }
+};
+
 // Compute spinner status based on processing state and match status
 const spinnerStatus = computed(() => {
   if (isProcessing.value) return 'loading';
@@ -118,7 +191,7 @@ const checkIfStudentNoExists = async () => {
   // Reset previous state
   faceMatchStatus.value = 'none';
   if (!studentId.value) {
-    alert("Please enter your student ID");
+    alert("Please enter your student mo.");
     return;
   }
   
