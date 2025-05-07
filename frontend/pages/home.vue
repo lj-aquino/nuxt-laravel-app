@@ -221,7 +221,7 @@ const handleFaceEncoding = async () => {
     // Call compare function with the extracted encoding
     const isMatch = await compareFaceEncoding(
       studentId.value, 
-      { encoding: JSON.stringify({ encoding: faceEncodingResult.encoding }) }, 
+      faceEncodingResult, 
       apiKey
     );
     

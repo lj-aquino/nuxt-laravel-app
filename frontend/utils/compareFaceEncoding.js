@@ -1,32 +1,23 @@
 /**
  * Compare a face encoding with the stored encoding for a student
  * @param {string} studentNumber - The student's ID number
- * @param {string} encodingResponse - The raw encoding response from the /encode endpoint
+ * @param {Object} encodingData - Object containing the encoding array
  * @param {string} apiKey - API key for authentication
  * @returns {Promise<boolean>} - True if the face matches the stored encoding, false otherwise
  */
-export async function compareFaceEncoding(studentNumber, encodingResponse, apiKey) {
+export async function compareFaceEncoding(studentNumber, encodingData, apiKey) {
   try {
-    // Parse the encoding from the response
-    // Example format: "Face encoding: {'success': True, 'encoding': [-0.112, 0.154, ...], 'debug_logs': []}"
-    if (!encodingResponse || !encodingResponse.encoding) {
-      console.error('Invalid encoding response:', encodingResponse);
+    // Check for valid encoding data
+    if (!encodingData || !encodingData.encoding || !Array.isArray(encodingData.encoding)) {
+      console.error('Invalid encoding data:', encodingData);
       return false;
     }
     
-    // Extract the encoding array from the response string
-    const encodingMatch = encodingResponse.encoding.match(/\'encoding\':\s*\[(.*?)\]/);
-    if (!encodingMatch || !encodingMatch[1]) {
-      console.error('Could not extract encoding array from response');
-      return false;
-    }
-    
-    // Parse the encoding string into an array of numbers
-    const encodingArrayString = encodingMatch[1];
-    const encodingArray = encodingArrayString.split(',').map(num => parseFloat(num.trim()));
+    // Use the encoding array directly from the encodingData object
+    const encodingArray = encodingData.encoding;
     
     if (!encodingArray.length) {
-      console.error('Failed to parse encoding array');
+      console.error('Empty encoding array');
       return false;
     }
     
