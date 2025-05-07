@@ -50,7 +50,7 @@
           
             <!-- Student verification feedback -->
             <div v-if="verificationAttempted" class="verification-feedback">
-              <p v-if="studentVerified" class="current-process">
+              <p v-if="studentNoExists" class="current-process">
                 {{ processingMessage }}
                 <span v-if="loadingStatus === 'error'" class="retry-links">
                   <a href="#" @click.prevent="retryFaceEncoding">Yes</a> / 
@@ -126,7 +126,7 @@ const webcam = ref(null);
 const stream = ref(null);
 const showCameraSelect = ref(false);
 const studentId = ref('');
-const studentVerified = ref(false);
+const studentNoExists = ref(false);
 const verificationAttempted = ref(false);
 const processingMessage = ref('Student number found...');
 const isProcessing = ref(false);
@@ -227,22 +227,22 @@ const checkIfStudentNoExists = async () => {
     verificationAttempted.value = true;
     
     if (response.ok && data.message === "Student found successfully") {
-      studentVerified.value = true;
+      studentNoExists.value = true;
       // Process face encoding after student is verified
       handleFaceEncoding();
     } else {
-      studentVerified.value = false;
+      studentNoExists.value = false;
     }
   } catch (error) {
     console.error('Error validating student ID:', error);
     verificationAttempted.value = true;
-    studentVerified.value = false;
+    studentNoExists.value = false;
   }
 };
 
 const handleFaceEncoding = async () => {
   faceMatched.value = false; // Reset face matched status
-  if (!studentVerified.value) {
+  if (!studentNoExists.value) {
     return;
   }
   
@@ -328,6 +328,9 @@ const recordStudentEntry = async (verificationSuccess = false) => {
         ? "Entry recorded with ID scan." 
         : "Entry recorded without ID scan.";
       loadingStatus.value = 'success';
+      
+      // Clear the student ID input field after successful entry recording
+      studentId.value = '';
     } else {
       processingMessage.value = "Failed to record entry.";
       loadingStatus.value = 'error';
