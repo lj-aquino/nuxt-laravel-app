@@ -1,0 +1,105 @@
+import { compareFaceEncoding } from './compareFaceEncoding.js';
+
+/**
+ * Process face encoding from webcam and compare with stored encoding
+ * @param {Object} options - Configuration options
+ * @param {HTMLVideoElement} options.webcam - Reference to webcam element
+ * @param {string} options.studentId - Student ID to match
+ * @param {Function} options.updateMessage - Function to update processing message
+ * @param {string} options.apiKey - API key for authentication
+ * @returns {Promise<boolean>} - Promise resolving to whether face matched
+ */
+export const getFaceEncoding = async ({ webcam, studentId, updateMessage, apiKey }) => {
+  try {
+    updateMessage("Scanning face, please position your face in the square...");
+    
+    // Create a canvas to capture the current webcam frame
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    // Make sure webcam is initialized and has dimensions
+    if (!webcam || !webcam.videoWidth) {
+      updateMessage("Camera not ready. Please try again.");
+      return false;
+    }
+    
+    canvas.width = webcam.videoWidth;
+    canvas.height = webcam.videoHeight;
+    
+    // Draw the current webcam frame on the canvas
+    context.drawImage(webcam, 0, 0, canvas.width, canvas.height);
+    
+    // Convert the canvas to a base64 image
+    const imageData = canvas.toDataURL('image/jpeg');
+    
+    // Use the local API URL
+    const localApiUrl = 'http://localhost:8000/api';
+    
+    // Use FormData instead of JSON
+    const formData = new FormData();
+    formData.append('image', imageData);
+    
+    console.log(`Sending request to: ${localApiUrl}/encode`);
+    
+    const response = await fetch(`${localApiUrl}/encode`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    console.log("Response status:", response.status);
+    
+    // For any non-OK response, try to capture detailed error information
+    if (!response.ok) {
+      let errorDetails = "";
+      try {
+        const errorText = await response.text();
+        errorDetails = errorText.substring(0, 200);
+        console.error("Server error details:", errorDetails);
+      } catch (textError) {
+        console.error("Could not read error response body");
+      }
+      
+      if (response.status === 404) {
+        updateMessage("API endpoint not found. Please check server configuration.");
+      } else if (response.status === 500) {
+        updateMessage("Server error processing the request. Check server logs.");
+        console.error("Server returned 500 error. Possible causes:", errorDetails);
+      } else {
+        updateMessage(`Server error: ${response.status}. Please try again.`);
+      }
+      
+      return false;
+    }
+    
+    const data = await response.json();
+    console.log("Response data:", data);
+    
+    // Extract the success value and encoding array from the response
+    const match = data.encoding ? data.encoding.match(/'success':\s*(true|false)/i) : null;
+    const success = match ? match[1].toLowerCase() === 'true' : false;
+    
+    if (!success) {
+      updateMessage("Failed to encode face. Please try again.");
+      return false;
+    }
+    
+    updateMessage("Face encoding done... comparing with database");
+    
+    // Compare the face encoding with the stored one
+    const isMatch = await compareFaceEncoding(studentId, data, apiKey);
+    
+    // Update processing message based on match result
+    if (isMatch) {
+      updateMessage("Face encoding matched!");
+    } else {
+      updateMessage("Face did not match. Please try again.");
+    }
+    
+    return isMatch;
+    
+  } catch (error) {
+    console.error('Error processing face encoding:', error);
+    updateMessage("Error processing face. Please try again.");
+    return false;
+  }
+};

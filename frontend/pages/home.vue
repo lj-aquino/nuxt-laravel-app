@@ -83,6 +83,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import SelectCamera from '~/components/SelectCamera.vue';
 import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
+import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -123,7 +124,7 @@ const checkIfStudentNoExists = async () => {
     if (response.ok && data.message === "Student found successfully") {
       studentVerified.value = true;
       // Process face encoding after student is verified
-      getFaceEncoding();
+      handleFaceEncoding();
     } else {
       studentVerified.value = false;
     }
@@ -134,112 +135,29 @@ const checkIfStudentNoExists = async () => {
   }
 };
 
-const getFaceEncoding = async () => {
-  // Remove the check for stream.value since we need to run this even if initial verification happened
+const handleFaceEncoding = async () => {
   if (!studentVerified.value) {
     return;
   }
   
   try {
     isProcessing.value = true;
-    processingMessage.value = "Scanning face, please position your face in the square...";
     
-    // Create a canvas to capture the current webcam frame
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    
-    // Make sure webcam is initialized and has dimensions
-    if (!webcam.value || !webcam.value.videoWidth) {
-      processingMessage.value = "Camera not ready. Please try again.";
-      isProcessing.value = false;
-      return;
-    }
-    
-    canvas.width = webcam.value.videoWidth;
-    canvas.height = webcam.value.videoHeight;
-    
-    // Draw the current webcam frame on the canvas
-    context.drawImage(webcam.value, 0, 0, canvas.width, canvas.height);
-    
-    // Convert the canvas to a base64 image - key difference #1: don't split the data URL
-    const imageData = canvas.toDataURL('image/jpeg');
-    
-    // Log some information for debugging
-    console.log("Student ID being sent:", studentId.value);
-    
-    // Use the local API URL
-    const localApiUrl = 'http://localhost:8000/api';
-    
-    // Key difference #2: Use FormData instead of JSON
-    const formData = new FormData();
-    formData.append('image', imageData); // Send the full imageData URL
-    
-    console.log(`Sending request to: ${localApiUrl}/encode`);
-    
-    // Key difference #3: Don't set Content-Type header, let the browser set it for FormData
-    const response = await fetch(`${localApiUrl}/encode`, {
-      method: 'POST',
-      body: formData,
-    });
-    
-    console.log("Response status:", response.status);
-    
-    // For any non-OK response, try to capture detailed error information
-    if (!response.ok) {
-      let errorDetails = "";
-      try {
-        const errorText = await response.text();
-        errorDetails = errorText.substring(0, 200);
-        console.error("Server error details:", errorDetails);
-      } catch (textError) {
-        console.error("Could not read error response body");
-      }
-      
-      if (response.status === 404) {
-        processingMessage.value = "API endpoint not found. Please check server configuration.";
-      } else if (response.status === 500) {
-        processingMessage.value = "Server error processing the request. Check server logs.";
-        console.error("Server returned 500 error. Possible causes:", errorDetails);
-      } else {
-        processingMessage.value = `Server error: ${response.status}. Please try again.`;
-      }
-      
-      isProcessing.value = false;
-      return;
-    }
-    
-    const data = await response.json();
-    console.log("Response data:", data);
-    
-    // Key difference #4: Handle the specific response format from your API
-    // Extract the success value and encoding array from the response
-    const match = data.encoding ? data.encoding.match(/'success':\s*(true|false)/i) : null;
-    const success = match ? match[1].toLowerCase() === 'true' : false;
-    
-    if (!success) {
-      processingMessage.value = "Failed to encode face. Please try again.";
-      isProcessing.value = false;
-      return;
-    }
-    
-    processingMessage.value = "Face encoding done... comparing with database";
-    
-    // Compare the face encoding with the stored one
     const apiKey = useRuntimeConfig().public.apiKey;
     
-    // Update the compareFaceEncoding function to use apiKey
-    const isMatch = await compareFaceEncoding(studentId.value, data, apiKey);
-    
-    // Update processing message based on match result
-    if (isMatch) {
-      processingMessage.value = "Face encoding matched!";
-    } else {
-      processingMessage.value = "Face did not match. Please try again.";
-    }
+    // Call the extracted function with needed parameters
+    await getFaceEncoding({
+      webcam: webcam.value,
+      studentId: studentId.value,
+      updateMessage: (message) => {
+        processingMessage.value = message;
+      },
+      apiKey
+    });
     
   } catch (error) {
-    console.error('Error processing face encoding:', error);
-    processingMessage.value = "Error processing face. Please try again.";
+    console.error('Error in face encoding process:', error);
+    processingMessage.value = "Unexpected error occurred. Please try again.";
   } finally {
     isProcessing.value = false;
   }
