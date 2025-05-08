@@ -86,6 +86,9 @@
             </div>
             <p class="current-process">
               {{ processingMessage }}
+              <span v-if="registrationSuccessful" class="scan-face-link">
+                <a href="#" @click.prevent="toggleRegistrationForm">Scan face.</a>
+              </span>
               <LoadingSpinner :status="spinnerStatus" />
             </p>
           </div>
@@ -136,6 +139,7 @@ const processingMessage = ref('Student number found...');
 const isProcessing = ref(false);
 const loadingStatus = ref('none'); // Status for face matching
 const faceMatched = ref(false); // Flag to indicate if face matching was successful
+const registrationSuccessful = ref(false); // Flag to indicate if registration was successful
 
 // registering form variables
 const showRegistrationForm = ref(false);
@@ -182,7 +186,10 @@ const resetTypingTimer = () => {
 
 // Function to toggle between login and registration forms
 const toggleRegistrationForm = () => {
+  loadingStatus.value = 'none'; // Reset match status
   showRegistrationForm.value = !showRegistrationForm.value;
+  processingMessage.value = ''; // Reset processing message
+  studentNoExists.value = true; // Reset student number existence check
   // Reset form fields when toggling
   if (showRegistrationForm.value) {
     registrationName.value = '';
@@ -201,6 +208,7 @@ const spinnerStatus = computed(() => {
 // Modify your checkIfStudentNoExists function
 const checkIfStudentNoExists = async () => {
   // Reset previous state
+  registrationSuccessful.value = false; // Reset registration success state
   loadingStatus.value = 'none';
   studentId.value = fixStudentNumberFormat(studentId.value);
   if (!studentId.value) {
@@ -284,7 +292,6 @@ const handleFaceEncoding = async () => {
       processingMessage.value = "Face encoding matched!";
       loadingStatus.value = 'success';
       faceMatched.value = true; // Set the flag to true
-      console.log("faceMatched = Face matched successfully!");
       await recordStudentEntry(true);
     } else {
       processingMessage.value = "Face did not match. Try again?";
@@ -312,7 +319,6 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     isProcessing.value = true;
     loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
-    console.log ("face matched value: ", faceMatched.value);
     
     const apiKey = useRuntimeConfig().public.apiKey;
     
@@ -390,13 +396,15 @@ const registerStudent = async () => {
     });
     
     if (result.success) {
-      alert("Registration complete! You can now scan your face to log in.");
-      // Auto-fill the login form with the registered student ID
-      studentId.value = registrationStudentId.value;
-      toggleRegistrationForm(); // Switch back to login form
-    } else {
-      alert(`Registration failed: ${result.message}`);
-    }
+          processingMessage.value = "Registration successful!";
+          loadingStatus.value = 'success';
+          studentId.value = registrationStudentId.value;
+          registrationSuccessful.value = true; // Set this flag to true
+          studentNoExists.value = false; // Set this flag to true
+        } else {
+          processingMessage.value = "Registration failed.";
+          loadingStatus.value = 'error';
+        }
     
   } catch (error) {
     console.error('Registration error:', error);
