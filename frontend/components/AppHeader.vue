@@ -27,6 +27,7 @@
   align-items: center;
   padding: 1rem 2rem;
   width: 100%;
+  font-family: 'Bricolage Grotesque', sans-serif;
 }
 
 .logo-container {

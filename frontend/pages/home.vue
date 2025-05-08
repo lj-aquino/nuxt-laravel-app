@@ -8,7 +8,7 @@
     <!-- Content wrapper - will contain all UI elements that should be above the video -->
     <div class="content-wrapper">
       <!-- Logo -->
-      <AppHeader />
+      <AppHeader class="app-header-container" />
       
       <!-- Content container -->
       <div class="content-container">

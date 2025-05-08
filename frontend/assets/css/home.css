@@ -11,6 +11,12 @@
   font-style: normal;
 }
 
+.app-header-container {
+  position: relative;
+  width: 100%;
+  z-index: 20; /* Higher z-index than other elements */
+}
+
 .retry-links {
   margin-left: 5px;
 }
@@ -154,7 +160,7 @@ html, body {
   transform: translate(-50%, -50%);
   width: 80%;
   max-width: 800px;
-  z-index: 10;
+  z-index: 10; /* Lower than header */
 }
 
 .title-section {

@@ -1,70 +1,67 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 .login-container {
-  min-height: 100vh;
-  width: 100vw;
-  background: url('@/assets/images/login_bg.jpg') no-repeat center center fixed;
-  background-size: cover;
-  font-family: 'Bricolage Grotesque', sans-serif;
-  position: fixed;
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background-video {
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
 }
 
-.logo img {
-  position: absolute;
-  top: 7%;
-  left: 7%;
-  height: 60px;
-}
-
-.top-navigator {
-  position: absolute;
-  top: 8%;
-  right: 10%;
+.content-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
-  gap: 70px;
-}
-
-.top-navigator a {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.top-navigator a.active {
-  text-decoration: underline;
+  flex-direction: column;
+  z-index: 1;
 }
 
 .login-content {
-  position: absolute;
-  top: 50%;
-  right: 5%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
-  padding: 40px;
-  border-radius: 22px;
-  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.login-title {
+.title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 10px;
   text-align: center;
-  margin-bottom: 30px;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
   font-weight: 600;
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.login-form {
+  width: 100%;
 }
 
 .input-group {
@@ -72,64 +69,116 @@ body {
   margin-bottom: 20px;
 }
 
-.input-group .icon {
+.input-icon {
   position: absolute;
   left: 15px;
   top: 50%;
   transform: translateY(-50%);
-  color: #666;
+  color: #fffbfb;
 }
 
-.input-group input {
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fffbfb;
+  cursor: pointer;
+}
+
+.text-field {
   width: 100%;
-  padding: 12px 45px;
-  border: 1px solid #ddd;
-  border-radius: 22px;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  padding: 15px 45px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  border: 2px solid #fffbfb;
+  border-radius: 100px;
+  background-color: transparent;
+  color: white;
+  outline: none;
 }
 
-.error {
-    color: red;
-    margin-top: 10px;
-  }  
-
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.text-field::placeholder {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .forgot-password {
-  color: #666;
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+.forgot-password a {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  color: #fffbfb;
   text-decoration: none;
 }
 
 .login-button {
   width: 100%;
-  padding: 12px;
-  background: #253036;
-  color: white;
+  padding: 15px;
+  background: linear-gradient(135deg, #5e60ce, #6930c3);
   border: none;
-  border-radius: 22px;
-  font-family: 'Bricolage Grotesque', sans-serif;
+  border-radius: 100px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
   font-weight: 600;
+  color: white;
   cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 
-.signup-link {
-  text-align: center;
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.signup-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 15px;
 }
 
-.signup-link a {
-  color: #1a73e8;
-  text-decoration: none;
+.signup-section p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.signup-button {
+  padding: 12px 30px;
+  background-color: transparent;
+  border: 2px solid #fffbfb;
+  border-radius: 100px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
   font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  text-align: center;
+}
+
+.signup-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-content {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+  
+  .title {
+    font-size: 32px;
+  }
+  
+  .subtitle {
+    font-size: 18px;
+  }
 }
