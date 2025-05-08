@@ -8,7 +8,7 @@
     </div>
     
     <div class="nav-links">
-      <NuxtLink to="/" class="nav-link" active-class="active">Home</NuxtLink>
+      <NuxtLink to="/home" class="nav-link" active-class="active">Home</NuxtLink>
       <NuxtLink to="/contact" class="nav-link" active-class="active">Contact</NuxtLink>
       <NuxtLink to="/about" class="nav-link" active-class="active">About</NuxtLink>
       <NuxtLink to="/login" class="nav-link" active-class="active">Login</NuxtLink>
