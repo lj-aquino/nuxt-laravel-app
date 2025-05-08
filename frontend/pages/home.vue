@@ -11,8 +11,7 @@
       <div class="logo-container">
         <img src="~/assets/images/uplb_logo.png" alt="UPLB Logo" class="uplb-logo">
         <div class="logo-text">
-          <div class="uplb-text">UPLB</div>
-          <div class="security-text">SECURITY</div>
+          <div class="uplb-text">UPLB SSO</div>
         </div>
       </div>
       
@@ -21,7 +20,7 @@
         <a href="#" class="active">Home</a>
         <a href="#">Contact</a>
         <a href="#">About</a>
-        <a href="#">Login</a>
+        <a href="/login">Login</a>
       </div>
       
       <!-- Content container -->
