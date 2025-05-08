@@ -8,20 +8,7 @@
     <!-- Content wrapper - will contain all UI elements that should be above the video -->
     <div class="content-wrapper">
       <!-- Logo -->
-      <div class="logo-container">
-        <img src="~/assets/images/uplb_logo.png" alt="UPLB Logo" class="uplb-logo">
-        <div class="logo-text">
-          <div class="uplb-text">UPLB SSO</div>
-        </div>
-      </div>
-      
-      <!-- Navigation links -->
-      <div class="nav-links">
-        <a href="#" class="active">Home</a>
-        <a href="#">Contact</a>
-        <a href="#">About</a>
-        <a href="/login">Login</a>
-      </div>
+      <AppHeader />
       
       <!-- Content container -->
       <div class="content-container">
@@ -121,6 +108,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import SelectCamera from '~/components/SelectCamera.vue';
 import LoadingSpinner from '~/components/LoadingSpinner.vue'; // Import the loading spinner component
+import AppHeader from '~/components/AppHeader.vue'; // Import the header component
 import { compareFaceEncoding } from '~/utils/compareFaceEncoding.js'; // Import the face recognition utility
 import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face encoding utility
 import { registerStudent as registerStudentUtil } from '~/utils/registerStudent.js'; // Import the register student utility
