@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import { api } from '../lib/api'
+import { supabase } from '../lib/supabase'
 
 export default {
   name: 'Sidebar',
@@ -201,7 +201,7 @@ export default {
     },
     async confirmLogout() {
       try {
-        const { error } = await api.auth.signOut()
+        const { error } = await supabase.auth.signOut()
         if (error) throw error
         this.showLogoutModal = false;
         this.$router.push('/login')

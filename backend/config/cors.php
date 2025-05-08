@@ -3,10 +3,9 @@
 return [
     'paths' => ['api/*'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => ['http://localhost:3000'], // Your Nuxt frontend URL
-    'allowed_origins_patterns' => [],
+    'allowed_origins' => ['http://localhost:3000'],  // Allow Nuxt frontend
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
     'max_age' => 0,
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 ];
