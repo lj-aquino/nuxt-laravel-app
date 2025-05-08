@@ -1,5 +1,6 @@
 <template>
   <div class="home-container">
+    <AppHeader />
     <!-- Background video - lower z-index to ensure it stays in the background -->
     <video autoplay muted loop class="background-video">
       <source src="~/assets/videos/bg_vid.mp4" type="video/mp4">
@@ -8,7 +9,6 @@
     <!-- Content wrapper - will contain all UI elements that should be above the video -->
     <div class="content-wrapper">
       <!-- Logo -->
-      <AppHeader class="app-header-container" />
       
       <!-- Content container -->
       <div class="content-container">
@@ -18,7 +18,7 @@
             <span>FACE & ID</span>
             <span>AUTHENTICATION</span>
           </h1>
-          <h2 class="subtitle">Enhancing UPLB's Curfew System with Face Recognition and School ID Authentication</h2>
+          <h2 class="home-subtitle">Enhancing UPLB's Curfew System with Face Recognition and School ID Authentication</h2>
         </div>
         
         <!-- Input field and scan button -->

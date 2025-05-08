@@ -1,15 +1,15 @@
 <template>
   <div class="login-container">
+    <!-- Place AppHeader at the top of the structure -->
+    <AppHeader />
+    
     <!-- Background video - lower z-index to ensure it stays in the background -->
     <video autoplay muted loop class="background-video">
       <source src="~/assets/videos/bg_vid.mp4" type="video/mp4">
     </video>
     
     <!-- Content wrapper - will contain all UI elements that should be above the video -->
-    <div class="content-wrapper">
-      <!-- Logo -->
-      <AppHeader />
-      
+    <div class="content-login-wrapper">
       <!-- Login content - centered vertically and horizontally -->
       <div class="login-content">
         <div class="title">Welcome back!</div>
@@ -52,7 +52,7 @@
         </form>
         
         <div class="action-section">
-          <button type="submit" class="login-button">Login</button>
+          <button type="submit" class="login-button" @click="handleLogin">Login</button>
           <button class="signup-button">Sign Up</button>
         </div>
       </div>

@@ -30,30 +30,26 @@
   padding: 1rem 2rem;
   width: 100%;
   font-family: 'Bricolage Grotesque', sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100; /* Higher z-index to ensure it stays on top */
 }
 
 .logo-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 10;
   display: flex;
-  flex-direction: row-reverse; /* Reverse the order of elements */
   align-items: center;
-  gap: 10px; /* Add gap between logo and text */
+  gap: 10px;
 }
 
 .uplb-logo {
   height: 60px;
   width: auto;
-  margin-left: 10px; /* Change margin-right to margin-left */
-  margin-right: 0; /* Reset margin-right if it exists */
 }
 
 .logo-text {
   display: flex;
   flex-direction: column;
-  align-items: flex-end; /* Align text to right side since we're reversing order */
 }
 
 .uplb-text {
@@ -62,13 +58,7 @@
   font-size: 1.5rem;
 }
 
-
-/* Navigation links */
 .nav-links {
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  z-index: 10;
   display: flex;
   gap: 70px;
 }
@@ -90,7 +80,6 @@
   font-weight: bold;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
   .app-header {
     flex-direction: column;
@@ -102,4 +91,5 @@
     gap: 1rem;
   }
 }
+
 </style>
