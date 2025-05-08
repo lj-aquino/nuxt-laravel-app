@@ -84,6 +84,10 @@
               <button class="register-button" @click="registerStudent">REGISTER</button>
               <button class="cancel-button" @click="toggleRegistrationForm">CANCEL</button>
             </div>
+            <p class="current-process">
+              {{ processingMessage }}
+              <LoadingSpinner :status="spinnerStatus" />
+            </p>
           </div>
         </div>
 
