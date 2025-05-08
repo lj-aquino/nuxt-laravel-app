@@ -49,12 +49,11 @@
             <NuxtLink to="/forgot-password">Forgot password?</NuxtLink>
           </div>
           
-          <button type="submit" class="login-button">Login</button>
         </form>
         
-        <div class="signup-section">
-          <p>Don't have an account?</p>
-          <NuxtLink to="/signup" class="signup-button">Sign Up</NuxtLink>
+        <div class="action-section">
+          <button type="submit" class="login-button">Login</button>
+          <button class="signup-button">Sign Up</button>
         </div>
       </div>
     </div>

@@ -21,6 +21,8 @@
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap');
+
 .app-header {
   display: flex;
   justify-content: space-between;
