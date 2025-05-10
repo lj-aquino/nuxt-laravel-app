@@ -22,9 +22,9 @@
         </div>
         
         <!-- Input field and scan button -->
-        <div class="input-section">
+        <div class="input-section-home">
           <!-- Login form (default) -->
-          <div v-if="!showRegistrationForm" class="input-button-container">
+          <div v-if="!showRegistrationForm" class="input-button-container-home">
             <input 
               type="text" 
               placeholder="Enter your student no." 

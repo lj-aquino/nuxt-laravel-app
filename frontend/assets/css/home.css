@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
 /* Import HK Gothic font */
 @font-face {
@@ -39,41 +40,38 @@
 
 .register-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 5px;
+  justify-content: space-between; /* This helps with equal spacing */
+  width: 100%;
+  margin-top: 15px;
+  gap: 10px; /* Keep this as is */
 }
 
-/* Make these selectors more specific by prefixing with .register-buttons */
-.register-buttons .register-button {
-  flex: 2;
-  background-color: #fdd935;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+.register-button,
+ .cancel-button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 100px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
   font-weight: 600;
-  transition: background-color 0.3s;
-}
-
-.register-buttons .register-button:hover {
-  background-color: #b79f34;
-}
-
-.register-buttons .cancel-button {
-  flex: 1;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 5px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  color: #700386;
 }
 
-.register-buttons .cancel-button:hover {
-  background-color: #c0392b;
+.cancel-button {
+  background-color: transparent;
+  border-color: white;
+}
+
+.register-button {
+  background-color: #fcfcfc;
+}
+
+.register-button:hover, 
+.cancel-button:hover {
+  background-color: #a56b6b;
 }
 
 * {
@@ -194,7 +192,7 @@ html, body {
   text-align: left;
 }
 
-.input-section {
+.input-section-home {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -204,7 +202,7 @@ html, body {
   margin-left: 0;
 }
 
-.input-button-container {
+.input-button-container-home {
   position: relative;
   width: 100%;
   margin-left: 0;
@@ -212,25 +210,29 @@ html, body {
 
 .student-id-input,
 .student-name-input {
-  padding: 12px 15px;
-  border-radius: 50px;
-  border: none;
-  font-size: 1.1rem;
-  font-family: inherit;
   width: 100%;
-  padding-right: 120px;
+  padding: 15px 45px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  border: 2px solid #fffbfb;
+  border-radius: 100px;
+  background-color: transparent;
+  color: rgb(255, 253, 253);
+  outline: none;
+  font-style: italic;
+  font-weight: 500;
 }
 
 .scan-button {
   position: absolute;
   right: 5px;
   top: 4px;
-  height: 36px;
+  height: 44px;
   padding: 0 15px;
   border-radius: 50px;
   border: none;
-  background-color: #eead2b;
-  color: white;
+  background-color: #ffffff;
+  color: 700386;
   font-size: 1rem;
   cursor: pointer;
   font-family: inherit;
