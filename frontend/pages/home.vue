@@ -177,6 +177,7 @@ const toggleRegistrationForm = () => {
   showRegistrationForm.value = !showRegistrationForm.value;
   processingMessage.value = ''; // Reset processing message
   studentNoExists.value = true; // Reset student number existence check
+  studentNumber.value = ''; // Reset student ID input field
   // Reset form fields when toggling
   if (showRegistrationForm.value) {
     registrationName.value = '';
@@ -360,7 +361,7 @@ const registerStudent = async () => {
   // Validate input fields
   registrationStudentId.value = fixStudentNumberFormat(registrationStudentId.value);
   if (!registrationName.value || !registrationStudentId.value) {
-    alert('Please fill in all fields.');
+    processingMessage.value = "Please fill in all fields.";
     return;
   }
   

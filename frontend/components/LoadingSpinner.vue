@@ -55,7 +55,7 @@ const props = defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
-  color: blue;
+  color: rgb(255, 255, 255);
   font-size: 12px;
 }
 
