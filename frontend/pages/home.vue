@@ -78,6 +78,11 @@
               <LoadingSpinner :status="spinnerStatus" />
             </p>
           </div>
+
+          <div class="enrollment-status">
+            <img src="~/assets/images/enrolled_check.png" class="enrolled-check" alt="Enrolled">
+            Enrollment text
+          </div>
         </div>
 
       </div>

@@ -96,6 +96,23 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
+.enrollment-status {
+  margin-left: 10px;
+  margin-top: 5px;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Space between the text and the check icon */
+  font-size: 0.9rem;
+}
+
+.enrolled-check {
+  height: 15px;
+  display: inline-block; /* Makes it flow with text */
+  vertical-align: middle;
+}
+
 .verification-error {
   margin-top: 5%;
   color: #d9d9d9;
@@ -200,7 +217,6 @@ html, body {
 .input-section-home {
   display: flex;
   flex-direction: column;
-  gap: 15px;
   margin-bottom: 50px;
   width: 100%;
   max-width: 400px;
