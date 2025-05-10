@@ -110,25 +110,33 @@ export default {
   methods: {
     async fetchLogs() {
       try {
-        const result = await $fetch('https://sp-j16t.onrender.com/api/logs/recent', {
+        // Use runtime config like you did in logs-summary-page.vue
+        const config = useRuntimeConfig().public;
+        const apiUrl = config.apiUrl;
+        const apiKey = config.apiKey;
+        
+        const result = await fetch(`${apiUrl}/logs/recent`, {
           method: 'GET',
           headers: {
-            'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+            'Content-Type': 'application/json',
+            'X-API-KEY': apiKey,
           },
         });
-
-        if (result.success) {
-          this.logs = result.data
+        
+        const data = await result.json();
+        
+        if (data.success) {
+          this.logs = data.data
             .map((log) => {
               const [date, time] = log.entry_time.split(" ");
               const formattedTime = time.slice(0, 5); // Remove seconds
               return { ...log, date, time: formattedTime };
             })
-            .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time)); // Sort by entry_time (descending)
-
-          this.filteredLogs = this.logs; // Initialize filtered logs
+            .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time));
+          
+          this.filteredLogs = this.logs;
         } else {
-          console.error("Failed to fetch logs:", result);
+          console.error("Failed to fetch logs:", data);
         }
       } catch (error) {
         console.error("Error fetching logs:", error);
