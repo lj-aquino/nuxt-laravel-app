@@ -49,11 +49,12 @@
             <NuxtLink to="/forgot-password">Forgot password?</NuxtLink>
           </div>
           
+          <p class="error" v-if="errorMessage">{{ errorMessage }}</p>
         </form>
         
         <div class="action-section">
           <button type="submit" class="login-button" @click="handleLogin">Login</button>
-          <button class="signup-button">Sign Up</button>
+          <button class="signup-button" @click="navigateToSignup">Sign Up</button>
         </div>
       </div>
     </div>
@@ -62,6 +63,8 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '~/lib/supabase'; // Make sure this path is correct
 import AppHeader from '~/components/AppHeader.vue';
 import '~/assets/css/login.css'; // Import the external CSS file
 
@@ -69,6 +72,8 @@ import '~/assets/css/login.css'; // Import the external CSS file
 const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
+const errorMessage = ref('');
+const router = useRouter();
 
 // Toggle password visibility
 const togglePassword = () => {
@@ -76,8 +81,28 @@ const togglePassword = () => {
 };
 
 // Handle login submission
-const handleLogin = () => {
-  // Implement your login logic here
-  console.log('Login attempt with:', email.value, password.value);
+const handleLogin = async () => {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    });
+
+    if (error) {
+      errorMessage.value = error.message;
+    } else {
+      // Redirect to /face-scanning after successful login
+      const { data: { session } } = await supabase.auth.getSession();
+      router.push('/face-scanning');
+    }
+  } catch (e) {
+    errorMessage.value = 'An error occurred during login';
+    console.error(e);
+  }
+};
+
+// Navigate to signup page
+const navigateToSignup = () => {
+  router.push('/signup');
 };
 </script>
