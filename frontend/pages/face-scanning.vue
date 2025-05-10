@@ -46,8 +46,8 @@
         <!-- Student Info Text -->
         <div class="student-info-text">Student Info</div>
       
-        <!-- Content Container -->
-        <div class="content-container">
+
+
           <!-- Loading Indicator - Shown when recognizing -->
           <div v-if="isRecognizing" class="loading-indicator">
             <i class="fas fa-spinner fa-spin"></i>
@@ -124,7 +124,7 @@
               </div>
             </div>
           </template>
-        </div>
+
       </div>
 
       <div class="scanned-number-display" v-if="showScannedInfo">
