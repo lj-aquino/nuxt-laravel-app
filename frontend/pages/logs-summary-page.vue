@@ -166,10 +166,21 @@ export default {
             .map((log) => {
               const [date, time] = log.entry_time.split(" ");
               const formattedTime = time.slice(0, 5); // Remove seconds
-              return { ...log, date, time: formattedTime };
+              
+              // Extract student properties from the nested student object
+              const studentName = log.student ? log.student.student_name : 'N/A';
+              const enrolled = log.student ? log.student.enrolled : false;
+              
+              return { 
+                ...log, 
+                date, 
+                time: formattedTime,
+                student_name: studentName,
+                enrolled: enrolled
+              };
             })
             .sort((a, b) => new Date(b.entry_time) - new Date(a.entry_time)); // Sort by entry_time (descending)
-
+    
           // After fetching logs, calculate statistics
           this.calculateStats();
         } else {
