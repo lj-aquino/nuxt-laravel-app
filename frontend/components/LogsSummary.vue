@@ -91,6 +91,7 @@
 <script>
 import '~/assets/css/logs-summary.css';
 import { maskStudentNumber } from '~/utils/maskStudentNumber';
+import { exportToCSV } from '~/utils/exportToCSV';
 
 export default {
   name: "LogsSummary",
@@ -170,52 +171,25 @@ export default {
       this.$router.push("/logs-summary-page");
     },
     downloadLogs() {
-      if (process.client) {
-        // Dynamically import jsPDF only on client-side
-        import('jspdf').then(({ jsPDF }) => {
-          import('jspdf-autotable').then((autoTableModule) => {
-            try {
-              const doc = new jsPDF();
-              
-              // Add the plugin to the jsPDF instance
-              autoTableModule.default(doc, {
-                startY: 35,
-                head: [[
-                  'Student Number',
-                  'Has ID',
-                  'Entry Time',
-                  'Status'
-                ]],
-                body: this.filteredLogs.map(log => [
-                  log.student_number,
-                  log.has_id ? 'Yes' : 'No',
-                  `${log.date} ${log.time}`,
-                  log.status
-                ]),
-                theme: 'grid',
-                headStyles: {
-                  fillColor: [56, 113, 193],
-                  textColor: [255, 255, 255]
-                },
-                alternateRowStyles: {
-                  fillColor: [245, 245, 245]
-                }
-              });
-
-              // Add title and date before the table
-              doc.setFontSize(16);
-              doc.text('Logs Summary Report', 14, 15);
-              
-              doc.setFontSize(11);
-              doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 25);
-              
-              // Save the PDF
-              doc.save('logs-summary.pdf');
-            } catch (error) {
-              console.error('Error generating PDF:', error);
-            }
-          });
-        });
+      // Prepare headers
+      const headers = ['Student Number', 'Name', 'Has ID', 'Entry Time', 'Status', 'Enrolled'];
+      
+      // Prepare data rows
+      const data = this.filteredLogs.map(log => [
+        log.student_number,
+        log.student_name || 'N/A',
+        log.has_id ? 'Yes' : 'No',
+        `${log.date} ${log.time}`,
+        log.status,
+        log.enrolled ? 'Yes' : 'No'
+      ]);
+      
+      // Export to CSV
+      const success = exportToCSV(headers, data, 'logs-summary');
+      
+      if (!success) {
+        // Optionally handle export failure (e.g., show notification)
+        console.error('Failed to export logs to CSV');
       }
     }
   },
