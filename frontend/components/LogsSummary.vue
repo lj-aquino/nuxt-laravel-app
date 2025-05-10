@@ -146,6 +146,9 @@ export default {
       return maskStudentNumber(number);
     },
     formatStudentName(name) {
+      // Add null check to handle undefined or null student names
+      if (!name) return 'N/A';
+      
       const parts = name.split(" ");
       const formattedParts = parts.map((part, index) => {
         if (index === parts.length - 1) {
