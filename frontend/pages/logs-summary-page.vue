@@ -154,13 +154,13 @@ export default {
         // Use runtime config to get API URL and key
         const config = useRuntimeConfig().public;
         const apiUrl = config.apiUrl;
-        const apiKey = config.apiKey;
+        const mainApiKey = useRuntimeConfig().public.mainApiKey;
         
         const result = await fetch('https://sp-j16t.onrender.com/api/logs/recent', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+            'X-API-KEY': mainApiKey,
           },
         });
         

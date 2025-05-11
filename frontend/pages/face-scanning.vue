@@ -857,14 +857,14 @@ const getFaceEncoding = async () => {
     const base64Image = imageDataUrl.split(',')[1]; // Remove the data URL prefix
     
     const apiUrl = useRuntimeConfig().public.apiUrl;
-    const apiKey = useRuntimeConfig().public.apiKey;
+    const mainApiKey = useRuntimeConfig().public.mainApiKey;
     
     // Send the image to the API for encoding
     const response = await fetch(`${apiUrl}/encode`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': apiKey
+        'X-API-KEY': mainApiKey
       },
       body: JSON.stringify({
         student_number: studentId.value,

@@ -216,13 +216,13 @@ const checkIfStudentNoExists = async () => {
   
   try {
     const apiUrl = useRuntimeConfig().public.apiUrl;
-    const apiKey = useRuntimeConfig().public.apiKey;
+    const mainApiKey = useRuntimeConfig().public.mainApiKey;
     
     const response = await fetch(`${apiUrl}/students/show`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': apiKey
+        'X-API-KEY':mainApiKey
       },
       body: JSON.stringify({
         student_number: studentId.value,
@@ -257,7 +257,7 @@ const handleFaceEncoding = async () => {
     isProcessing.value = true;
     loadingStatus.value = 'none'; // Reset match status
     
-    const apiKey = useRuntimeConfig().public.apiKey;
+    const mainApiKey = useRuntimeConfig().public.mainApiKey;
     
     // Get the face encoding
     const faceEncodingResult = await getFaceEncoding({
@@ -280,7 +280,7 @@ const handleFaceEncoding = async () => {
     const isMatch = await compareFaceEncoding(
       studentId.value, 
       faceEncodingResult, 
-      apiKey
+      mainApiKey
     );
     
     if (isMatch) {
@@ -316,7 +316,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
     
-    const apiKey = useRuntimeConfig().public.apiKey;
+    const mainApiKey = useRuntimeConfig().public.mainApiKey;
     
     // Call recordEntry function
     const result = await recordEntry({
@@ -326,7 +326,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
         ? (wasScanned.value ? "Face verified with ID scan" : "Face verified without ID scan") 
         : "Face verification bypassed",
       status: faceMatched.value ? "verified" : "unverified",
-      apiKey: apiKey
+      apiKey: mainApiKey
     });
     
     if (result.success) {
@@ -389,7 +389,7 @@ const registerStudent = async () => {
       updateMessage: (message) => {
         processingMessage.value = message;
       },
-      apiKey: apiConfig.apiKey
+      apiKey: apiConfig.mainApiKey
     });
     
     if (result.success) {

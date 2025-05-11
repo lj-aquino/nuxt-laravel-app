@@ -7,7 +7,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: 'http://127.0.0.1:8000/api',
-      apiKey: process.env.NUXT_PUBLIC_API_KEY,
+      mainApiKey: process.env.NUXT_PUBLIC_MAIN_API_KEY,
+      enrollmentApiKey: process.env.NUXT_PUBLIC_ENROLLMENT_API_KEY,
       apiUrl: process.env.NUXT_PUBLIC_API_URL || 'https://sp-j16t.onrender.com/api'
     },
   },

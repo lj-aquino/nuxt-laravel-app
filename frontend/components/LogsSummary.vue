@@ -114,13 +114,13 @@ export default {
         // Use runtime config like you did in logs-summary-page.vue
         const config = useRuntimeConfig().public;
         const apiUrl = config.apiUrl;
-        const apiKey = config.apiKey;
+        const mainApiKey = useRuntimeConfig().public.mainApiKey;
         
         const result = await fetch(`${apiUrl}/logs/recent`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'X-API-KEY': apiKey,
+            'X-API-KEY':mainApiKey,
           },
         });
         
