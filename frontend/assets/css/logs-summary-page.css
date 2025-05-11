@@ -78,7 +78,7 @@
   box-sizing: border-box; /* Ensure padding doesn't affect width/height */
 }
 
-.summary-plus-pie-chart {
+.summary-plus-donut-chart {
   display: flex; /* Use flexbox to align items horizontally */
   justify-content: space-between; /* Add space between the two elements */
   align-items: center; /* Align items vertically in the center */
@@ -99,7 +99,24 @@
   flex-direction: column;
 }
 
-.pie-chart {
+.donut-chart-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.verification-wtd {
+  background-color: #d9cfcf;
+  border-radius: 8px;
+  padding-left: 2%;
+  padding-right: 2%;
+  font-weight: lighter;
+
+}
+
+.donut-chart {
   flex: none;
   width: 420px;
   height: 440px;

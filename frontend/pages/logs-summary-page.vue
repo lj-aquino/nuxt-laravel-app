@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <div class="summary-plus-pie-chart">
+    <div class="summary-plus-donut-chart">
       <div class="summary-box">
         <table class="table-summary-page">
           <thead>
@@ -102,8 +102,13 @@
         </div>
       </div>
 
-      <div class="pie-chart">
-        <h3>Verification Breakdown</h3>
+      <div class="donut-chart">
+        <div class = "donut-chart-header">
+          <h3>Verification Breakdown</h3>
+          <div class="verification-wtd">
+            WTD
+          </div>
+        </div>
         <VerificationDonutChart :logs="logs" />
       </div>
     </div>

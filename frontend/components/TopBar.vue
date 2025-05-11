@@ -2,7 +2,7 @@
   <div class="topbar">
     <!-- Welcome and Logs Section -->
     <div class="welcome-section">
-      <div class="welcome-message">Welcome back, Security</div>
+      <div class="welcome-message">Welcome back, Mang Sekyu</div>
       <div class="detailed-logs-message">Let’s take a detailed look at verification logs.</div>
     </div>
 
@@ -26,7 +26,7 @@
       </div>
       <div class="profile-pic">
         <img
-          src="@/assets/images/lj-2.png"
+          src="@/assets/images/guard.png"
           alt="User Profile"
         />
       </div>
