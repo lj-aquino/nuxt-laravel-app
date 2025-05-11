@@ -79,9 +79,9 @@
             </p>
           </div>
 
-          <div class="enrollment-status">
+          <div v-if="entryRecorded" class="enrollment-status">
             <img src="~/assets/images/enrolled_check.png" class="enrolled-check" alt="Enrolled">
-            Enrollment text
+            Enrolled
           </div>
         </div>
 
@@ -132,6 +132,7 @@ const isProcessing = ref(false);
 const loadingStatus = ref('none'); // Status for face matching
 const faceMatched = ref(false); // Flag to indicate if face matching was successful
 const registrationSuccessful = ref(false); // Flag to indicate if registration was successful
+const entryRecorded = ref(false); // Flag to indicate if entry was recorded
 
 // registering form variables
 const showRegistrationForm = ref(false);
@@ -200,6 +201,7 @@ const spinnerStatus = computed(() => {
 
 // Modify your checkIfStudentNoExists function
 const checkIfStudentNoExists = async () => {
+  entryRecorded.value = false; // Reset entry recorded state
   // Reset previous state
   registrationSuccessful.value = false; // Reset registration success state
   loadingStatus.value = 'none';
@@ -309,6 +311,7 @@ const retryFaceEncoding = () => {
 
 const recordStudentEntry = async (verificationSuccess = false) => {
   try {
+    entryRecorded.value = false; // Set entry recorded state to true
     isProcessing.value = true;
     loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
@@ -335,6 +338,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
             ? "Entry recorded: Student is verified, no ID presented."
             : "Entry recorded: Student unverified, no ID presented.");
       loadingStatus.value = 'success';
+      entryRecorded.value = true; // Set entry recorded state to true
       
       // Clear the student ID input field after successful entry recording
       studentId.value = '';
