@@ -81,7 +81,7 @@
 
           <div v-if="entryRecorded" class="enrollment-status">
             <img src="~/assets/images/enrolled_check.png" class="enrolled-check" alt="Enrolled">
-            {{ isEnrolled ? 'Enrolled' : 'Not enrolled' }}
+            Enrolled
           </div>
         </div>
 
@@ -318,17 +318,19 @@ const recordStudentEntry = async (verificationSuccess = false) => {
     loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
     
-    const apiKey = useRuntimeConfig().public.apiKey;
+    const mainApiKey = useRuntimeConfig().public.mainApiKey;
+
+    isEnrolled.value = true; // Reset enrollment status
     
     // Check enrollment status from AMIS API
-    try {
-      const enrollmentResult = await checkStudentEnrollment(studentId.value);
-      isEnrolled.value = enrollmentResult.is_student === true;
-    } catch (error) {
-      console.error('Failed to check enrollment status:', error);
-      // Fallback to false if there's an error
-      isEnrolled.value = false;
-    }
+    // try {
+    //   const enrollmentResult = await checkStudentEnrollment(studentId.value);
+    //   isEnrolled.value = enrollmentResult.is_student === true;
+    // } catch (error) {
+    //   console.error('Failed to check enrollment status:', error);
+    //   // Fallback to false if there's an error
+    //   isEnrolled.value = false;
+    // }
     
     // Continue with existing code to record entry
     const result = await recordEntry({
@@ -338,7 +340,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
         ? (wasScanned.value ? "Face verified with ID scan" : "Face verified without ID scan") 
         : "Face verification bypassed",
       status: faceMatched.value ? "verified" : "unverified",
-      apiKey: apiKey
+      apiKey: mainApiKey
     });
     
     if (result.success) {
