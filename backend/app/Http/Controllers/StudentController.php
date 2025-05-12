@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Student;
 use App\Models\Log;
 use App\Services\ApiKeyRequestService;
+use Illuminate\Support\Facades\Log as LaravelLog;
 
 class StudentController extends Controller
 {
@@ -53,32 +54,67 @@ class StudentController extends Controller
         }
     }
 
-    // Check via external AMIS API
     public function isStudent(Request $request)
     {
         $request->validate([
             'student_number' => 'required|string'
         ]);
 
-        $studentNumber = $request->input('student_number');
+        $studentNumber = str_replace('-', '', $request->input('student_number'));
+        LaravelLog::info('AMIS Request - Checking student: ' . $studentNumber);
 
         try {
-            $endpoint = env('AMIS_API_URL') . '/is-student';
+            // Check if AMIS API key is configured
+            $apiKey = config('app.api_key');
+            if (!$apiKey || $apiKey === '<TO_BE_PROVIDED_BY_AMIS_TEAM>') {
+                LaravelLog::warning('AMIS API - API key not configured');
+                return response()->json([
+                    'is_student' => false,
+                    'message' => 'AMIS API key not configured'
+                ]);
+            }
+
+            // Use config as shown in instructions
+            $endpoint = config('app.amis_api_url') . '/is-student';
+            LaravelLog::info('AMIS API - Endpoint: ' . $endpoint);
+            
             $apiKeyRequestService = new ApiKeyRequestService();
             $encrypted_api_key = $apiKeyRequestService->generateEncryptedApiKey();
 
-            $response = Http::withHeaders([
+            // IMPORTANT: For local development, disable SSL verification
+            $response = Http::withOptions([
+                'verify' => false, // Disable SSL verification for local development
+                'timeout' => 30,   // Set timeout
+            ])->withHeaders([
                 'X-Api-Key' => $encrypted_api_key,
             ])->get($endpoint, [
                 'student_number' => $studentNumber,
             ]);
 
-            return response()->json($response->json());
+            LaravelLog::info('AMIS API - Response status: ' . $response->status());
+            LaravelLog::info('AMIS API - Response body: ' . $response->body());
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                LaravelLog::info('AMIS API - Success response: ' . json_encode($responseData));
+                return response()->json($responseData);
+            } else {
+                LaravelLog::error('AMIS API - Request failed with status: ' . $response->status());
+                return response()->json([
+                    'is_student' => false,
+                    'error' => 'AMIS API request failed',
+                    'status' => $response->status(),
+                    'message' => $response->body()
+                ]);
+            }
         } catch (\Exception $e) {
+            LaravelLog::error('AMIS API - Exception: ' . $e->getMessage());
             return response()->json([
-                'error' => 'Failed to check student status',
+                'is_student' => false,
+                'error' => 'AMIS API error',
                 'message' => $e->getMessage()
             ], 500);
         }
     }
+
 }

@@ -1,9 +1,16 @@
 // studentApi.js
 export async function checkStudentEnrollment(studentNumber) {
   try {
-    const apiUrl = useRuntimeConfig().public.apiBackendUrl;
+    const config = useRuntimeConfig();
+    const apiBackendUrl = config.public.apiBackendUrl;
     
-    const response = await fetch(`${apiUrl}/check-student`, {
+    if (!apiBackendUrl) {
+      throw new Error('Backend API URL is not configured');
+    }
+    
+    console.log('Making request to:', `${apiBackendUrl}/check-student`);
+    
+    const response = await fetch(`${apiBackendUrl}/check-student`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -14,10 +21,13 @@ export async function checkStudentEnrollment(studentNumber) {
     });
     
     if (!response.ok) {
-      throw new Error('Failed to verify student enrollment');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('API Error:', errorData);
+      throw new Error(`API returned ${response.status}: ${errorData.message || 'Failed to verify student enrollment'}`);
     }
     
     const data = await response.json();
+    console.log('Enrollment API response:', data);
     return data;
   } catch (error) {
     console.error('Error checking student enrollment:', error);

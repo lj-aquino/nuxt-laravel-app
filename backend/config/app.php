@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Manila',
 
     /*
     |--------------------------------------------------------------------------
@@ -83,6 +83,9 @@ return [
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    'api_key' => env('API_KEY'),
+    'amis_api_url' => env('AMIS_API_URL', 'https://api.amis.uplb.edu.ph/api'),
 
     /*
     |--------------------------------------------------------------------------

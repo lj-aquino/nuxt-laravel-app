@@ -81,7 +81,7 @@
 
           <div v-if="entryRecorded" class="enrollment-status">
             <img src="~/assets/images/enrolled_check.png" class="enrolled-check" alt="Enrolled">
-            Enrolled
+            {{ isEnrolled ? 'Enrolled' : 'Not enrolled' }}
           </div>
         </div>
 
@@ -119,6 +119,7 @@ import { getFaceEncoding } from '~/utils/getFaceEncoding.js'; // Import the face
 import { registerStudent as registerStudentUtil } from '~/utils/registerStudent.js'; // Import the register student utility
 import { recordEntry } from '~/utils/recordEntry.js'; // Import the record entry utility
 import { fixStudentNumberFormat } from '~/utils/fixStudentNumberFormat.js'; // Import the student number formatting utility
+import { checkStudentEnrollment } from '~/utils/studentApi.js';
 import '~/assets/css/home.css'; // Import the external CSS file
 
 const webcam = ref(null);
@@ -133,6 +134,7 @@ const loadingStatus = ref('none'); // Status for face matching
 const faceMatched = ref(false); // Flag to indicate if face matching was successful
 const registrationSuccessful = ref(false); // Flag to indicate if registration was successful
 const entryRecorded = ref(false); // Flag to indicate if entry was recorded
+const isEnrolled = ref(false);
 
 // registering form variables
 const showRegistrationForm = ref(false);
@@ -311,22 +313,32 @@ const retryFaceEncoding = () => {
 
 const recordStudentEntry = async (verificationSuccess = false) => {
   try {
-    entryRecorded.value = false; // Set entry recorded state to true
+    entryRecorded.value = false;
     isProcessing.value = true;
     loadingStatus.value = 'none';
     processingMessage.value = "Recording entry...";
     
-    const mainApiKey = useRuntimeConfig().public.mainApiKey;
+    const apiKey = useRuntimeConfig().public.apiKey;
     
-    // Call recordEntry function
+    // Check enrollment status from AMIS API
+    try {
+      const enrollmentResult = await checkStudentEnrollment(studentId.value);
+      isEnrolled.value = enrollmentResult.is_student === true;
+    } catch (error) {
+      console.error('Failed to check enrollment status:', error);
+      // Fallback to false if there's an error
+      isEnrolled.value = false;
+    }
+    
+    // Continue with existing code to record entry
     const result = await recordEntry({
       studentNumber: studentId.value,
-      hasId: wasScanned.value, // Now using the scanner detection variable
+      hasId: wasScanned.value,
       remarks: verificationSuccess 
         ? (wasScanned.value ? "Face verified with ID scan" : "Face verified without ID scan") 
         : "Face verification bypassed",
       status: faceMatched.value ? "verified" : "unverified",
-      apiKey: mainApiKey
+      apiKey: apiKey
     });
     
     if (result.success) {
@@ -338,7 +350,7 @@ const recordStudentEntry = async (verificationSuccess = false) => {
             ? "Entry recorded: Student is verified, no ID presented."
             : "Entry recorded: Student unverified, no ID presented.");
       loadingStatus.value = 'success';
-      entryRecorded.value = true; // Set entry recorded state to true
+      entryRecorded.value = true;
       
       // Clear the student ID input field after successful entry recording
       studentId.value = '';
