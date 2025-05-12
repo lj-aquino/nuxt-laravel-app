@@ -303,6 +303,7 @@ const showScannedInfo = ref(false); // Track if the scanned info div should be s
 const studentName = ref(''); // Store the student's name
 const isEnrolled = ref(false); // Track if the student is enrolled
 const entryTime = ref(''); // Store the entry time
+const mainApiKey = useRuntimeConfig().public.mainApiKey;
 
 const resetStates = () => {
   showScannedInfo.value = false;
@@ -317,7 +318,7 @@ const getStudentDetails = async (studentNum) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+        'X-API-KEY': mainApiKey,
       },
       body: JSON.stringify({
         student_number: studentNum
@@ -491,7 +492,7 @@ const recordEntryAttempt = async () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+        'X-API-KEY': mainApiKey,
       },
       body: JSON.stringify(payload),
     });
@@ -585,7 +586,7 @@ const compareFaceEncoding = async (studentNum, scannedEncoding) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+        'X-API-KEY': mainApiKey,
       },
       body: JSON.stringify(payload),
     });
@@ -702,7 +703,7 @@ const checkFaceEncoding = async (studentNum) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+        'X-API-KEY': mainApiKey,
       },
       body: JSON.stringify({
         student_number: studentNum

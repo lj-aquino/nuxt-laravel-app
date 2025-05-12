@@ -146,6 +146,8 @@ const activeMenu = ref('Register Student'); // Default active menu
 const studentName = ref(''); // Ref for the student name input
 const showCameraSelect = ref(false); // Track if the camera selection modal is visible
 
+const mainApiKey = useRuntimeConfig().public.mainApiKey;
+
 // Notification state
 const showNotification = ref(false); // Track if the notification is visible
 const isRegistrationSuccessful = ref(false); // Track if registration was successful
@@ -260,7 +262,7 @@ const handleRegister = async () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': 'yFITiurVNg9eEXIReziZQQA4iHDlCaZSDxwUCpY9SAsMO36M6OIsRl2MErKBOn9q',
+          'X-API-KEY': mainApiKey,
         },
         body: JSON.stringify({
           student_number: studentNumber.value,
